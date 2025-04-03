@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Text.Json;
+using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
 namespace devbuddy.plugins.JsonFormatters
@@ -10,6 +11,9 @@ namespace devbuddy.plugins.JsonFormatters
         private string InputJson { get; set; } = string.Empty;
         private string OutputJson { get; set; } = string.Empty;
         private string ErrorMessage { get; set; } = string.Empty;
+        private int JsonSize { get; set; } = 0;
+        private int JsonDepth { get; set; } = 0;
+        private int JsonProperties { get; set; } = 0;
 
         private void FormatJson()
         {
@@ -26,16 +30,63 @@ namespace devbuddy.plugins.JsonFormatters
                 var jsonObject = System.Text.Json.JsonSerializer.Deserialize<object>(InputJson);
                 OutputJson = System.Text.Json.JsonSerializer.Serialize(
                     jsonObject,
-                    new System.Text.Json.JsonSerializerOptions
+                    new JsonSerializerOptions
                     {
                         WriteIndented = true
                     });
+
+                // Calcola le statistiche del JSON
+                JsonSize = OutputJson.Length;
+                CalculateJsonMetrics(jsonObject);
                 ErrorMessage = string.Empty;
             }
             catch (Exception ex)
             {
                 ErrorMessage = $"JSON non valido: {ex.Message}";
             }
+
+            void CalculateJsonMetrics(object jsonObject)
+            {
+                JsonProperties = 0;
+                JsonDepth = 0;
+
+                if (jsonObject != null)
+                {
+                    // Calcola profondità e numero di proprietà
+                    CalculateDepthAndProperties(jsonObject, 1);
+                }
+
+                void CalculateDepthAndProperties(object obj, int currentDepth)
+                {
+                    // Aggiorna la profondità massima se necessario
+                    if (currentDepth > JsonDepth)
+                    {
+                        JsonDepth = currentDepth;
+                    }
+
+                    if (obj is JsonElement element)
+                    {
+                        switch (element.ValueKind)
+                        {
+                            case JsonValueKind.Object:
+                                foreach (var property in element.EnumerateObject())
+                                {
+                                    JsonProperties++;
+                                    CalculateDepthAndProperties(property.Value, currentDepth + 1);
+                                }
+                                break;
+                            case JsonValueKind.Array:
+                                foreach (var item in element.EnumerateArray())
+                                {
+                                    CalculateDepthAndProperties(item, currentDepth + 1);
+                                }
+                                break;
+                        }
+                    }
+                }
+            }
+
+
         }
 
         private async Task PasteFromClipboard()

@@ -1,14 +1,4 @@
-﻿@* <div class="row">
-	<div class="col">
-		<label for="comment">Input:</label>
-<textarea class="form-control" rows="5" id="comment" name="text"></textarea>
-	</div>
-	<div class="col">
-		<label for="comment">Output:</label>
-<textarea class="form-control" rows="5" id="comment" name="text"></textarea>
-	</div>
-</div> *@
-
+﻿
 <div class="container mt-4">
     <h2 class="mb-4">JSON Formatter</h2>
 
@@ -45,6 +35,11 @@
                 </div>
                 <div class="card-body">
                     <textarea @bind="OutputJson" class="form-control" rows="15" readonly></textarea>
+                    <div class="mt-2 text-muted small">
+                        <span title="Dimensione in caratteri">Dimensione: @JsonSize caratteri</span> |
+                        <span title="Profondità massima dell'oggetto">Profondità: @JsonDepth</span> |
+                        <span title="Numero di proprietà">Proprietà: @JsonProperties</span>
+                    </div>
                 </div>
             </div>
         </div>

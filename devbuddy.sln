@@ -15,13 +15,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "devbuddy.notificationhub", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "plugins", "plugins", "{255A78B8-75D1-4175-B9AA-5E9F2BE5EACC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "devbuddy.Plugins.MyNotes", "devbuddy.plugins\DevBuddy.Plugins.MyNotes\devbuddy.Plugins.MyNotes.csproj", "{0E92D3B9-0894-4119-A120-9C7EBD434A13}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "devbuddy.plugins.MyNotes", "devbuddy.plugins\DevBuddy.Plugins.MyNotes\devbuddy.plugins.MyNotes.csproj", "{0E92D3B9-0894-4119-A120-9C7EBD434A13}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "devbuddy.Plugins.PomodoroTimer", "devbuddy.plugins\DevBuddy.Plugins.PomodoroTimer\devbuddy.Plugins.PomodoroTimer.csproj", "{6BB1CA3B-9151-4AF0-8619-DA0CB0D1257A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "devbuddy.plugins.PomodoroTimer", "devbuddy.plugins\DevBuddy.Plugins.PomodoroTimer\devbuddy.plugins.PomodoroTimer.csproj", "{6BB1CA3B-9151-4AF0-8619-DA0CB0D1257A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "devbuddy.web", "devbuddy.web\devbuddy.web.csproj", "{C76AC33C-9B52-484D-8629-C41E41E98F70}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devbuddy.Plugins.JsonUtilities", "devbuddy.plugins\DevBuddy.Plugins.JsonUtilities\DevBuddy.Plugins.JsonUtilities.csproj", "{E85211FC-9DD3-435E-94DB-562AF42EA328}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devbuddy.plugins.JsonUtilities", "devbuddy.plugins\DevBuddy.Plugins.JsonUtilities\devbuddy.plugins.JsonUtilities.csproj", "{E85211FC-9DD3-435E-94DB-562AF42EA328}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6C83A596-D32D-B35F-00DD-F0C99B673980}"
 EndProject

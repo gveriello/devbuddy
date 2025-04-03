@@ -19,7 +19,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.10" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.13" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -31,7 +31,7 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\devbuddy.business\devbuddy.business.csproj" />
 	  <ProjectReference Include="..\devbuddy.common\devbuddy.common.csproj" />
-	  <ProjectReference Include="..\devbuddy.plugins\DevBuddy.Plugins.JsonFormatters\devbuddy.plugins.JsonFormatters.csproj" />
+	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.JsonFormatters\devbuddy.plugins.JsonFormatters.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

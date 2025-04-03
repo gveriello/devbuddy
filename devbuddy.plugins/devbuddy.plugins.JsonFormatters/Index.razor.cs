@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 using devbuddy.common.Attributes;
 using devbuddy.common.Enums;
 
-namespace devbuddy.plugins.JsonUtilities
+namespace devbuddy.plugins.JsonFormatters
 {
 
-    [DynamicallyLoadable(ModulesItems.JsonFormatters)]
     public sealed partial class Index
     {
 

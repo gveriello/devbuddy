@@ -1,0 +1,19 @@
+﻿@if (toasts.Any())
+{
+    <div class="toast-container @GetPositionClass()">
+        @foreach (var toast in toasts)
+        {
+            <div class="toast-box @GetToastClass(toast.Level)" @key="toast.Id">
+                <div class="toast-header">
+                    <div class="toast-message">@toast.Message</div>
+                    <button class="toast-close" @onclick="() => CloseToast(toast.Id)" title="Chiudi">
+                        ×
+                    </button>
+                </div>
+                <div class="toast-progress">
+                    <div class="toast-progress-bar" style="animation-duration: @(toast.DurationSeconds)s"></div>
+                </div>
+            </div>
+        }
+    </div>
+}

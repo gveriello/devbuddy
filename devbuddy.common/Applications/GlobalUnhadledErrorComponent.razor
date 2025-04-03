@@ -1,0 +1,11 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+
+<div class="alert alert-danger">
+    <h3>Si è verificato un errore non gestito.</h3>
+    <p>@Exception.Message</p>
+    @if (IsDebug)
+    {
+        <p>@Exception.StackTrace</p>
+    }
+    <button class="btn btn-primary" @onclick="RecoverError">Riprova</button>
+</div>

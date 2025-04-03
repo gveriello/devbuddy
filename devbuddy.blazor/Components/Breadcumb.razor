@@ -1,0 +1,13 @@
+﻿@using devbuddy.common.ExtensionMethods;
+@using System.ComponentModel
+
+<span class="ms-1 d-none d-sm-inline sidebar-item">
+    Stai visualizzando la pagina 
+    @if (DashboardState.Parent.GetValueOrDefault() != common.Enums.ModulesItems.Unparented)
+    {
+        @(DashboardState.Parent.Value.AttributeValueOrDefault<DescriptionAttribute, string>(attr => attr.Description) ?? DashboardState.Parent.Value.ToString());
+        @(" / ")
+    }
+    @(DashboardState.SelectedNavNode.AttributeValueOrDefault<DescriptionAttribute, string>(attr => attr.Description) ?? DashboardState.SelectedNavNode.ToString())
+</span>
+<hr />

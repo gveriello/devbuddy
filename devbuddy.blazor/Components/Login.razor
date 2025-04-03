@@ -1,0 +1,25 @@
+﻿@using devbuddy.common.Applications
+@inherits PageComponentsBase
+
+<div class="row" hidden="@(IsLoggedIn)">
+	<div class="d-flex align-items-center py-4 bg-body-tertiary">
+
+		<div class="form-signin w-100 m-auto">
+			<Logo />
+
+			<div class="alert alert-danger" role="alert" hidden="@(!HasErrors)">
+				Attenzione: @Errors
+			</div>
+			<div class="form-floating mb-3">
+				<input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" @bind="Model.Email">
+				<label for="floatingInput">Email</label>
+			</div>
+			<div class="form-floating mb-3">
+				<input type="password" class="form-control" id="floatingPassword" placeholder="Password" @bind="Model.Password">
+				<label for="floatingPassword">Password</label>
+			</div>
+			<button class="btn btn-primary w-100 py-2" @onclick="@SignIn" type="button">Accedi</button>
+			<p class="mt-5 mb-3 text-body-secondary">&copy; 2024–2025</p>
+		</div>
+	</div>
+</div>

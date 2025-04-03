@@ -1,0 +1,47 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<UseWPF>true</UseWPF>
+	</PropertyGroup>
+
+
+
+	<ItemGroup>
+		<Content Include="wwwroot\**" />
+		<None Remove="wwwroot\css\modal.css" />
+		<None Remove="wwwroot\css\toasts.css" />
+		<None Remove="wwwroot\js\app.js" />
+		<None Remove="wwwroot\js\modal.js" />
+		<None Remove="wwwroot\js\sounds.js" />
+		<Content Update="wwwroot\**">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebView.Wpf" Version="8.0.93" />
+		<PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\devbuddy.blazor\devbuddy.blazor.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ApplicationDefinition Update="App.xaml">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</ApplicationDefinition>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Update="wwwroot\index.html">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+</Project>

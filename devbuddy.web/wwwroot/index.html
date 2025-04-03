@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DevBuddy Web</title>
+    <base href="/" />
+    <link rel="stylesheet" href="css/all.min.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/toasts.css">
+    <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="css/framework.css">
+    <link rel="stylesheet" href="css/customicons.css">
+</head>
+
+<body>
+    <div id="app">
+        <svg class="loading-progress" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 200">
+            <defs>
+                <style>
+                    @keyframes rotate {
+                        from {
+                            transform: rotate(0deg);
+                        }
+
+                        to {
+                            transform: rotate(360deg);
+                        }
+                    }
+
+                    @keyframes slideIn {
+                        0% {
+                            transform: translateX(40px);
+                            opacity: 0;
+                        }
+
+                        100% {
+                            transform: translateX(0);
+                            opacity: 1;
+                        }
+                    }
+
+                    @keyframes slideOut {
+                        0% {
+                            transform: translateX(0);
+                            opacity: 1;
+                        }
+
+                        100% {
+                            transform: translateX(-40px);
+                            opacity: 0;
+                        }
+                    }
+
+                    @keyframes typewriter {
+                        0%, 100% {
+                            clip-path: inset(0 100% 0 0);
+                        }
+
+                        40%, 60% {
+                            clip-path: inset(0 0 0 0);
+                        }
+                    }
+
+                    .rotating-group {
+                        animation: rotate 3s linear infinite;
+                        transform-origin: 90px 100px;
+                    }
+
+                    .dev-text {
+                        animation: typewriter 4s infinite;
+                    }
+
+                    .buddy-text {
+                        animation: typewriter 4s infinite;
+                        animation-delay: 2s;
+                    }
+
+                    .code-symbol {
+                        opacity: 0;
+                        animation: slideIn 1s ease-out forwards, slideOut 1s ease-in 2s forwards;
+                        animation-iteration-count: infinite;
+                        animation-delay: 0.5s;
+                    }
+                </style>
+            </defs>
+
+            <!-- Gruppo rotante con i rettangoli -->
+            <g class="rotating-group">
+                <rect x="40" y="50" width="100" height="100" rx="20" fill="#6366F1" />
+                <rect x="60" y="70" width="100" height="100" rx="20" fill="#818CF8" opacity="0.7" />
+                <text x="76" y="124" font-family="Monaco, monospace" font-size="32" fill="white" class="code-symbol">&lt;/&gt;</text>
+            </g>
+
+            <!-- Testo DevBuddy con effetto typewriter -->
+            <text x="190" y="120" font-family="Arial, sans-serif" font-weight="bold" font-size="48">
+                <tspan class="dev-text" fill="#4338CA">Dev</tspan><tspan class="buddy-text" fill="#818CF8">Buddy</tspan>
+            </text>
+        </svg>
+        <!--<div class="loading-progress-text"></div>-->
+    </div>
+
+    <div id="blazor-error-ui">
+        An unhandled error has occurred.
+        <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>
+    <script src="_framework/blazor.webassembly.js"></script>
+    <script src="js/all.min.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/modal.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/sounds.js"></script>
+    <script src="js/browserinfo.js"></script>
+    <script src="js/cryptoInterop.js"></script>
+</body>
+
+</html>

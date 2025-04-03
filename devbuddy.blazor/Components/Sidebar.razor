@@ -1,0 +1,32 @@
+﻿@using devbuddy.common.Enums
+@inherits PageComponentsBase
+
+<div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100 ">
+	<ul class="nav flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+		@if (AllModules?.Count > 0)
+			@foreach (var navItem in AllModules)
+			{
+				<li class="nav-item">
+					<button @onclick="@(() => OnMenuItemClick(navItem.Node, navItem.Description))" class="nav-link align-middle px-0 hover:bg-gray-700 transition-colors duration-200">
+						<i class="fa-solid @(navItem.Icon)"></i>
+						<span class="ms-1 d-none d-sm-inline sidebar-item">@navItem.Description</span>
+					</button>
+				</li>
+			}
+	</ul>
+	<hr>
+	@if (User is not null)
+	{
+		<div class="dropdown pb-4">
+			<a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+				@* <img src="https://github.com/mdo.png" alt="hugenerd" width="30" height="30" class="rounded-circle"> *@
+				<i class="fa-solid fa-user rounded-circle" style="width:30px; height:30px;"></i>
+				<span class="d-none d-sm-inline mx-1">@User.Name @User.Surname</span>
+			</a>
+			<ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+				<li><a class="dropdown-item" @onclick="@(() => OnLogout.InvokeAsync())" style="cursor:pointer">Disconnetti</a></li>
+			</ul>
+		</div>
+	}
+
+</div>

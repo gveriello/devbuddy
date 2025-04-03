@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<SignAssembly>False</SignAssembly>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Resource Include="_Imports.razor">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+	</ItemGroup>
+
+
+	<ItemGroup>
+		<SupportedPlatform Include="browser" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.10" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="Attributes\" />
+		<Folder Include="Enums\" />
+		<Folder Include="wwwroot\css\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\devbuddy.business\devbuddy.business.csproj" />
+	  <ProjectReference Include="..\devbuddy.common\devbuddy.common.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Update="wwwroot\**\*.*">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+</Project>

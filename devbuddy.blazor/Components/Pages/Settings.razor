@@ -1,0 +1,35 @@
+﻿@using devbuddy.common
+@using devbuddy.common.Applications
+@using devbuddy.common.Services.Base
+@inherits AppComponentBase<SettingsDataModel>
+
+<div class="vh-100">
+    <div class="h-[90vh] overflow-y-auto">
+        <div class="form-check" hidden="@DeviceServiceBase.IsInstanceInWebApp">
+            <input class="form-check-input" type="checkbox" value="" id="startOnWindows" @bind="@Model.StartOnWindowsStartup" @bind:after="OnModelChangedAsync">
+            <label class="form-check-label" for="startOnWindows">
+                Avvia DevBuddy all'avvio di windows.
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="authorizeAnonymousSend"
+                   @bind="@Model.AuthorizeAnonymousSend"
+                   @bind:after="OnModelChangedAsync">
+            <label class="form-check-label" for="flexCheckChecked">
+                Autorizza l'invio anonimo delle informazioni di utilizzo.
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="authorizeNotifications"
+                   @bind="@Model.AuthorizeNotifications"
+                   @bind:after="OnModelChangedAsync">
+            <label class="form-check-label" for="flexCheckChecked">
+                Autorizza l'invio di notifiche da parte dei plugin.
+            </label>
+        </div>
+    </div>
+
+    <div hidden="@DeviceServiceBase.IsInstanceInWebApp">
+        <i><span>tutti i cambiamenti saranno resi effettivi al riavvio di devbuddy.</span></i>
+    </div>
+</div>

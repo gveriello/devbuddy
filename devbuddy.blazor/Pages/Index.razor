@@ -1,0 +1,40 @@
+﻿@using devbuddy.blazor.Components
+@using devbuddy.common.Applications
+
+<div class="container-fluid">
+    <Notify />
+    @if (IsLogged)
+    {
+        <div class="row flex-nowrap">
+            <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 sidebar">
+                <Sidebar OnPageChanged="@OnPageChanged"  User="@User"  OnLogout="@OnLogout" />
+            </div>
+
+            <div class="col py-3">
+                <div class="container-fluid">
+                    <div class="row mb-3">
+                        <div class="col">
+                            <Breadcumb DashboardState="@DashboardState" />
+                        </div>
+                    </div>
+
+                    <div class="row" hidden="@Loading">
+                        <div class="col">
+                            <DynamicComponent Type="@ComponentToRender" Parameters="@ComponentParameters" />
+                        </div>
+                    </div>
+
+                    <div class="row" hidden="@(!Loading)">
+                        <div class="col">
+                            Attendi un momento...sto caricando le dipendenze.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <Login OnLogin="@OnLogin" />
+    }
+</div>

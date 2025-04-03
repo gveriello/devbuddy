@@ -62,11 +62,12 @@ namespace devbuddy.business
                 {
                     var toAdd = new NavItem()
                     {
+                        Id = isHome ? (int)@enum : module!.Id,
                         Node = @enum,
                         Name = isHome ? @enum.ToString() : module!.Name,
-                        Id = isHome ? (int)@enum : module!.Id,
-                        Description = @enum.AttributeValueOrDefault<DescriptionAttribute, string>(attr => attr.Description) ?? @enum.ToString(),
-                        Icon = isHome ? @enum.AttributeValueOrDefault<IconAttribute, string>(attr => attr.Icon) : module!.Icon
+                        Description = isHome ? ModulesItems.Home.ToString() : module!.Description,
+                        Icon = isHome ? @enum.AttributeValueOrDefault<IconAttribute, string>(attr => attr.Icon) : module!.Icon,
+                        ApiKey = isHome ? null : module!.ApiKey
                     };
                     toReturn.Add(toAdd);
                 }

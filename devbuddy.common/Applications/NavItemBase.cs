@@ -18,6 +18,6 @@ namespace devbuddy.common.Applications
         public string Icon { get; set; }
 
         [JsonPropertyName("apikey")]
-        public string ApiKey { get; set; }
+        public string? ApiKey { get; set; }
     }
 }

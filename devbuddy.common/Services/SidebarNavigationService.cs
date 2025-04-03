@@ -32,7 +32,7 @@ namespace devbuddy.common.Services
             foreach (var assembly in currentAssemblies!)
             {
                 var loadableComponent = assembly.GetCustomAttribute<DynamicallyLoadableAttribute>();
-                if (loadableComponent?.NavNode == navNode && loadableComponent?.NavDescription == navDescription)
+                if ((int)loadableComponent?.NavNode == (int)navNode)
                 {
                     FunctionalityType = assembly;
                     Parent = loadableComponent?.NavParent;

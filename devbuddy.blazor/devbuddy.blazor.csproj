@@ -31,6 +31,7 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\devbuddy.business\devbuddy.business.csproj" />
 	  <ProjectReference Include="..\devbuddy.common\devbuddy.common.csproj" />
+	  <ProjectReference Include="..\devbuddy.plugins\DevBuddy.Plugins.JsonFormatters\devbuddy.plugins.JsonFormatters.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

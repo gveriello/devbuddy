@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using devbuddy.common.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
@@ -8,6 +9,7 @@ namespace devbuddy.plugins.JsonFormatters
     public sealed partial class Index
     {
         [Inject] private IJSRuntime JSRuntime { get; set; }
+        [Inject] private ToastService ToastService { get; set; }
         private string InputJson { get; set; } = string.Empty;
         private string OutputJson { get; set; } = string.Empty;
         private string ErrorMessage { get; set; } = string.Empty;
@@ -115,6 +117,7 @@ namespace devbuddy.plugins.JsonFormatters
             if (!string.IsNullOrEmpty(OutputJson))
             {
                 await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", OutputJson);
+                ToastService.Show("Copiato");
             }
         }
     }

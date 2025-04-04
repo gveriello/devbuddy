@@ -25,8 +25,8 @@
 					if (parentedItems?.Count > 0)
 					{
 						<li class="nav-item" style="color:black; cursor:pointer" href="#@category" data-bs-toggle="collapse">
-							<i class="fa-solid fa-caret-right"></i>
-							<h5><i>@category</i></h5>
+
+							<h5><i class="fa-solid fa-caret-right"></i><i>@category</i></h5>
 						</li>
 						<div id="@category" class="collapse mb-3">
 							@foreach (var parentedItem in parentedItems)

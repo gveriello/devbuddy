@@ -507,69 +507,269 @@ namespace devbuddy.plugins.QueryOptimizer
         private ExecutionPlan GenerateExecutionPlan(string query, bool isOptimized)
         {
             // In un'applicazione reale, otterremmo il piano di esecuzione dal database
-            // Per questo esempio, generiamo un piano simulato
+            // Per questo esempio, generiamo un piano simulato in base alla query
+
             var plan = new ExecutionPlan();
+
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                // Se non c'è una query, restituiamo un piano vuoto
+                plan.TotalCost = 0;
+                plan.EstimatedRows = 0;
+                plan.RootNode = null;
+                return plan;
+            }
+
+            // Analizziamo la query per personalizzare il piano
+            bool hasJoin = query.ToUpperInvariant().Contains("JOIN");
+            bool hasWhere = query.ToUpperInvariant().Contains("WHERE");
+            bool hasOrderBy = query.ToUpperInvariant().Contains("ORDER BY");
+            bool hasGroupBy = query.ToUpperInvariant().Contains("GROUP BY");
+            bool hasHaving = query.ToUpperInvariant().Contains("HAVING");
+            bool hasLimit = query.ToUpperInvariant().Contains("LIMIT") || query.ToUpperInvariant().Contains("TOP");
+            bool hasSelectStar = query.ToUpperInvariant().Contains("SELECT *");
+
+            // Identifichiamo le tabelle coinvolte
+            var tableMatches = Regex.Matches(query, @"FROM\s+([a-zA-Z0-9_\.]+)|JOIN\s+([a-zA-Z0-9_\.]+)", RegexOptions.IgnoreCase);
+            List<string> tables = new List<string>();
+
+            foreach (Match match in tableMatches)
+            {
+                string table = match.Groups[1].Success ? match.Groups[1].Value : match.Groups[2].Value;
+                if (!string.IsNullOrEmpty(table) && !tables.Contains(table))
+                {
+                    tables.Add(table);
+                }
+            }
 
             // Simuliamo un piano più efficiente per la versione ottimizzata
             if (isOptimized)
             {
-                plan.TotalCost = 500;
+                // Il costo base dipende dal numero di tabelle e clausole
+                double baseCost = tables.Count * 50;
+                // Aggiungiamo costi per le varie operazioni
+                if (hasJoin) baseCost += 100;
+                if (hasWhere) baseCost += 50;
+                if (hasOrderBy) baseCost += 200;
+                if (hasGroupBy) baseCost += 300;
+                if (hasHaving) baseCost += 150;
+
+                plan.TotalCost = baseCost;
                 plan.EstimatedRows = 1000;
 
-                plan.RootNode = new ExecutionPlanNode
+                // Costruiamo un piano realistico in base alla struttura della query
+                if (hasJoin)
                 {
-                    Operation = "Hash Join",
-                    ObjectName = "users_orders",
-                    Cost = 300,
-                    Rows = 1000,
-                    Children = new List<ExecutionPlanNode>
+                    plan.RootNode = new ExecutionPlanNode
                     {
-                        new ExecutionPlanNode
+                        Operation = hasGroupBy ? "Hash Group" : "Hash Join",
+                        ObjectName = tables.Count > 1 ? $"{tables[0]}_{tables[1]}" : tables[0],
+                        Cost = baseCost * 0.6,
+                        Rows = 1000,
+                        Children = new List<ExecutionPlanNode>()
+                    };
+
+                    // Aggiungiamo i nodi figli in base alle tabelle e clausole
+                    if (hasWhere && tables.Count > 0)
+                    {
+                        plan.RootNode.Children.Add(new ExecutionPlanNode
                         {
                             Operation = "Index Scan",
-                            ObjectName = "orders_created_at_idx",
-                            Cost = 100,
-                            Rows = 5000
-                        },
-                        new ExecutionPlanNode
+                            ObjectName = $"{tables[0]}_" + (hasWhere ? "idx" : "pkey"),
+                            Cost = baseCost * 0.2,
+                            Rows = hasWhere ? 5000 : 10000
+                        });
+                    }
+
+                    if (tables.Count > 1)
+                    {
+                        plan.RootNode.Children.Add(new ExecutionPlanNode
                         {
                             Operation = "Index Scan",
-                            ObjectName = "users_pkey",
-                            Cost = 50,
+                            ObjectName = $"{tables[1]}_pkey",
+                            Cost = baseCost * 0.1,
                             Rows = 100
+                        });
+                    }
+
+                    if (hasOrderBy)
+                    {
+                        // Aggiungiamo un nodo di ordinamento sopra il join
+                        var originalRoot = plan.RootNode;
+                        plan.RootNode = new ExecutionPlanNode
+                        {
+                            Operation = "Sort",
+                            ObjectName = null,
+                            Cost = baseCost * 0.1,
+                            Rows = 1000,
+                            Children = new List<ExecutionPlanNode> { originalRoot }
+                        };
+                    }
+                }
+                else if (tables.Count > 0)
+                {
+                    // Query su una singola tabella
+                    string operation = "Index Scan";
+                    string objectName = $"{tables[0]}_idx";
+
+                    if (hasWhere)
+                    {
+                        // Utilizzo di indice per la clausola WHERE
+                        operation = "Index Scan";
+                        objectName = $"{tables[0]}_idx";
+                    }
+                    else
+                    {
+                        // Senza WHERE, potremmo usare un indice per ORDER BY o PK scan
+                        operation = hasOrderBy ? "Index Scan" : "Sequential Scan";
+                        objectName = hasOrderBy ? $"{tables[0]}_idx" : tables[0];
+                    }
+
+                    plan.RootNode = new ExecutionPlanNode
+                    {
+                        Operation = operation,
+                        ObjectName = objectName,
+                        Cost = baseCost * 0.8,
+                        Rows = hasWhere ? 500 : 10000
+                    };
+
+                    if (hasGroupBy)
+                    {
+                        // Aggiungiamo un nodo di aggregazione sopra lo scan
+                        var scanNode = plan.RootNode;
+                        plan.RootNode = new ExecutionPlanNode
+                        {
+                            Operation = "Hash Aggregate",
+                            ObjectName = null,
+                            Cost = baseCost * 0.2,
+                            Rows = 100,
+                            Children = new List<ExecutionPlanNode> { scanNode }
+                        };
+                    }
+
+                    if (hasOrderBy)
+                    {
+                        // Se non stiamo già usando un indice per l'ordinamento, aggiungiamo un nodo di ordinamento
+                        if (operation != "Index Scan" || !objectName.EndsWith("_idx"))
+                        {
+                            var currentRoot = plan.RootNode;
+                            plan.RootNode = new ExecutionPlanNode
+                            {
+                                Operation = "Sort",
+                                ObjectName = null,
+                                Cost = baseCost * 0.2,
+                                Rows = currentRoot.Rows,
+                                Children = new List<ExecutionPlanNode> { currentRoot }
+                            };
                         }
                     }
-                };
+                }
             }
             else
             {
-                plan.TotalCost = 2000;
+                // Query originale, presumibilmente meno efficiente
+
+                // Il costo base dipende dal numero di tabelle e clausole, ma più alto dell'ottimizzata
+                double baseCost = tables.Count * 200;
+                // Aggiungiamo costi per le varie operazioni
+                if (hasJoin) baseCost += 500;
+                if (hasWhere) baseCost += 100;
+                if (hasOrderBy) baseCost += 400;
+                if (hasGroupBy) baseCost += 600;
+                if (hasHaving) baseCost += 300;
+                if (hasSelectStar) baseCost += 200;
+
+                plan.TotalCost = baseCost;
                 plan.EstimatedRows = 1000;
 
-                plan.RootNode = new ExecutionPlanNode
+                // Costruiamo un piano realistico in base alla struttura della query
+                if (hasJoin)
                 {
-                    Operation = "Hash Join",
-                    ObjectName = "users_orders",
-                    Cost = 1200,
-                    Rows = 1000,
-                    Children = new List<ExecutionPlanNode>
+                    plan.RootNode = new ExecutionPlanNode
                     {
-                        new ExecutionPlanNode
+                        Operation = hasGroupBy ? "Hash Group" : "Nested Loop",
+                        ObjectName = tables.Count > 1 ? $"{tables[0]}_{tables[1]}" : tables[0],
+                        Cost = baseCost * 0.6,
+                        Rows = 1000,
+                        Children = new List<ExecutionPlanNode>()
+                    };
+
+                    // Aggiungiamo i nodi figli in base alle tabelle e clausole
+                    if (tables.Count > 0)
+                    {
+                        plan.RootNode.Children.Add(new ExecutionPlanNode
                         {
-                            Operation = "Seq Scan",
-                            ObjectName = "orders",
-                            Cost = 800,
+                            Operation = "Sequential Scan",
+                            ObjectName = tables[0],
+                            Cost = baseCost * 0.3,
                             Rows = 10000
-                        },
-                        new ExecutionPlanNode
-                        {
-                            Operation = "Seq Scan",
-                            ObjectName = "users",
-                            Cost = 200,
-                            Rows = 1000
-                        }
+                        });
                     }
-                };
+
+                    if (tables.Count > 1)
+                    {
+                        plan.RootNode.Children.Add(new ExecutionPlanNode
+                        {
+                            Operation = "Sequential Scan",
+                            ObjectName = tables[1],
+                            Cost = baseCost * 0.2,
+                            Rows = 5000
+                        });
+                    }
+
+                    if (hasOrderBy)
+                    {
+                        // Aggiungiamo un nodo di ordinamento sopra il join
+                        var originalRoot = plan.RootNode;
+                        plan.RootNode = new ExecutionPlanNode
+                        {
+                            Operation = "Sort",
+                            ObjectName = null,
+                            Cost = baseCost * 0.4,
+                            Rows = 1000,
+                            Children = new List<ExecutionPlanNode> { originalRoot }
+                        };
+                    }
+                }
+                else if (tables.Count > 0)
+                {
+                    // Query su una singola tabella
+                    plan.RootNode = new ExecutionPlanNode
+                    {
+                        Operation = "Sequential Scan",
+                        ObjectName = tables[0],
+                        Cost = baseCost * 0.8,
+                        Rows = 10000
+                    };
+
+                    if (hasGroupBy)
+                    {
+                        // Aggiungiamo un nodo di aggregazione sopra lo scan
+                        var scanNode = plan.RootNode;
+                        plan.RootNode = new ExecutionPlanNode
+                        {
+                            Operation = "Group Aggregate",
+                            ObjectName = null,
+                            Cost = baseCost * 0.3,
+                            Rows = 100,
+                            Children = new List<ExecutionPlanNode> { scanNode }
+                        };
+                    }
+
+                    if (hasOrderBy)
+                    {
+                        // Aggiungiamo un nodo di ordinamento
+                        var currentRoot = plan.RootNode;
+                        plan.RootNode = new ExecutionPlanNode
+                        {
+                            Operation = "Sort",
+                            ObjectName = null,
+                            Cost = baseCost * 0.4,
+                            Rows = currentRoot.Rows,
+                            Children = new List<ExecutionPlanNode> { currentRoot }
+                        };
+                    }
+                }
             }
 
             return plan;

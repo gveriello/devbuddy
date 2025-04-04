@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using devbuddy.Business;
 using devbuddy.common;
 using devbuddy.Desktop.Windows;
 using Microsoft.Extensions.DependencyInjection;

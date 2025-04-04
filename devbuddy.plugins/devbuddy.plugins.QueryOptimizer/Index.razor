@@ -1,0 +1,670 @@
+﻿@page "/query-optimizer"
+@using System.Text.Json
+@using Microsoft.JSInterop
+@inject IJSRuntime JSRuntime
+
+<div class="container">
+	<div class="card mb-4">
+		<div class="card-header">
+			<h2 class="card-title">
+				<i class="fas fa-database mr-2"></i>
+				SQL query optimizer
+			</h2>
+		</div>
+		<div class="card-body">
+			<div class="row mb-3">
+				<div class="col-md-3">
+					<div class="form-group">
+						<label for="dbType">Tipo Database</label>
+						<select id="dbType" class="form-control" @bind="SelectedDbType">
+							<option value="sqlserver">SQL Server</option>
+							<option value="mysql">MySQL</option>
+							<option value="postgresql">PostgreSQL</option>
+							<option value="oracle">Oracle</option>
+						</select>
+					</div>
+				</div>
+				<div class="col-md-9 d-flex align-items-end">
+					<button class="btn btn-primary" @onclick="AnalyzeQuery">
+						<i class="fas fa-magic mr-1"></i>
+						Analizza e Ottimizza
+					</button>
+					<button class="btn btn-outline-secondary ml-2" @onclick="ResetResults">
+						<i class="fas fa-redo mr-1"></i>
+						Resetta
+					</button>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<label for="originalQuery">Query Originale</label>
+						<textarea id="originalQuery" class="form-control code-editor" rows="10" @bind="OriginalQuery"></textarea>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label for="optimizedQuery">Query Ottimizzata</label>
+						<textarea id="optimizedQuery" class="form-control code-editor" rows="10" @bind="OptimizedQuery" readonly></textarea>
+					</div>
+				</div>
+			</div>
+
+			<div class="row mt-3">
+				<div class="col-12">
+					<div class="form-group">
+						<label for="schemaJson">Schema Database (JSON, opzionale)</label>
+						<textarea id="schemaJson" class="form-control code-editor" rows="4" @bind="SchemaJson"></textarea>
+						<small class="text-muted">
+							Fornisci la struttura del database come JSON per ottenere suggerimenti migliori.
+							Esempio: {"tables":{"users":{"columns":[{"name":"id","dataType":"int"},{"name":"name","dataType":"varchar"}],"indices":[{"name":"PK_users","columns":["id"],"isPrimary":true}]}}}
+						</small>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	@if (IsAnalyzing)
+	{
+		<div class="text-center my-4">
+			<div class="spinner-border text-primary" role="status">
+				<span class="sr-only">Analisi in corso...</span>
+			</div>
+			<p class="mt-2">Analisi in corso...</p>
+		</div>
+	}
+
+	@if (Result != null)
+	{
+		<div class="card mb-4">
+			<div class="card-header">
+				<ul class="nav nav-tabs card-header-tabs" id="resultTabs" role="tablist">
+					<li class="nav-item" role="presentation">
+						<button class="nav-link @(ActiveTab == "issues" ? "active" : "")"
+								@onclick=@(() => ActiveTab = "issues")>
+							Problemi
+							<span class="badge badge-@(Result.Issues.Count > 0 ? "warning" : "success")">@Result.Issues.Count</span>
+						</button>
+					</li>
+					<li class="nav-item" role="presentation">
+						<button class="nav-link @(ActiveTab == "suggestions" ? "active" : "")"
+								@onclick=@(() => ActiveTab = "suggestions")>
+							Suggerimenti
+							<span class="badge badge-info">@Result.Suggestions.Count</span>
+						</button>
+					</li>
+					<li class="nav-item" role="presentation">
+						<button class="nav-link @(ActiveTab == "execution" ? "active" : "")"
+								@onclick=@(() => ActiveTab = "execution")>
+							Piano di Esecuzione
+						</button>
+					</li>
+				</ul>
+			</div>
+			<div class="card-body">
+				@if (ActiveTab == "issues")
+				{
+					<div class="tab-pane fade show active" id="issues" role="tabpanel">
+						<h4>Problemi Rilevati</h4>
+						@if (Result.Issues.Count == 0)
+						{
+							<div class="alert alert-success">
+								<i class="fas fa-check-circle mr-2"></i>
+								Nessun problema rilevato nella query.
+							</div>
+						}
+						else
+						{
+							<div class="list-group">
+								@foreach (var issue in Result.Issues)
+								{
+									<div class="list-group-item list-group-item-action flex-column align-items-start">
+										<div class="d-flex w-100 justify-content-between">
+											<h5 class="mb-1">
+												<span class="badge badge-@GetSeverityClass(issue.Severity) mr-2">
+													@issue.Severity
+												</span>
+												@issue.Description
+											</h5>
+										</div>
+										<p class="mb-1">@issue.Message</p>
+									</div>
+								}
+							</div>
+						}
+					</div>
+				}
+				@if (ActiveTab == "suggestions")
+				{
+					<div class="tab-pane fade show active" id="suggestions" role="tabpanel">
+						<h4>Suggerimenti di Ottimizzazione</h4>
+						@if (Result.Suggestions.Count == 0)
+						{
+							<div class="alert alert-info">
+								<i class="fas fa-info-circle mr-2"></i>
+								Non ci sono suggerimenti di ottimizzazione per questa query.
+							</div>
+						}
+						else
+						{
+							<div class="accordion" id="suggestionsAccordion">
+								@for (int i = 0; i < Result.Suggestions.Count; i++)
+								{
+									var suggestion = Result.Suggestions[i];
+									<div class="card mb-3">
+										<div class="card-header" id="heading@i">
+											<h5 class="mb-0">
+												<button class="btn btn-link" type="button" data-toggle="collapse"
+														data-target="#collapse@i" aria-expanded="@(i == 0 ? "true" : "false")"
+														aria-controls="collapse@i">
+													<i class="fas fa-lightbulb text-warning mr-2"></i>
+													@suggestion.Description
+												</button>
+											</h5>
+										</div>
+
+										<div id="collapse@i" class="collapse @(i == 0 ? "show" : "")"
+											 aria-labelledby="heading@i" data-parent="#suggestionsAccordion">
+											<div class="card-body">
+												<p>@suggestion.Explanation</p>
+												<div class="form-group">
+													<label>Query Ottimizzata:</label>
+													<pre class="language-sql"><code>@suggestion.OptimizedQuery</code></pre>
+												</div>
+												<div class="alert alert-info">
+													<i class="fas fa-chart-line mr-2"></i>
+													Miglioramento stimato: <strong>@suggestion.EstimatedImprovement.ToString("F1")%</strong>
+												</div>
+												<button class="btn btn-sm btn-primary" @onclick="() => ApplySuggestion(suggestion)">
+													<i class="fas fa-check mr-1"></i>
+													Applica Suggerimento
+												</button>
+											</div>
+										</div>
+									</div>
+								}
+							</div>
+						}
+					</div>
+				}
+				@if (ActiveTab == "execution")
+				{
+					<div class="tab-pane fade show active" id="execution" role="tabpanel">
+						<h4>Piano di Esecuzione</h4>
+
+						<div class="row">
+							<div class="col-md-6">
+								<div class="card border-danger mb-4">
+									<div class="card-header bg-danger text-white">
+										<h5 class="mb-0">Piano Originale</h5>
+										<span class="badge badge-light">Costo stimato: @Result.OriginalPlan?.TotalCost</span>
+									</div>
+									<div class="card-body">
+										@if (Result.OriginalPlan != null)
+										{
+											<div class="execution-plan">
+												@RenderExecutionPlanNode(Result.OriginalPlan.RootNode, 0)
+											</div>
+										}
+										else
+										{
+											<p class="text-muted">Piano di esecuzione non disponibile</p>
+										}
+									</div>
+								</div>
+							</div>
+
+							<div class="col-md-6">
+								<div class="card border-success mb-4">
+									<div class="card-header bg-success text-white">
+										<h5 class="mb-0">Piano Ottimizzato</h5>
+										<span class="badge badge-light">Costo stimato: @Result.OptimizedPlan?.TotalCost</span>
+									</div>
+									<div class="card-body">
+										@if (Result.OptimizedPlan != null)
+										{
+											<div class="execution-plan">
+												@RenderExecutionPlanNode(Result.OptimizedPlan.RootNode, 0)
+											</div>
+										}
+										else
+										{
+											<p class="text-muted">Piano di esecuzione non disponibile</p>
+										}
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="card bg-light">
+							<div class="card-body">
+								<h5>Miglioramento stimato</h5>
+								<div class="progress mb-3" style="height: 25px;">
+									<div class="progress-bar bg-success" role="progressbar"
+										 style="width: @Result.EstimatedImprovement%;"
+										 aria-valuenow="@Result.EstimatedImprovement" aria-valuemin="0" aria-valuemax="100">
+										@Result.EstimatedImprovement.ToString("F1")%
+									</div>
+								</div>
+								<p class="text-muted mb-0">
+									<i class="fas fa-info-circle mr-1"></i>
+									Livello di confidenza: <strong>@Result.ConfidenceLevel</strong>
+								</p>
+							</div>
+						</div>
+					</div>
+				}
+			</div>
+		</div>
+
+		<!-- Sezione funzionalità avanzate -->
+		<div class="card mb-4">
+			<div class="card-header bg-secondary text-white">
+				<h5 class="mb-0 d-flex justify-content-between align-items-center">
+					<span>Funzionalità Avanzate</span>
+					<button class="btn btn-sm btn-light" @onclick="ToggleAdvancedFeatures">
+						<i class="fas @(ShowAdvancedFeatures ? "fa-chevron-up" : "fa-chevron-down")"></i>
+					</button>
+				</h5>
+			</div>
+
+			@if (ShowAdvancedFeatures)
+			{
+				<div class="card-body">
+					<div class="row">
+						<div class="col-md-4">
+							<div class="card h-100">
+								<div class="card-header">
+									<h5 class="mb-0">Analisi Indici</h5>
+								</div>
+								<div class="card-body">
+									<p>Analizza gli indici esistenti e suggerisce nuovi indici per migliorare le performance.</p>
+									<button class="btn btn-outline-primary btn-sm" @onclick="AnalyzeIndices" disabled="@(!Result?.OptimizedQuery.Any())">
+										<i class="fas fa-table mr-1"></i>
+										Analizza Indici
+									</button>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-md-4">
+							<div class="card h-100">
+								<div class="card-header">
+									<h5 class="mb-0">Benchmark</h5>
+								</div>
+								<div class="card-body">
+									<p>Confronta le performance delle query originali e ottimizzate con dati simulati.</p>
+									<button class="btn btn-outline-primary btn-sm" @onclick="RunBenchmark" disabled="@(!Result?.OptimizedQuery.Any())">
+										<i class="fas fa-chart-line mr-1"></i>
+										Esegui Benchmark
+									</button>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-md-4">
+							<div class="card h-100">
+								<div class="card-header">
+									<h5 class="mb-0">Esporta Risultati</h5>
+								</div>
+								<div class="card-body">
+									<p>Esporta l'analisi completa in formato PDF o condividi come link.</p>
+									<div class="btn-group">
+										<button class="btn btn-outline-primary btn-sm" @onclick="ExportPdf" disabled="@(!Result?.OptimizedQuery.Any())">
+											<i class="fas fa-file-pdf mr-1"></i>
+											PDF
+										</button>
+										<button class="btn btn-outline-primary btn-sm" @onclick="ShareLink" disabled="@(!Result?.OptimizedQuery.Any())">
+											<i class="fas fa-share-alt mr-1"></i>
+											Condividi
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					@if (BenchmarkResults != null)
+					{
+						<div class="mt-4">
+							<h5>Risultati Benchmark</h5>
+							<div class="table-responsive">
+								<table class="table table-bordered table-striped">
+									<thead class="thead-dark">
+										<tr>
+											<th>Query</th>
+											<th>Tempo Esecuzione (ms)</th>
+											<th>Uso CPU</th>
+											<th>I/O Disco</th>
+											<th>Memoria Usata</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>Originale</td>
+											<td>@BenchmarkResults.OriginalExecutionTime</td>
+											<td>@BenchmarkResults.OriginalCpuUsage%</td>
+											<td>@BenchmarkResults.OriginalDiskIO KB</td>
+											<td>@BenchmarkResults.OriginalMemoryUsage MB</td>
+										</tr>
+										<tr class="table-success">
+											<td>Ottimizzata</td>
+											<td>@BenchmarkResults.OptimizedExecutionTime</td>
+											<td>@BenchmarkResults.OptimizedCpuUsage%</td>
+											<td>@BenchmarkResults.OptimizedDiskIO KB</td>
+											<td>@BenchmarkResults.OptimizedMemoryUsage MB</td>
+										</tr>
+										<tr class="table-info">
+											<td><strong>Miglioramento</strong></td>
+											<td>
+												<strong>
+													@((1 - (double)BenchmarkResults.OptimizedExecutionTime / BenchmarkResults.OriginalExecutionTime) * 100)%
+												</strong>
+											</td>
+											<td>
+												<strong>
+													@((1 - (double)BenchmarkResults.OptimizedCpuUsage / BenchmarkResults.OriginalCpuUsage) * 100)%
+												</strong>
+											</td>
+											<td>
+												<strong>
+													@((1 - (double)BenchmarkResults.OptimizedDiskIO / BenchmarkResults.OriginalDiskIO) * 100)%
+												</strong>
+											</td>
+											<td>
+												<strong>
+													@((1 - (double)BenchmarkResults.OptimizedMemoryUsage / BenchmarkResults.OriginalMemoryUsage) * 100)%
+												</strong>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					}
+				</div>
+			}
+		</div>
+	}
+
+	<!-- Modal per la condivisione del link -->
+	<div class="modal fade" id="shareModal" tabindex="-1" role="dialog" aria-labelledby="shareModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="shareModalLabel">Condividi Analisi</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<p>Usa questo link per condividere la tua analisi:</p>
+					<div class="input-group">
+						<input type="text" class="form-control" id="shareLink" value="@ShareUrl" readonly>
+						<div class="input-group-append">
+							<button class="btn btn-outline-secondary" type="button" @onclick="CopyShareLink">
+								<i class="fas fa-copy"></i>
+							</button>
+						</div>
+					</div>
+					@if (LinkCopied)
+					{
+						<div class="alert alert-success mt-2">
+							<i class="fas fa-check-circle mr-2"></i>
+							Link copiato negli appunti!
+						</div>
+					}
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@code {
+	private string OriginalQuery { get; set; } = @"SELECT *
+FROM users
+JOIN orders ON users.id = orders.user_id
+WHERE orders.created_at > '2023-01-01'";
+	private string OptimizedQuery { get; set; } = "";
+	private string SchemaJson { get; set; } = @"{
+  ""tables"": {
+    ""users"": {
+      ""columns"": [
+        { ""name"": ""id"", ""dataType"": ""int"" },
+        { ""name"": ""name"", ""dataType"": ""varchar"" },
+        { ""name"": ""email"", ""dataType"": ""varchar"" }
+      ],
+      ""indices"": [
+        { ""name"": ""PK_users"", ""columns"": [""id""], ""isPrimary"": true }
+      ]
+    },
+    ""orders"": {
+      ""columns"": [
+        { ""name"": ""id"", ""dataType"": ""int"" },
+        { ""name"": ""user_id"", ""dataType"": ""int"" },
+        { ""name"": ""amount"", ""dataType"": ""decimal"" },
+        { ""name"": ""created_at"", ""dataType"": ""datetime"" }
+      ],
+      ""indices"": [
+        { ""name"": ""PK_orders"", ""columns"": [""id""], ""isPrimary"": true },
+        { ""name"": ""IX_orders_user_id"", ""columns"": [""user_id""], ""isPrimary"": false }
+      ]
+    }
+  }
+}";
+	private string SelectedDbType { get; set; } = "sqlserver";
+	private bool IsAnalyzing { get; set; } = false;
+	private OptimizationResult Result { get; set; }
+	private string ActiveTab { get; set; } = "issues";
+	private bool ShowAdvancedFeatures { get; set; } = false;
+	private BenchmarkResult BenchmarkResults { get; set; }
+	private string ShareUrl { get; set; } = "";
+	private bool LinkCopied { get; set; } = false;
+
+	private QueryOptimizer _optimizer;
+
+	protected override void OnInitialized()
+	{
+		_optimizer = new QueryOptimizer(JSRuntime, SelectedDbType);
+	}
+
+	private async Task AnalyzeQuery()
+	{
+		if (string.IsNullOrWhiteSpace(OriginalQuery))
+		{
+			return;
+		}
+
+		IsAnalyzing = true;
+		StateHasChanged();
+
+		// Small delay to show the loading indicator
+		await Task.Delay(500);
+
+		Result = await _optimizer.OptimizeAsync(OriginalQuery, SchemaJson);
+
+		if (!string.IsNullOrWhiteSpace(Result.OptimizedQuery))
+		{
+			OptimizedQuery = Result.OptimizedQuery;
+		}
+
+		IsAnalyzing = false;
+		StateHasChanged();
+	}
+
+	private void ResetResults()
+	{
+		Result = null;
+		OptimizedQuery = "";
+		ActiveTab = "issues";
+		BenchmarkResults = null;
+	}
+
+	private void ApplySuggestion(OptimizationSuggestion suggestion)
+	{
+		if (!string.IsNullOrWhiteSpace(suggestion.OptimizedQuery))
+		{
+			OptimizedQuery = suggestion.OptimizedQuery;
+		}
+	}
+
+	private string GetSeverityClass(SeverityLevel severity)
+	{
+		return severity switch
+		{
+			SeverityLevel.Critical => "danger",
+			SeverityLevel.High => "warning",
+			SeverityLevel.Medium => "info",
+			SeverityLevel.Low => "secondary",
+			_ => "secondary"
+		};
+	}
+
+	private RenderFragment RenderExecutionPlanNode(ExecutionPlanNode node, int level) => builder =>
+	{
+		if (node == null) return;
+
+		builder.OpenElement(0, "div");
+		builder.AddAttribute(1, "class", "plan-node");
+		builder.AddAttribute(2, "style", $"margin-left: {level * 20}px");
+
+		builder.OpenElement(3, "div");
+		builder.AddAttribute(4, "class", "d-flex");
+
+		builder.OpenElement(5, "span");
+		builder.AddAttribute(6, "class", "node-icon mr-2");
+		builder.AddContent(7, level == 0 ? "➤" : "└─");
+		builder.CloseElement(); // span
+
+		builder.OpenElement(8, "div");
+		builder.AddAttribute(9, "class", "node-details");
+
+		builder.OpenElement(10, "div");
+		builder.AddAttribute(11, "class", "node-operation");
+		builder.AddContent(12, node.Operation);
+		if (!string.IsNullOrEmpty(node.ObjectName))
+		{
+			builder.AddContent(13, $" on {node.ObjectName}");
+		}
+		builder.CloseElement(); // div
+
+		builder.OpenElement(14, "small");
+		builder.AddAttribute(15, "class", "text-muted");
+		builder.AddContent(16, $"Cost: {node.Cost}, Rows: {node.Rows}");
+		builder.CloseElement(); // small
+
+		builder.CloseElement(); // div
+
+		builder.CloseElement(); // div
+
+		// Render children
+		if (node.Children != null)
+		{
+			foreach (var child in node.Children)
+			{
+				builder.AddContent(17, RenderExecutionPlanNode(child, level + 1));
+			}
+		}
+
+		builder.CloseElement(); // div
+	};
+
+	private void ToggleAdvancedFeatures()
+	{
+		ShowAdvancedFeatures = !ShowAdvancedFeatures;
+	}
+
+	private async Task AnalyzeIndices()
+	{
+		// In una implementazione reale, qui chiameremmo un servizio per analizzare gli indici
+		await Task.Delay(1000); // Simuliamo un'operazione asincrona
+
+		// Qui implementeremmo l'analisi degli indici e visualizzeremmo i risultati
+		await JSRuntime.InvokeVoidAsync("alert", "Analisi indici completata. Suggerimento: Aggiungere un indice sulla colonna orders.created_at per migliorare le performance delle ricerche per data.");
+	}
+
+	private async Task RunBenchmark()
+	{
+		// In una implementazione reale, qui eseguiremmo un vero benchmark
+		IsAnalyzing = true;
+		StateHasChanged();
+
+		// Simuliamo un'operazione che richiede tempo
+		await Task.Delay(2000);
+
+		// Simuliamo i risultati del benchmark
+		BenchmarkResults = new BenchmarkResult
+			{
+				OriginalExecutionTime = 450,
+				OptimizedExecutionTime = 120,
+				OriginalCpuUsage = 65,
+				OptimizedCpuUsage = 30,
+				OriginalDiskIO = 8500,
+				OptimizedDiskIO = 2200,
+				OriginalMemoryUsage = 245,
+				OptimizedMemoryUsage = 180
+			};
+
+		IsAnalyzing = false;
+		StateHasChanged();
+	}
+
+	private async Task ExportPdf()
+	{
+		// In una implementazione reale, qui genereremmo un PDF
+		await JSRuntime.InvokeVoidAsync("alert", "La funzione di esportazione PDF sarà disponibile nella prossima versione.");
+	}
+
+	private async Task ShareLink()
+	{
+		// In una implementazione reale, qui genereremmo un link condivisibile
+		// che potrebbe essere caricato da altri utenti per vedere gli stessi risultati
+
+		// Genera un ID univoco per questa analisi
+		string analysisId = Guid.NewGuid().ToString("N");
+
+		// Crea un URL che include tutti i parametri necessari
+		ShareUrl = $"https://tuodominio.it/query-optimizer/share/{analysisId}";
+
+		// Salva i risultati dell'analisi (in una implementazione reale questo sarebbe in un database)
+		// await QueryAnalysisService.SaveAnalysis(analysisId, Result, OriginalQuery, OptimizedQuery);
+
+		// Mostra il modal
+		await JSRuntime.InvokeVoidAsync("$('#shareModal').modal", "show");
+
+		LinkCopied = false;
+		StateHasChanged();
+	}
+
+	private async Task CopyShareLink()
+	{
+		// Copia il link negli appunti
+		await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", ShareUrl);
+
+		LinkCopied = true;
+		StateHasChanged();
+
+		// Resetta lo stato dopo 3 secondi
+		await Task.Delay(3000);
+		LinkCopied = false;
+		StateHasChanged();
+	}
+
+	// Classe per i risultati del benchmark
+	private class BenchmarkResult
+	{
+		public int OriginalExecutionTime { get; set; } // in ms
+		public int OptimizedExecutionTime { get; set; } // in ms
+		public int OriginalCpuUsage { get; set; } // in %
+		public int OptimizedCpuUsage { get; set; } // in %
+		public int OriginalDiskIO { get; set; } // in KB
+		public int OptimizedDiskIO { get; set; } // in KB
+		public int OriginalMemoryUsage { get; set; } // in MB
+		public int OptimizedMemoryUsage { get; set; } // in MB
+	}
+}

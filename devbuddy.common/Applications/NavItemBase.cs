@@ -1,5 +1,4 @@
 ﻿using System.Text.Json.Serialization;
-using devbuddy.common.Enums;
 
 namespace devbuddy.common.Applications
 {

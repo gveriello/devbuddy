@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using devbuddy.common.Attributes;
 
 namespace devbuddy.common.Enums
@@ -17,5 +16,8 @@ namespace devbuddy.common.Enums
 
         [ModuleKey("45e7bf11-4192-40c0-b4ea-b2701fa345f4")]
         JsonFormatters,
+
+        [ModuleKey("642746dc-cc2a-45dc-b2f7-d6d67e8696e4")]
+        QueryOptimizer
     }
 }

@@ -17,7 +17,7 @@
 				}
 			<hr />
 			//nodi categorizzati
-			var allCategories = AllModules.Where(nav => !string.IsNullOrEmpty(nav.Category))?.Select(nav => nav.Category).ToList();
+			var allCategories = AllModules.Where(nav => !string.IsNullOrEmpty(nav.Category))?.Select(nav => nav.Category.Trim()).Distinct().ToList();
 			if (allCategories?.Count > 0)
 				foreach (var category in allCategories)
 				{

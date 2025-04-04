@@ -1,0 +1,92 @@
+﻿@using devbuddy.common.Applications
+@using Microsoft.JSInterop
+@inherits PageComponentsBase
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12 mb-4">
+            <h2>Generatore QR Code</h2>
+            <p class="text-muted">Inserisci il testo da convertire in QR Code</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Input</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="qrText" class="form-label">Testo per QR Code</label>
+                        <textarea id="qrText"
+                                  class="form-control"
+                                  rows="5"
+                                  placeholder="Inserisci il testo da convertire in QR Code"
+                                  @bind="QrText">
+                        </textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="qrSize" class="form-label">Dimensione (px): @QrSize</label>
+                        <input type="range"
+                               class="form-range"
+                               min="100"
+                               max="500"
+                               step="10"
+                               id="qrSize"
+                               @bind="QrSize">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="errorCorrectionLevel" class="form-label">Livello di correzione errori</label>
+                        <select class="form-select" id="errorCorrectionLevel" @bind="ErrorCorrectionLevel">
+                            <option value="L">Basso (7%)</option>
+                            <option value="M">Medio (15%)</option>
+                            <option value="Q">Quartile (25%)</option>
+                            <option value="H">Alto (30%)</option>
+                        </select>
+                    </div>
+
+                    <button class="btn btn-primary" @onclick="GenerateQrCode" disabled="@string.IsNullOrWhiteSpace(QrText)">
+                        <i class="fa-solid fa-qrcode me-2"></i>Genera QR Code
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Output</h5>
+                    <div>
+                        <button class="btn btn-outline-primary btn-sm" @onclick="DownloadQrCode" disabled="@(QrCodeImageUrl == null)">
+                            <i class="fa-solid fa-download me-1"></i>Scarica PNG
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body text-center">
+                    @if (QrCodeImageUrl != null)
+                    {
+                        <div class="mt-3 mb-3">
+                            <img src="@QrCodeImageUrl" alt="QR Code" class="img-fluid" style="max-width: 100%;" />
+                        </div>
+                        <small class="text-muted">Clicca su "Scarica PNG" per salvare il QR Code</small>
+                    }
+                    else if (string.IsNullOrWhiteSpace(QrText))
+                    {
+                        <div class="alert alert-info">
+                            <i class="fa-solid fa-info-circle me-2"></i>Inserisci un testo per generare un QR Code
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-secondary">
+                            <i class="fa-solid fa-spinner fa-spin me-2"></i>Premi il pulsante "Genera QR Code" per visualizzare l'output
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -4,15 +4,34 @@
 <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100 ">
 	<ul class="nav flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
 		@if (AllModules?.Count > 0)
-			@foreach (var navItem in AllModules)
-			{
-				<li class="nav-item">
-					<button @onclick="@(() => OnMenuItemClick(navItem.Node, navItem.Description))" class="nav-link align-middle px-0 hover:bg-gray-700 transition-colors duration-200">
-						<i class="fa-solid @(navItem.Icon)"></i>
-						<span class="ms-1 d-none d-sm-inline sidebar-item">@navItem.Description</span>
-					</button>
-				</li>
-			}
+		{
+			//nodo home
+			var homeNavItem = AllModules.FirstOrDefault(nav => nav.Node == ModulesItems.Home);
+			<MenuNavItem NavNode="@homeNavItem.Node" Description="@homeNavItem.Description" Icon="@homeNavItem.Icon" OnNavItemClick="OnMenuItemClick" />
+			//nodo unparented
+			var unparentedItems = AllModules.Where(nav => string.IsNullOrEmpty(nav.Category) && nav.Node != ModulesItems.Home)?.ToList();
+			if (unparentedItems?.Count > 0)
+				foreach (var unparentedItem in unparentedItems)
+				{
+					<MenuNavItem NavNode="@unparentedItem.Node" Description="@unparentedItem.Description" Icon="@unparentedItem.Icon" OnNavItemClick="OnMenuItemClick" />
+				}
+			<hr />
+			//nodi categorizzati
+			var allCategories = AllModules.Where(nav => !string.IsNullOrEmpty(nav.Category))?.Select(nav => nav.Category).ToList();
+			if (allCategories?.Count > 0)
+				foreach (var category in allCategories)
+				{
+					var parentedItems = AllModules.Where(nav => nav.Category == category)?.ToList();
+					if (parentedItems?.Count > 0)
+					{
+						<li class="nav-item" style="color:black">@category</li>
+						foreach (var parentedItem in parentedItems)
+						{
+							<MenuNavItem NavNode="@parentedItem.Node" Description="@parentedItem.Description" Icon="@parentedItem.Icon" OnNavItemClick="OnMenuItemClick" />
+						}
+					}
+				}
+		}
 	</ul>
 	<hr>
 	@if (User is not null)

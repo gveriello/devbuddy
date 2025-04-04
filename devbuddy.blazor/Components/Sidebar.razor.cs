@@ -29,9 +29,9 @@ namespace devbuddy.blazor.Components
             StateHasChanged();
         }
 
-        private void OnMenuItemClick(ModulesItems navNode, string navDescription)
+        private void OnMenuItemClick((ModulesItems navNode, string navDescription) node)
         {
-            DashboardState.SetMenuItem(navNode, navDescription);
+            DashboardState.SetMenuItem(node.navNode, node.navDescription);
             OnPageChanged.InvokeAsync();
         }
     }

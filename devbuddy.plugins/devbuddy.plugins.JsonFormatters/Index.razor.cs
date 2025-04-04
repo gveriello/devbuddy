@@ -8,8 +8,8 @@ namespace devbuddy.plugins.JsonFormatters
 
     public sealed partial class Index
     {
-        [Inject] private IJSRuntime JSRuntime { get; set; }
-        [Inject] private ToastService ToastService { get; set; }
+        [Inject] private IJSRuntime? JSRuntime { get; set; }
+        [Inject] private ToastService? ToastService { get; set; }
         private string InputJson { get; set; } = string.Empty;
         private string OutputJson { get; set; } = string.Empty;
         private string ErrorMessage { get; set; } = string.Empty;

@@ -18,5 +18,8 @@ namespace devbuddy.common.Applications
 
         [JsonPropertyName("apikey")]
         public string? ApiKey { get; set; }
+
+        [JsonPropertyName("category")]
+        public string? Category { get; set; }
     }
 }

@@ -67,7 +67,7 @@ namespace devbuddy.business
                         Description = isHome ? ModulesItems.Home.ToString() : module!.Description,
                         Icon = isHome ? @enum.AttributeValueOrDefault<IconAttribute, string>(attr => attr.Icon) : module!.Icon,
                         ApiKey = isHome ? null : module!.ApiKey,
-                        Category = isHome ? null: module!.Category
+                        Category = isHome ? null : module!.Category
                     };
                     toReturn.Add(toAdd);
                 }

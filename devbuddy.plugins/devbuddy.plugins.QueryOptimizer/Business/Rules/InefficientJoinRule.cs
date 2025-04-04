@@ -1,4 +1,7 @@
 ﻿using System.Text.RegularExpressions;
+using devbuddy.plugins.QueryOptimizer.Business.Contracts;
+using devbuddy.plugins.QueryOptimizer.Business.Models.Enum;
+using devbuddy.plugins.QueryOptimizer.Business.Schemas;
 
 namespace devbuddy.plugins.QueryOptimizer.Business.Rules
 {
@@ -10,7 +13,7 @@ namespace devbuddy.plugins.QueryOptimizer.Business.Rules
 
         public List<QueryIssue> Check(SqlAst ast, DatabaseSchema schema)
         {
-            List<QueryIssue> issues = new List<QueryIssue>();
+            List<QueryIssue> issues = [];
 
             if (ast.Type == "SELECT" && ast.Joins.Count > 0 && schema != null)
             {

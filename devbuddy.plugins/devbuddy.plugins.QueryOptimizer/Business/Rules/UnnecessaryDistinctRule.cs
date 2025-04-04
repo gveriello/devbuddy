@@ -1,4 +1,8 @@
-﻿namespace devbuddy.plugins.QueryOptimizer.Business.Rules
+﻿using devbuddy.plugins.QueryOptimizer.Business.Contracts;
+using devbuddy.plugins.QueryOptimizer.Business.Models.Enum;
+using devbuddy.plugins.QueryOptimizer.Business.Schemas;
+
+namespace devbuddy.plugins.QueryOptimizer.Business.Rules
 {
     public class UnnecessaryDistinctRule : IOptimizationRule
     {
@@ -8,7 +12,7 @@
 
         public List<QueryIssue> Check(SqlAst ast, DatabaseSchema schema)
         {
-            List<QueryIssue> issues = new List<QueryIssue>();
+            List<QueryIssue> issues = [];
 
             if (ast.Type == "SELECT" && ast.HasDistinct)
             {

@@ -1,4 +1,8 @@
-﻿namespace devbuddy.plugins.QueryOptimizer.Business.Rules
+﻿using devbuddy.plugins.QueryOptimizer.Business.Contracts;
+using devbuddy.plugins.QueryOptimizer.Business.Models.Enum;
+using devbuddy.plugins.QueryOptimizer.Business.Schemas;
+
+namespace devbuddy.plugins.QueryOptimizer.Business.Rules
 {
     public class MissingWhereRule : IOptimizationRule
     {
@@ -8,7 +12,7 @@
 
         public List<QueryIssue> Check(SqlAst ast, DatabaseSchema schema)
         {
-            List<QueryIssue> issues = new List<QueryIssue>();
+            List<QueryIssue> issues = [];
 
             if (ast.Type == "SELECT" && (ast.Where == null || ast.Where.Conditions.Count == 0))
             {
@@ -29,8 +33,6 @@
 
         public OptimizationSuggestion GenerateSuggestion(SqlAst ast, DatabaseSchema schema, QueryIssue issue)
         {
-            // Per questo tipo di problema, non possiamo generare automaticamente una soluzione
-            // perché richiede conoscenza del dominio per sapere quali condizioni aggiungere
             return new OptimizationSuggestion
             {
                 Id = "add_where_condition",

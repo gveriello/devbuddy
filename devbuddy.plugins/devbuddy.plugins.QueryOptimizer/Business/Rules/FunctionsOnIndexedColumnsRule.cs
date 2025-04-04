@@ -1,4 +1,7 @@
 ﻿using System.Text.RegularExpressions;
+using devbuddy.plugins.QueryOptimizer.Business.Contracts;
+using devbuddy.plugins.QueryOptimizer.Business.Models.Enum;
+using devbuddy.plugins.QueryOptimizer.Business.Schemas;
 
 namespace devbuddy.plugins.QueryOptimizer.Business.Rules
 {
@@ -22,7 +25,7 @@ namespace devbuddy.plugins.QueryOptimizer.Business.Rules
 
         public List<QueryIssue> Check(SqlAst ast, DatabaseSchema schema)
         {
-            List<QueryIssue> issues = new List<QueryIssue>();
+            List<QueryIssue> issues = [];
 
             // Questa è una semplificazione - in un'implementazione reale dovremmo analizzare l'AST
             // Per questo esempio, utilizziamo l'analisi della query originale

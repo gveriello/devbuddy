@@ -1,4 +1,8 @@
-﻿namespace devbuddy.plugins.QueryOptimizer.Business.Rules
+﻿using devbuddy.plugins.QueryOptimizer.Business.Contracts;
+using devbuddy.plugins.QueryOptimizer.Business.Models.Enum;
+using devbuddy.plugins.QueryOptimizer.Business.Schemas;
+
+namespace devbuddy.plugins.QueryOptimizer.Business.Rules
 {
     public class OptimizationRulesManager
     {

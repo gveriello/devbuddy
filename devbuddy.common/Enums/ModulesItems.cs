@@ -18,6 +18,9 @@ namespace devbuddy.common.Enums
         JsonFormatters,
 
         [ModuleKey("642746dc-cc2a-45dc-b2f7-d6d67e8696e4")]
-        QueryOptimizer
+        QueryOptimizer,
+
+        [ModuleKey("f84a2729-4c37-4eb3-ac89-3911752b414e")]
+        Base64Encoder
     }
 }

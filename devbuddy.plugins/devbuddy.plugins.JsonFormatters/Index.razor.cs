@@ -117,7 +117,7 @@ namespace devbuddy.plugins.JsonFormatters
             if (!string.IsNullOrEmpty(OutputJson))
             {
                 await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", OutputJson);
-                ToastService.Show("Copiato");
+                ToastService.Show("Copiato negli appunti");
             }
         }
     }

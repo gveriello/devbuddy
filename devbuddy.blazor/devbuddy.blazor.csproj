@@ -31,6 +31,7 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\devbuddy.business\devbuddy.business.csproj" />
 	  <ProjectReference Include="..\devbuddy.common\devbuddy.common.csproj" />
+	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.Base64Encoder\devbuddy.plugins.Base64Encoder.csproj" />
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.JsonFormatters\devbuddy.plugins.JsonFormatters.csproj" />
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.QueryOptimizer\devbuddy.plugins.QueryOptimizer.csproj" />
 	</ItemGroup>

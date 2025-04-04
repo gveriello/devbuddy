@@ -27,6 +27,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6C83A596-D32
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devbuddy.plugins.QueryOptimizer", "devbuddy.plugins\devbuddy.plugins.QueryOptimizer\devbuddy.plugins.QueryOptimizer.csproj", "{1FEC38C8-2830-4946-9068-2961FB1B8882}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devbuddy.plugins.Base64Encoder", "devbuddy.plugins\devbuddy.plugins.Base64Encoder\devbuddy.plugins.Base64Encoder.csproj", "{83378767-FACB-4A15-8C75-F32D06B5376B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,6 +75,10 @@ Global
 		{1FEC38C8-2830-4946-9068-2961FB1B8882}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1FEC38C8-2830-4946-9068-2961FB1B8882}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1FEC38C8-2830-4946-9068-2961FB1B8882}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83378767-FACB-4A15-8C75-F32D06B5376B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83378767-FACB-4A15-8C75-F32D06B5376B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83378767-FACB-4A15-8C75-F32D06B5376B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83378767-FACB-4A15-8C75-F32D06B5376B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -88,6 +94,7 @@ Global
 		{C76AC33C-9B52-484D-8629-C41E41E98F70} = {6C83A596-D32D-B35F-00DD-F0C99B673980}
 		{E85211FC-9DD3-435E-94DB-562AF42EA328} = {255A78B8-75D1-4175-B9AA-5E9F2BE5EACC}
 		{1FEC38C8-2830-4946-9068-2961FB1B8882} = {255A78B8-75D1-4175-B9AA-5E9F2BE5EACC}
+		{83378767-FACB-4A15-8C75-F32D06B5376B} = {255A78B8-75D1-4175-B9AA-5E9F2BE5EACC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {63069232-DFA8-4BF6-A5A0-395A67298A8F}

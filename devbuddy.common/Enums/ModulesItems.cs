@@ -28,5 +28,8 @@ namespace devbuddy.common.Enums
 
         [ModuleKey("49641eb4-10d5-459b-aafc-f1ab50281360")]
         CodeMetricsAnalyzer,
+
+        [ModuleKey("753857f1-b31d-4e80-9c8e-f3a2dc123e68")]
+        CronConverter
     }
 }

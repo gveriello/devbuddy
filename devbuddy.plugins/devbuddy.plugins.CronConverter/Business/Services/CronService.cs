@@ -1,0 +1,254 @@
+﻿// File: DevBuddy.Plugins.CronConverter/Services/CronService.cs
+using Cronos;
+using devbuddy.plugins.CronConverter.Models;
+
+namespace devbuddy.plugins.CronConverter.Business.Services
+{
+    public class CronService
+    {
+        public static List<CronPreset> GetCommonPresets()
+        {
+            return
+            [
+                new() { Name = "Ogni minuto", Expression = "* * * * *", Description = "Si esegue ogni minuto" },
+                new() { Name = "Ogni ora", Expression = "0 * * * *", Description = "Si esegue all'inizio di ogni ora" },
+                new() { Name = "Ogni giorno a mezzanotte", Expression = "0 0 * * *", Description = "Si esegue alle 12:00 AM ogni giorno" },
+                new() { Name = "Ogni lunedì", Expression = "0 0 * * 1", Description = "Si esegue alle 12:00 AM ogni Lunedì" },
+                new() { Name = "Primo di ogni mese", Expression = "0 0 1 * *", Description = "Si esegue alle 12:00 AM il primo giorno di ogni mese" },
+                new() { Name = "Ogni 15 minuti", Expression = "*/15 * * * *", Description = "Si esegue ogni 15 minuti" },
+                new() { Name = "Giorni feriali alle 9 AM", Expression = "0 9 * * 1-5", Description = "Si esegue alle 9:00 AM da Lunedì a Venerdì" },
+                new() { Name = "Weekend alle 10 AM", Expression = "0 10 * * 0,6", Description = "Si esegue alle 10:00 AM solo Sabato e Domenica" },
+                new() { Name = "Ogni trimestre", Expression = "0 0 1 1,4,7,10 *", Description = "Si esegue alle 12:00 AM il primo giorno di ogni trimestre (Gennaio, Aprile, Luglio, Ottobre)" },
+                new() { Name = "Due volte al giorno", Expression = "0 8,20 * * *", Description = "Si esegue alle 8:00 AM e 8:00 PM ogni giorno" }
+            ];
+        }
+
+        private static string GetMonthName(int month)
+        {
+            return month switch
+            {
+                1 => "Gennaio",
+                2 => "Febbraio",
+                3 => "Marzo",
+                4 => "Aprile",
+                5 => "Maggio",
+                6 => "Giugno",
+                7 => "Luglio",
+                8 => "Agosto",
+                9 => "Settembre",
+                10 => "Ottobre",
+                11 => "Novembre",
+                12 => "Dicembre",
+                _ => month.ToString()
+            };
+        }
+
+        private static string GetDayName(int day)
+        {
+            return day switch
+            {
+                0 => "Domenica",
+                1 => "Lunedì",
+                2 => "Martedì",
+                3 => "Mercoledì",
+                4 => "Giovedì",
+                5 => "Venerdì",
+                6 => "Sabato",
+                7 => "Domenica",
+                _ => day.ToString()
+            };
+        }
+
+        public static List<CronScheduleResult> GetNextOccurrences(string expression, int count = 5)
+        {
+            var results = new List<CronScheduleResult>();
+
+            try
+            {
+                // Parse the expression
+                var cronExpression = CronExpression.Parse(expression);
+
+                // Get the next 'count' occurrences
+                DateTime? nextUtc = DateTime.UtcNow;
+                for (int i = 0; i < count; i++)
+                {
+                    nextUtc = cronExpression.GetNextOccurrence(nextUtc.Value);
+
+                    if (nextUtc.HasValue)
+                    {
+                        results.Add(new CronScheduleResult
+                        {
+                            DateTime = nextUtc.Value.ToLocalTime(),
+                            IsValid = true
+                        });
+
+                        // Add 1 second to get the next occurrence after this one
+                        nextUtc = nextUtc.Value.AddSeconds(1);
+                    }
+                    else
+                    {
+                        break;  // No more occurrences
+                    }
+                }
+
+                return results;
+            }
+            catch (Exception ex)
+            {
+                // Return a single result with error details
+                return new List<CronScheduleResult>
+                {
+                    new CronScheduleResult
+                    {
+                        IsValid = false,
+                        ErrorMessage = $"Invalid cron expression: {ex.Message}"
+                    }
+                };
+            }
+        }
+
+        public static string GetExpressionDescription(string expression)
+        {
+            try
+            {
+                var parts = expression.Split(' ');
+                if (parts.Length < 5) return "Invalid cron expression format";
+
+                var minute = DescribeMinuteExpression(parts[0]);
+                var hour = DescribeHourExpression(parts[1]);
+                var dayOfMonth = DescribeDayOfMonthExpression(parts[2]);
+                var month = DescribeMonthExpression(parts[3]);
+                var dayOfWeek = DescribeDayOfWeekExpression(parts[4]);
+
+                return $"Runs {minute}, {hour}, {dayOfMonth}, {month}, {dayOfWeek}";
+            }
+            catch (Exception)
+            {
+                return "Could not parse cron expression";
+            }
+        }
+
+        private static string DescribeMinuteExpression(string minute)
+        {
+            if (minute == "*") return "every minute";
+            if (minute == "0") return "at the start of the hour";
+            if (minute.StartsWith("*/"))
+            {
+                var interval = int.Parse(minute.Substring(2));
+                return $"every {interval} minute{(interval > 1 ? "s" : "")}";
+            }
+            if (minute.Contains(","))
+            {
+                var minutes = minute.Split(',');
+                return $"at minute{(minutes.Length > 1 ? "s" : "")} {string.Join(", ", minutes)}";
+            }
+            if (minute.Contains("-"))
+            {
+                var range = minute.Split('-');
+                return $"every minute from {range[0]} through {range[1]}";
+            }
+            return $"at minute {minute}";
+        }
+
+        private static string DescribeHourExpression(string hour)
+        {
+            if (hour == "*") return "every hour";
+            if (hour == "0") return "at midnight";
+            if (hour == "12") return "at noon";
+            if (hour.StartsWith("*/"))
+            {
+                var interval = int.Parse(hour.Substring(2));
+                return $"every {interval} hour{(interval > 1 ? "s" : "")}";
+            }
+            if (hour.Contains(","))
+            {
+                var hours = hour.Split(',');
+                return $"at hour{(hours.Length > 1 ? "s" : "")} {string.Join(", ", hours)}";
+            }
+            if (hour.Contains("-"))
+            {
+                var range = hour.Split('-');
+                return $"every hour from {range[0]} through {range[1]}";
+            }
+            return $"at {hour}:00";
+        }
+
+        private static string DescribeDayOfMonthExpression(string dayOfMonth)
+        {
+            if (dayOfMonth == "*") return "every day of the month";
+            if (dayOfMonth.StartsWith("*/"))
+            {
+                var interval = int.Parse(dayOfMonth.Substring(2));
+                return $"every {interval} day{(interval > 1 ? "s" : "")} of the month";
+            }
+            if (dayOfMonth.Contains(","))
+            {
+                var days = dayOfMonth.Split(',');
+                return $"on day{(days.Length > 1 ? "s" : "")} {string.Join(", ", days)} of the month";
+            }
+            if (dayOfMonth.Contains("-"))
+            {
+                var range = dayOfMonth.Split('-');
+                return $"on days {range[0]} through {range[1]} of the month";
+            }
+            return $"on day {dayOfMonth} of the month";
+        }
+
+        private static string DescribeMonthExpression(string month)
+        {
+            if (month == "*") return "every month";
+            if (month.StartsWith("*/"))
+            {
+                var interval = int.Parse(month.Substring(2));
+                return $"every {interval} month{(interval > 1 ? "s" : "")}";
+            }
+            if (month.Contains(","))
+            {
+                var months = month.Split(',');
+                var monthNames = months.Select(m => GetMonthName(int.Parse(m))).ToList();
+                return $"in {string.Join(", ", monthNames)}";
+            }
+            if (month.Contains("-"))
+            {
+                var range = month.Split('-');
+                return $"from {GetMonthName(int.Parse(range[0]))} through {GetMonthName(int.Parse(range[1]))}";
+            }
+            return $"in {GetMonthName(int.Parse(month))}";
+        }
+
+        private static string DescribeDayOfWeekExpression(string dayOfWeek)
+        {
+            if (dayOfWeek == "*") return "every day of the week";
+            if (dayOfWeek.StartsWith("*/"))
+            {
+                var interval = int.Parse(dayOfWeek.Substring(2));
+                return $"every {interval} day{(interval > 1 ? "s" : "")} of the week";
+            }
+            if (dayOfWeek.Contains(","))
+            {
+                var days = dayOfWeek.Split(',');
+                var dayNames = days.Select(d => GetDayName(int.Parse(d))).ToList();
+                return $"on {string.Join(", ", dayNames)}";
+            }
+            if (dayOfWeek.Contains("-"))
+            {
+                var range = dayOfWeek.Split('-');
+                return $"from {GetDayName(int.Parse(range[0]))} through {GetDayName(int.Parse(range[1]))}";
+            }
+            return $"on {GetDayName(int.Parse(dayOfWeek))}";
+        }
+
+        public static bool ValidateCronExpression(string expression)
+        {
+            try
+            {
+                CronExpression.Parse(expression);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+    }
+}

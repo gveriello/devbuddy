@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devbuddy.plugins.Base64Enco
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devbuddy.plugins.QRCodeEncoder", "devbuddy.plugins\devbuddy.plugins.QRCodeEncoder\devbuddy.plugins.QRCodeEncoder.csproj", "{ADE84F52-C580-4D7E-BE4E-5D4FF1B71117}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devbuddy.plugins.CodeMetricsAnalyzer", "devbuddy.plugins\devbuddy.plugins.CodeMetricsAnalyzer\devbuddy.plugins.CodeMetricsAnalyzer.csproj", "{5422863F-AE88-4436-A5AA-875CA909AC11}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -85,6 +87,10 @@ Global
 		{ADE84F52-C580-4D7E-BE4E-5D4FF1B71117}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ADE84F52-C580-4D7E-BE4E-5D4FF1B71117}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ADE84F52-C580-4D7E-BE4E-5D4FF1B71117}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5422863F-AE88-4436-A5AA-875CA909AC11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5422863F-AE88-4436-A5AA-875CA909AC11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5422863F-AE88-4436-A5AA-875CA909AC11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5422863F-AE88-4436-A5AA-875CA909AC11}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -102,6 +108,7 @@ Global
 		{1FEC38C8-2830-4946-9068-2961FB1B8882} = {255A78B8-75D1-4175-B9AA-5E9F2BE5EACC}
 		{83378767-FACB-4A15-8C75-F32D06B5376B} = {255A78B8-75D1-4175-B9AA-5E9F2BE5EACC}
 		{ADE84F52-C580-4D7E-BE4E-5D4FF1B71117} = {255A78B8-75D1-4175-B9AA-5E9F2BE5EACC}
+		{5422863F-AE88-4436-A5AA-875CA909AC11} = {255A78B8-75D1-4175-B9AA-5E9F2BE5EACC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {63069232-DFA8-4BF6-A5A0-395A67298A8F}

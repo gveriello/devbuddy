@@ -25,5 +25,8 @@ namespace devbuddy.common.Enums
 
         [ModuleKey("53253590-e83c-4f9c-ab3e-8a4cdc25b8fb")]
         QRcodeEncoder,
+
+        [ModuleKey("49641eb4-10d5-459b-aafc-f1ab50281360")]
+        CodeMetricsAnalyzer,
     }
 }

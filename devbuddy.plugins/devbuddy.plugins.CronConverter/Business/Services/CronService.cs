@@ -120,7 +120,7 @@ namespace devbuddy.plugins.CronConverter.Business.Services
                 var month = DescribeMonthExpression(parts[3]);
                 var dayOfWeek = DescribeDayOfWeekExpression(parts[4]);
 
-                return $"Runs {minute}, {hour}, {dayOfMonth}, {month}, {dayOfWeek}";
+                return $"Eseguito {minute}, {hour}, {dayOfMonth}, {month}, {dayOfWeek}";
             }
             catch (Exception)
             {

@@ -2,383 +2,377 @@
 @using devbuddy.plugins.CronConverter.Models
 @inherits AppComponentBase<CronExpressionDataModel>
 
-<div class="container">
+<div class="container mt-4">
+	<h2 class="mb-4">Convertitore Base64</h2>
 	<div class="row mb-4">
 		<div class="col-12">
-			<div class="card">
-				<div class="card-header d-flex justify-content-between align-items-center">
-					<h4 class="mb-0">Utility Espressioni Cron</h4>
+			<ul class="nav nav-tabs" id="cronTabs" role="tablist">
+				<li class="nav-item" role="presentation">
+					<button class="nav-link @(activeTab == "builder" ? "active" : "")" @onclick=@(()=> activeTab = "builder")
+							id="builder-tab" type="button" role="tab" aria-controls="builder" aria-selected="@(activeTab == "builder")">
+						Generatore
+					</button>
+				</li>
+				<li class="nav-item" role="presentation">
+					<button class="nav-link @(activeTab == "simulator" ? "active" : "")" @onclick=@(() => activeTab = "simulator")
+							id="simulator-tab" type="button" role="tab" aria-controls="simulator" aria-selected="@(activeTab == "simulator")">
+						Simulatore
+					</button>
+				</li>
+				<li class="nav-item" role="presentation">
+					<button class="nav-link @(activeTab == "saved" ? "active" : "")" @onclick=@(()=> activeTab = "saved")
+							id="saved-tab" type="button" role="tab" aria-controls="saved" aria-selected="@(activeTab == "saved")">
+						Espressioni Salvate
+					</button>
+				</li>
+			</ul>
+
+			<div class="tab-content pt-3" id="cronTabContent">
+				<!-- Builder Tab -->
+				<div class="tab-pane fade @(activeTab == "builder" ? "show active" : "")" id="builder" role="tabpanel" aria-labelledby="builder-tab">
+					<div class="row mb-3">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="expressionType">Tipo di Espressione</label>
+								<select id="expressionType" class="form-control" @bind="expressionType">
+									<option value="@CronExpressionType.Simple">Crea</option>
+									<option value="@CronExpressionType.Advanced">Dettagli</option>
+									<option value="@CronExpressionType.Preset">Predefiniti</option>
+								</select>
+							</div>
+						</div>
+					</div>
+
+					@if (expressionType == CronExpressionType.Simple)
+					{
+						<div class="row g-3">
+							<div class="col-md-2">
+								<div class="form-group">
+									<label for="minutes">Minuti</label>
+									<select id="minutes" class="form-select" @onchange="OnMinuteChange">
+										<option value="*">Ogni minuto (*)</option>
+										<option value="0">Al minuto 0 (0)</option>
+										<option value="*/5">Ogni 5 minuti (*/5)</option>
+										<option value="*/10">Ogni 10 minuti (*/10)</option>
+										<option value="*/15">Ogni 15 minuti (*/15)</option>
+										<option value="*/30">Ogni 30 minuti (*/30)</option>
+										<option value="0,15,30,45">Trimestrali (0,15,30,45)</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-md-2">
+								<div class="form-group">
+									<label for="hours">Ore</label>
+									<select id="hours" class="form-select" @onchange="OnHourChange">
+										<option value="*">Ogni ora (*)</option>
+										<option value="0">A mezzanotte (0)</option>
+										<option value="12">A mezzogiorno (12)</option>
+										<option value="*/2">Ogni 2 ore (*/2)</option>
+										<option value="*/4">Ogni 4 ore (*/4)</option>
+										<option value="*/6">Ogni 6 ore (*/6)</option>
+										<option value="*/12">Ogni 12 ore (*/12)</option>
+										<option value="9-17">Orario lavorativo (9-17)</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-md-2">
+								<div class="form-group">
+									<label for="dayOfMonth">Giorno del mese</label>
+									<select id="dayOfMonth" class="form-select" @onchange="OnDayOfMonthChange">
+										<option value="*">Ogni giorno (*)</option>
+										<option value="1">1° giorno (1)</option>
+										<option value="15">15° giorno (15)</option>
+										<option value="1,15">1° e 15° (1,15)</option>
+										<option value="1-5">Primi 5 giorni (1-5)</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-md-2">
+								<div class="form-group">
+									<label for="month">Mese</label>
+									<select id="month" class="form-select" @onchange="OnMonthChange">
+										<option value="*">Ogni mese (*)</option>
+										<option value="1">Gennaio (1)</option>
+										<option value="6">Giugno (6)</option>
+										<option value="12">Dicembre (12)</option>
+										<option value="1,6,12">Gen,Giu,Dic (1,6,12)</option>
+										<option value="1-3">Q1 (1-3)</option>
+										<option value="*/3">Ogni trimestre (*/3)</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-md-2">
+								<div class="form-group">
+									<label for="dayOfWeek">Giorno della settimana</label>
+									<select id="dayOfWeek" class="form-select" @onchange="OnDayOfWeekChange">
+										<option value="*">Ogni giorno (*)</option>
+										<option value="0">Domenica (0)</option>
+										<option value="1">Lunedì (1)</option>
+										<option value="5">Venerdì (5)</option>
+										<option value="6">Sabato (6)</option>
+										<option value="1-5">Giorni feriali (1-5)</option>
+										<option value="0,6">Fine settimana (0,6)</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					}
+					else if (expressionType == CronExpressionType.Advanced)
+					{
+						<div class="row mb-3">
+							<div class="col-md-10">
+								<div class="form-group">
+									<label for="advancedExpression">Cron expression</label>
+									<div class="input-group">
+										<input id="advancedExpression" type="text" class="form-control" placeholder="* * * * *"
+											   @bind="currentExpression" @bind:event="oninput" @onchange="ValidateCurrentExpression" />
+										<button class="btn btn-outline-secondary" @onclick="ValidateCurrentExpression">
+											<i class="fas fa-check"></i> Convalida
+										</button>
+									</div>
+									<small class="form-text text-muted">Formato: minuto ora giorno-del-mese mese giorno-della-settimana</small>
+									@if (!string.IsNullOrEmpty(validationError))
+									{
+										<div class="mt-2 text-danger">@validationError</div>
+									}
+									@if (isExpressionValid)
+									{
+										<div class="mt-2 text-success">Cron expression valida.</div>
+									}
+								</div>
+							</div>
+						</div>
+						<div class="row mb-3">
+							<div class="col-md-10">
+								<div class="form-group">
+									<label>Descrizione cron expression</label>
+									<div class="alert alert-info">
+										@expressionDescription
+									</div>
+								</div>
+							</div>
+						</div>
+					}
+					else if (expressionType == CronExpressionType.Preset)
+					{
+						<div class="row mb-3">
+							<div class="col-md-8">
+								<div class="form-group">
+									<label for="preset">Cron expression comuni</label>
+									<select id="preset" class="form-select" @bind="selectedPresetIndex">
+										@for (int i = 0; i < presets.Count; i++)
+										{
+											<option value="@i">@presets[i].Name (@presets[i].Expression)</option>
+										}
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="row mb-3">
+							<div class="col-md-8">
+								<div class="form-group">
+									<label>Descrizione</label>
+									<div class="alert alert-info">
+										@(selectedPresetIndex >= 0 && selectedPresetIndex < presets.Count ? presets[selectedPresetIndex].Description : "")
+									</div>
+								</div>
+							</div>
+						</div>
+					}
+
+					<div class="row mt-4">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label>Espressione Cron Generata</label>
+								<div class="input-group">
+									<input type="text" class="form-control" readonly value="@currentExpression" />
+									<button class="btn btn-outline-primary" @onclick="() => CopyToClipboard(currentExpression)">
+										<i class="fas fa-copy"></i> Copia
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row mt-4">
+						<div class="col-md-12">
+							<button class="btn btn-primary" @onclick="SimulateExpression">
+								<i class="fas fa-play"></i> Simula
+							</button>
+							<button class="btn btn-success ms-2" @onclick="ShowSaveDialog">
+								<i class="fas fa-save"></i> Salva
+							</button>
+						</div>
+					</div>
 				</div>
-				<div class="card-body">
-					<ul class="nav nav-tabs" id="cronTabs" role="tablist">
-						<li class="nav-item" role="presentation">
-							<button class="nav-link @(activeTab == "builder" ? "active" : "")" @onclick=@(()=> activeTab = "builder")
-									id="builder-tab" type="button" role="tab" aria-controls="builder" aria-selected="@(activeTab == "builder")">
-								Generatore
-							</button>
-						</li>
-						<li class="nav-item" role="presentation">
-							<button class="nav-link @(activeTab == "simulator" ? "active" : "")" @onclick=@(() => activeTab = "simulator")
-									id="simulator-tab" type="button" role="tab" aria-controls="simulator" aria-selected="@(activeTab == "simulator")">
-								Simulatore
-							</button>
-						</li>
-						<li class="nav-item" role="presentation">
-							<button class="nav-link @(activeTab == "saved" ? "active" : "")" @onclick=@(()=> activeTab = "saved")
-									id="saved-tab" type="button" role="tab" aria-controls="saved" aria-selected="@(activeTab == "saved")">
-								Espressioni Salvate
-							</button>
-						</li>
-					</ul>
 
-					<div class="tab-content pt-3" id="cronTabContent">
-						<!-- Builder Tab -->
-						<div class="tab-pane fade @(activeTab == "builder" ? "show active" : "")" id="builder" role="tabpanel" aria-labelledby="builder-tab">
-							<div class="row mb-3">
-								<div class="col-md-6">
-									<div class="form-group">
-										<label for="expressionType">Tipo di Espressione</label>
-										<select id="expressionType" class="form-control" @bind="expressionType">
-											<option value="@CronExpressionType.Simple">Semplice</option>
-											<option value="@CronExpressionType.Advanced">Avanzato</option>
-											<option value="@CronExpressionType.Preset">Predefinito</option>
-										</select>
-									</div>
-								</div>
-							</div>
-
-							@if (expressionType == CronExpressionType.Simple)
-							{
-								<div class="row g-3">
-									<div class="col-md-2">
-										<div class="form-group">
-											<label for="minutes">Minuti</label>
-											<select id="minutes" class="form-select" @onchange="OnMinuteChange">
-												<option value="*">Ogni minuto (*)</option>
-												<option value="0">Al minuto 0 (0)</option>
-												<option value="*/5">Ogni 5 minuti (*/5)</option>
-												<option value="*/10">Ogni 10 minuti (*/10)</option>
-												<option value="*/15">Ogni 15 minuti (*/15)</option>
-												<option value="*/30">Ogni 30 minuti (*/30)</option>
-												<option value="0,15,30,45">Trimestrali (0,15,30,45)</option>
-											</select>
-										</div>
-									</div>
-									<div class="col-md-2">
-										<div class="form-group">
-											<label for="hours">Ore</label>
-											<select id="hours" class="form-select" @onchange="OnHourChange">
-												<option value="*">Ogni ora (*)</option>
-												<option value="0">A mezzanotte (0)</option>
-												<option value="12">A mezzogiorno (12)</option>
-												<option value="*/2">Ogni 2 ore (*/2)</option>
-												<option value="*/4">Ogni 4 ore (*/4)</option>
-												<option value="*/6">Ogni 6 ore (*/6)</option>
-												<option value="*/12">Ogni 12 ore (*/12)</option>
-												<option value="9-17">Orario lavorativo (9-17)</option>
-											</select>
-										</div>
-									</div>
-									<div class="col-md-2">
-										<div class="form-group">
-											<label for="dayOfMonth">Giorno del mese</label>
-											<select id="dayOfMonth" class="form-select" @onchange="OnDayOfMonthChange">
-												<option value="*">Ogni giorno (*)</option>
-												<option value="1">1° giorno (1)</option>
-												<option value="15">15° giorno (15)</option>
-												<option value="1,15">1° e 15° (1,15)</option>
-												<option value="1-5">Primi 5 giorni (1-5)</option>
-											</select>
-										</div>
-									</div>
-									<div class="col-md-2">
-										<div class="form-group">
-											<label for="month">Mese</label>
-											<select id="month" class="form-select" @onchange="OnMonthChange">
-												<option value="*">Ogni mese (*)</option>
-												<option value="1">Gennaio (1)</option>
-												<option value="6">Giugno (6)</option>
-												<option value="12">Dicembre (12)</option>
-												<option value="1,6,12">Gen,Giu,Dic (1,6,12)</option>
-												<option value="1-3">Q1 (1-3)</option>
-												<option value="*/3">Ogni trimestre (*/3)</option>
-											</select>
-										</div>
-									</div>
-									<div class="col-md-2">
-										<div class="form-group">
-											<label for="dayOfWeek">Giorno della settimana</label>
-											<select id="dayOfWeek" class="form-select" @onchange="OnDayOfWeekChange">
-												<option value="*">Ogni giorno (*)</option>
-												<option value="0">Domenica (0)</option>
-												<option value="1">Lunedì (1)</option>
-												<option value="5">Venerdì (5)</option>
-												<option value="6">Sabato (6)</option>
-												<option value="1-5">Giorni feriali (1-5)</option>
-												<option value="0,6">Fine settimana (0,6)</option>
-											</select>
-										</div>
-									</div>
-								</div>
-							}
-							else if (expressionType == CronExpressionType.Advanced)
-							{
-								<div class="row mb-3">
-									<div class="col-md-10">
-										<div class="form-group">
-											<label for="advancedExpression">Cron expression</label>
-											<div class="input-group">
-												<input id="advancedExpression" type="text" class="form-control" placeholder="* * * * *"
-													   @bind="currentExpression" @bind:event="oninput" @onchange="ValidateCurrentExpression" />
-												<button class="btn btn-outline-secondary" @onclick="ValidateCurrentExpression">
-													<i class="fas fa-check"></i> Convalida
-												</button>
-											</div>
-											<small class="form-text text-muted">Formato: minuto ora giorno-del-mese mese giorno-della-settimana</small>
-											@if (!string.IsNullOrEmpty(validationError))
-											{
-												<div class="mt-2 text-danger">@validationError</div>
-											}
-											@if (isExpressionValid)
-											{
-												<div class="mt-2 text-success">Cron expression valida.</div>
-											}
-										</div>
-									</div>
-								</div>
-								<div class="row mb-3">
-									<div class="col-md-10">
-										<div class="form-group">
-											<label>Descrizione cron expression</label>
-											<div class="alert alert-info">
-												@expressionDescription
-											</div>
-										</div>
-									</div>
-								</div>
-							}
-							else if (expressionType == CronExpressionType.Preset)
-							{
-								<div class="row mb-3">
-									<div class="col-md-8">
-										<div class="form-group">
-											<label for="preset">Cron expression comuni</label>
-											<select id="preset" class="form-select" @bind="selectedPresetIndex">
-												@for (int i = 0; i < presets.Count; i++)
-												{
-													<option value="@i">@presets[i].Name (@presets[i].Expression)</option>
-												}
-											</select>
-										</div>
-									</div>
-								</div>
-								<div class="row mb-3">
-									<div class="col-md-8">
-										<div class="form-group">
-											<label>Descrizione</label>
-											<div class="alert alert-info">
-												@(selectedPresetIndex >= 0 && selectedPresetIndex < presets.Count ? presets[selectedPresetIndex].Description : "")
-											</div>
-										</div>
-									</div>
-								</div>
-							}
-
-							<div class="row mt-4">
-								<div class="col-md-12">
-									<div class="form-group">
-										<label>Espressione Cron Generata</label>
-										<div class="input-group">
-											<input type="text" class="form-control" readonly value="@currentExpression" />
-											<button class="btn btn-outline-primary" @onclick="() => CopyToClipboard(currentExpression)">
-												<i class="fas fa-copy"></i> Copia
-											</button>
-										</div>
-									</div>
-								</div>
-							</div>
-
-							<div class="row mt-4">
-								<div class="col-md-12">
+				<!-- Simulator Tab -->
+				<div class="tab-pane fade @(activeTab == "simulator" ? "show active" : "")" id="simulator" role="tabpanel" aria-labelledby="simulator-tab">
+					<div class="row mb-3">
+						<div class="col-md-10">
+							<div class="form-group">
+								<label for="simulatorExpression">Espressione Cron</label>
+								<div class="input-group">
+									<input id="simulatorExpression" type="text" class="form-control" placeholder="* * * * *"
+										   @bind="currentExpression" />
 									<button class="btn btn-primary" @onclick="SimulateExpression">
 										<i class="fas fa-play"></i> Simula
 									</button>
-									<button class="btn btn-success ms-2" @onclick="ShowSaveDialog">
-										<i class="fas fa-save"></i> Salva
-									</button>
 								</div>
 							</div>
 						</div>
+					</div>
 
-						<!-- Simulator Tab -->
-						<div class="tab-pane fade @(activeTab == "simulator" ? "show active" : "")" id="simulator" role="tabpanel" aria-labelledby="simulator-tab">
-							<div class="row mb-3">
-								<div class="col-md-10">
-									<div class="form-group">
-										<label for="simulatorExpression">Espressione Cron</label>
-										<div class="input-group">
-											<input id="simulatorExpression" type="text" class="form-control" placeholder="* * * * *"
-												   @bind="currentExpression" />
-											<button class="btn btn-primary" @onclick="SimulateExpression">
-												<i class="fas fa-play"></i> Simula
-											</button>
-										</div>
-									</div>
-								</div>
-							</div>
-
-							<div class="row mb-3">
-								<div class="col-md-10">
-									<div class="form-group">
-										<label>Descrizione Espressione</label>
-										<div class="alert alert-info">
-											@expressionDescription
-										</div>
-									</div>
-								</div>
-							</div>
-
-							<div class="row mb-3">
-								<div class="col-md-6">
-									<div class="form-group">
-										<label>Numero di ricorrenze da mostrare</label>
-										<select class="form-select" @bind="occurrencesToShow">
-											<option value="5">5</option>
-											<option value="10">10</option>
-											<option value="20">20</option>
-											<option value="50">50</option>
-										</select>
-									</div>
-								</div>
-							</div>
-
-							<div class="row">
-								<div class="col-md-10">
-									<div class="card">
-										<div class="card-header">
-											<h5 class="mb-0">Prossime @occurrencesToShow Ricorrenze</h5>
-										</div>
-										<div class="card-body">
-											@if (scheduleResults.Count > 0)
-											{
-												if (scheduleResults[0].IsValid)
-												{
-													<table class="table table-bordered table-striped">
-														<thead>
-															<tr>
-																<th>#</th>
-																<th>Data e Ora</th>
-																<th>Da Ora</th>
-															</tr>
-														</thead>
-														<tbody>
-															@for (int i = 0; i < scheduleResults.Count; i++)
-															{
-																var result = scheduleResults[i];
-																var timeSpan = result.DateTime - DateTime.Now;
-
-																<tr>
-																	<td>@(i + 1)</td>
-																	<td>@result.DateTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
-																	<td>
-																		@if (timeSpan.TotalDays >= 1)
-																		{
-																			@($"{(int)timeSpan.TotalDays} giorn{((int)timeSpan.TotalDays != 1 ? "i" : "o")} {timeSpan.Hours:D2}:{timeSpan.Minutes:D2}:{timeSpan.Seconds:D2}")
-																		}
-																		else
-																		{
-																			@($"{timeSpan.Hours:D2}:{timeSpan.Minutes:D2}:{timeSpan.Seconds:D2}")
-																		}
-																	</td>
-																</tr>
-															}
-														</tbody>
-													</table>
-												}
-												else
-												{
-													<div class="alert alert-danger">
-														@scheduleResults[0].ErrorMessage
-													</div>
-												}
-											}
-											else
-											{
-												<div class="alert alert-info">
-													Inserisci un'espressione cron e fai clic su "Simula" per vedere quando verrà eseguita.
-												</div>
-											}
-										</div>
-									</div>
+					<div class="row mb-3">
+						<div class="col-md-10">
+							<div class="form-group">
+								<label>Descrizione Espressione</label>
+								<div class="alert alert-info">
+									@expressionDescription
 								</div>
 							</div>
 						</div>
+					</div>
 
-						<!-- Saved Expressions Tab -->
-						<div class="tab-pane fade @(activeTab == "saved" ? "show active" : "")" id="saved" role="tabpanel" aria-labelledby="saved-tab">
-							<div class="row mb-3">
-								<div class="col-12">
-									<button class="btn btn-primary" @onclick="ShowSaveDialog">
-										<i class="fas fa-plus"></i> Aggiungi Nuova Espressione
-									</button>
-								</div>
+					<div class="row mb-3">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label>Numero di ricorrenze da mostrare</label>
+								<select class="form-select" @bind="occurrencesToShow">
+									<option value="5">5</option>
+									<option value="10">10</option>
+									<option value="20">20</option>
+									<option value="50">50</option>
+								</select>
 							</div>
+						</div>
+					</div>
 
-							<div class="row">
-								<div class="col-12">
-									@if (Model.SavedExpressions.Count > 0)
+					<div class="row">
+						<div class="col-md-10">
+							<div class="card">
+								<div class="card-header">
+									<h5 class="mb-0">Prossime @occurrencesToShow Ricorrenze</h5>
+								</div>
+								<div class="card-body">
+									@if (scheduleResults.Count > 0)
 									{
-										<div class="table-responsive">
+										if (scheduleResults[0].IsValid)
+										{
 											<table class="table table-bordered table-striped">
 												<thead>
 													<tr>
-														<th>Nome</th>
-														<th>Espressione</th>
-														<th>Descrizione</th>
-														<th>Datadi Creazione</th>
-														<th width="150">Azioni</th>
+														<th>#</th>
+														<th>Data e Ora</th>
+														<th>Da Ora</th>
 													</tr>
 												</thead>
 												<tbody>
-													@foreach (var expression in Model.SavedExpressions)
+													@for (int i = 0; i < scheduleResults.Count; i++)
 													{
+														var result = scheduleResults[i];
+														var timeSpan = result.DateTime - DateTime.Now;
+
 														<tr>
-															<td>@expression.Name</td>
+															<td>@(i + 1)</td>
+															<td>@result.DateTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
 															<td>
-																<code>@expression.Expression</code>
-																<button class="btn btn-sm btn-outline-secondary ms-2" @onclick="() => CopyToClipboard(expression.Expression)">
-																	<i class="fas fa-copy"></i>
-																</button>
-															</td>
-															<td>@expression.Description</td>
-															<td>@expression.CreatedDate.ToString("yyyy-MM-dd")</td>
-															<td>
-																<div class="btn-group">
-																	<button class="btn btn-sm btn-primary" @onclick="() => LoadExpression(expression)">
-																		<i class="fas fa-edit"></i>
-																	</button>
-																	<button class="btn btn-sm btn-success" @onclick="() => UseExpression(expression)">
-																		<i class="fas fa-play"></i>
-																	</button>
-																	<button class="btn btn-sm btn-danger" @onclick="() => DeleteExpression(expression)">
-																		<i class="fas fa-trash"></i>
-																	</button>
-																</div>
+																@if (timeSpan.TotalDays >= 1)
+																{
+																	@($"{(int)timeSpan.TotalDays} giorn{((int)timeSpan.TotalDays != 1 ? "i" : "o")} {timeSpan.Hours:D2}:{timeSpan.Minutes:D2}:{timeSpan.Seconds:D2}")
+																}
+																else
+																{
+																	@($"{timeSpan.Hours:D2}:{timeSpan.Minutes:D2}:{timeSpan.Seconds:D2}")
+																}
 															</td>
 														</tr>
 													}
 												</tbody>
 											</table>
-										</div>
+										}
+										else
+										{
+											<div class="alert alert-danger">
+												@scheduleResults[0].ErrorMessage
+											</div>
+										}
 									}
 									else
 									{
 										<div class="alert alert-info">
-											Nessuna espressione salvata. Fai clic su "Aggiungi Nuova Espressione" per crearne una.
+											Inserisci un'espressione cron e fai clic su "Simula" per vedere quando verrà eseguita.
 										</div>
 									}
 								</div>
 							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Saved Expressions Tab -->
+				<div class="tab-pane fade @(activeTab == "saved" ? "show active" : "")" id="saved" role="tabpanel" aria-labelledby="saved-tab">
+					<div class="row mb-3">
+						<div class="col-12">
+							<button class="btn btn-primary" @onclick="ShowSaveDialog">
+								<i class="fas fa-plus"></i> Aggiungi Nuova Espressione
+							</button>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-12">
+							@if (Model.SavedExpressions.Count > 0)
+							{
+								<div class="table-responsive">
+									<table class="table table-bordered table-striped">
+										<thead>
+											<tr>
+												<th>Nome</th>
+												<th>Espressione</th>
+												<th>Descrizione</th>
+												<th>Datadi Creazione</th>
+												<th width="150">Azioni</th>
+											</tr>
+										</thead>
+										<tbody>
+											@foreach (var expression in Model.SavedExpressions)
+											{
+												<tr>
+													<td>@expression.Name</td>
+													<td>
+														<code>@expression.Expression</code>
+														<button class="btn btn-sm btn-outline-secondary ms-2" @onclick="() => CopyToClipboard(expression.Expression)">
+															<i class="fas fa-copy"></i>
+														</button>
+													</td>
+													<td>@expression.Description</td>
+													<td>@expression.CreatedDate.ToString("yyyy-MM-dd")</td>
+													<td>
+														<div class="btn-group">
+															<button class="btn btn-sm btn-primary" @onclick="() => LoadExpression(expression)">
+																<i class="fas fa-edit"></i>
+															</button>
+															<button class="btn btn-sm btn-success" @onclick="() => UseExpression(expression)">
+																<i class="fas fa-play"></i>
+															</button>
+															<button class="btn btn-sm btn-danger" @onclick="() => DeleteExpression(expression)">
+																<i class="fas fa-trash"></i>
+															</button>
+														</div>
+													</td>
+												</tr>
+											}
+										</tbody>
+									</table>
+								</div>
+							}
+							else
+							{
+								<div class="alert alert-info">
+									Nessuna espressione salvata. Fai clic su "Aggiungi Nuova Espressione" per crearne una.
+								</div>
+							}
 						</div>
 					</div>
 				</div>
@@ -387,7 +381,6 @@
 	</div>
 </div>
 
-<!-- Save Expression Modal -->
 <ModalComponentBase @ref="saveModal" Title="Salva Espressione Cron" ModalSize="modal-lg" OnConfirmCallback="SaveExpression">
 	<div class="mb-3">
 		<label for="expressionName" class="form-label">Nome</label>
@@ -403,7 +396,6 @@
 	</div>
 </ModalComponentBase>
 
-<!-- Delete Confirmation Modal -->
 <ModalComponentBase @ref="deleteModal" Title="Conferma Eliminazione" ModalSize="modal-md" OnConfirmCallback="ConfirmDeleteExpression">
 	<p>Sei sicuro di voler eliminare l'espressione "@(expressionToDelete?.Name)"?</p>
 	<p>Questa azione non può essere annullata.</p>

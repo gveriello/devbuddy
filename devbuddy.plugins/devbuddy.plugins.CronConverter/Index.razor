@@ -53,7 +53,7 @@
 									<div class="col-md-2">
 										<div class="form-group">
 											<label for="minutes">Minuti</label>
-											<select id="minutes" class="form-select" @bind="expressionParts.Minute">
+											<select id="minutes" class="form-select" @onchange="OnMinuteChange">
 												<option value="*">Ogni minuto (*)</option>
 												<option value="0">Al minuto 0 (0)</option>
 												<option value="*/5">Ogni 5 minuti (*/5)</option>
@@ -67,7 +67,7 @@
 									<div class="col-md-2">
 										<div class="form-group">
 											<label for="hours">Ore</label>
-											<select id="hours" class="form-select" @bind="expressionParts.Hour">
+											<select id="hours" class="form-select" @onchange="OnHourChange">
 												<option value="*">Ogni ora (*)</option>
 												<option value="0">A mezzanotte (0)</option>
 												<option value="12">A mezzogiorno (12)</option>
@@ -81,8 +81,8 @@
 									</div>
 									<div class="col-md-2">
 										<div class="form-group">
-											<label for="dayOfMonth">Giorno del Mese</label>
-											<select id="dayOfMonth" class="form-select" @bind="expressionParts.DayOfMonth">
+											<label for="dayOfMonth">Giorno del mese</label>
+											<select id="dayOfMonth" class="form-select" @onchange="OnDayOfMonthChange">
 												<option value="*">Ogni giorno (*)</option>
 												<option value="1">1° giorno (1)</option>
 												<option value="15">15° giorno (15)</option>
@@ -94,7 +94,7 @@
 									<div class="col-md-2">
 										<div class="form-group">
 											<label for="month">Mese</label>
-											<select id="month" class="form-select" @bind="expressionParts.Month">
+											<select id="month" class="form-select" @onchange="OnMonthChange">
 												<option value="*">Ogni mese (*)</option>
 												<option value="1">Gennaio (1)</option>
 												<option value="6">Giugno (6)</option>
@@ -107,8 +107,8 @@
 									</div>
 									<div class="col-md-2">
 										<div class="form-group">
-											<label for="dayOfWeek">Giorno della Settimana</label>
-											<select id="dayOfWeek" class="form-select" @bind="expressionParts.DayOfWeek">
+											<label for="dayOfWeek">Giorno della settimana</label>
+											<select id="dayOfWeek" class="form-select" @onchange="OnDayOfWeekChange">
 												<option value="*">Ogni giorno (*)</option>
 												<option value="0">Domenica (0)</option>
 												<option value="1">Lunedì (1)</option>
@@ -126,7 +126,7 @@
 								<div class="row mb-3">
 									<div class="col-md-10">
 										<div class="form-group">
-											<label for="advancedExpression">Espressione Cron</label>
+											<label for="advancedExpression">Cron expression</label>
 											<div class="input-group">
 												<input id="advancedExpression" type="text" class="form-control" placeholder="* * * * *"
 													   @bind="currentExpression" @bind:event="oninput" @onchange="ValidateCurrentExpression" />
@@ -141,7 +141,7 @@
 											}
 											@if (isExpressionValid)
 											{
-												<div class="mt-2 text-success">L'espressione è valida</div>
+												<div class="mt-2 text-success">Cron expression valida.</div>
 											}
 										</div>
 									</div>
@@ -149,7 +149,7 @@
 								<div class="row mb-3">
 									<div class="col-md-10">
 										<div class="form-group">
-											<label>Descrizione Espressione</label>
+											<label>Descrizione cron expression</label>
 											<div class="alert alert-info">
 												@expressionDescription
 											</div>
@@ -162,7 +162,7 @@
 								<div class="row mb-3">
 									<div class="col-md-8">
 										<div class="form-group">
-											<label for="preset">Preset Comuni</label>
+											<label for="preset">Cron expression comuni</label>
 											<select id="preset" class="form-select" @bind="selectedPresetIndex">
 												@for (int i = 0; i < presets.Count; i++)
 												{
@@ -200,11 +200,11 @@
 
 							<div class="row mt-4">
 								<div class="col-md-12">
-									<button class="btn btn-primary" @onclick="SimulateExpression">
+									<button class="btn btn-primary" @onclick="SimulateExpression" @Tooltip="">
 										<i class="fas fa-play"></i> Simula
 									</button>
 									<button class="btn btn-success ms-2" @onclick="ShowSaveDialog">
-										<i class="fas fa-save"></i> Salva Espressione
+										<i class="fas fa-save"></i> Salva
 									</button>
 								</div>
 							</div>

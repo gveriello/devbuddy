@@ -2,6 +2,7 @@
 using devbuddy.common.Services;
 using devbuddy.plugins.CronConverter.Business.Services;
 using devbuddy.plugins.CronConverter.Models;
+using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
 namespace devbuddy.plugins.CronConverter
@@ -9,12 +10,24 @@ namespace devbuddy.plugins.CronConverter
     public sealed partial class Index : AppComponentBase<CronExpressionDataModel>
     {
         private string activeTab = "builder";
-        private CronExpressionType expressionType = CronExpressionType.Simple;
+
+
+        private CronExpressionType _expressionType = CronExpressionType.Simple;
+        private CronExpressionType expressionType
+        {
+            get => _expressionType;
+            set
+            {
+                _expressionType = value;
+                UpdateCurrentExpression();
+            }
+        }
+
         private CronExpressionParts expressionParts = new();
         private string currentExpression = "* * * * *";
         private bool isExpressionValid = true;
         private string validationError = "";
-        private string expressionDescription = "Runs every minute, every hour, every day of the month, every month, every day of the week";
+        private string expressionDescription = "Eseguito ogni minuto, ogni ora, ogni giorno del mese, ogni mese, ogni giorno del weekend.";
         private List<CronScheduleResult> scheduleResults = [];
         private int occurrencesToShow = 5;
         private List<CronPreset> presets = [];
@@ -69,26 +82,70 @@ namespace devbuddy.plugins.CronConverter
             }
         }
 
+        private void UpdateCronExpression()
+        {
+            // Genera l'espressione cron dai valori correnti
+            currentExpression = $"{minuteValue} {hourValue} {dayOfMonthValue} {monthValue} {dayOfWeekValue}";
+
+            // Aggiorna la descrizione
+            expressionDescription = CronService.GetExpressionDescription(currentExpression);
+
+            // Convalida l'espressione
+            ValidateCurrentExpression();
+        }
+
+        private string minuteValue = "*";
+        private void OnMinuteChange(ChangeEventArgs e)
+        {
+            minuteValue = e.Value.ToString();
+            UpdateCronExpression();
+        }
+
+        private string hourValue = "*";
+        private void OnHourChange(ChangeEventArgs e)
+        {
+            hourValue = e.Value.ToString();
+            UpdateCronExpression();
+        }
+
+        // Metodi simili per gli altri campi
+        private string dayOfMonthValue = "*";
+        private void OnDayOfMonthChange(ChangeEventArgs e)
+        {
+            dayOfMonthValue = e.Value.ToString();
+            UpdateCronExpression();
+        }
+
+        private string monthValue = "*";
+        private void OnMonthChange(ChangeEventArgs e)
+        {
+            monthValue = e.Value.ToString();
+            UpdateCronExpression();
+        }
+
+        private string dayOfWeekValue = "*";
+        private void OnDayOfWeekChange(ChangeEventArgs e)
+        {
+            dayOfWeekValue = e.Value.ToString();
+            UpdateCronExpression();
+        }
+
         private void UpdateCurrentExpression()
         {
-            if (expressionType == CronExpressionType.Simple)
-            {
-                currentExpression = expressionParts.ToString();
-            }
-            else if (expressionType == CronExpressionType.Preset && selectedPresetIndex >= 0 && selectedPresetIndex < presets.Count)
-            {
-                currentExpression = presets[selectedPresetIndex].Expression;
-            }
+            currentExpression = $"{expressionParts.Minute} {expressionParts.Hour} " +
+                                $"{expressionParts.DayOfMonth} {expressionParts.Month} {expressionParts.DayOfWeek}";
 
             expressionDescription = CronService.GetExpressionDescription(currentExpression);
             Model.CurrentExpression = currentExpression;
             ValidateCurrentExpression();
+
+            StateHasChanged();
         }
 
         private void ValidateCurrentExpression()
         {
             isExpressionValid = CronService.ValidateCronExpression(currentExpression);
-            validationError = isExpressionValid ? "" : "Invalid cron expression format";
+            validationError = isExpressionValid ? "" : "Cron expression non valida.";
             expressionDescription = CronService.GetExpressionDescription(currentExpression);
         }
 
@@ -97,7 +154,7 @@ namespace devbuddy.plugins.CronConverter
             if (string.IsNullOrEmpty(text)) return;
 
             await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", text);
-            ToastService.Show("Expression copied to clipboard", ToastLevel.Success);
+            ToastService.Show("Copiato negli appunti");
         }
 
         private void SimulateExpression()
@@ -106,7 +163,7 @@ namespace devbuddy.plugins.CronConverter
 
             if (!isExpressionValid)
             {
-                ToastService.Show("Invalid cron expression", ToastLevel.Error);
+                ToastService.Show("Cron expression non valida.", ToastLevel.Error);
                 return;
             }
 
@@ -130,7 +187,7 @@ namespace devbuddy.plugins.CronConverter
 
             if (!isExpressionValid)
             {
-                ToastService.Show("Cannot save invalid cron expression", ToastLevel.Error);
+                ToastService.Show("Non è possibile salvare una cron expression non valida.", ToastLevel.Error);
                 return;
             }
 
@@ -145,13 +202,13 @@ namespace devbuddy.plugins.CronConverter
         {
             if (string.IsNullOrWhiteSpace(saveExpressionName))
             {
-                ToastService.Show("Please enter a name for the expression", ToastLevel.Warning);
+                ToastService.Show("Per favore, inserisci un nome valido.", ToastLevel.Warning);
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(saveExpressionValue) || !CronService.ValidateCronExpression(saveExpressionValue))
             {
-                ToastService.Show("Please enter a valid cron expression", ToastLevel.Warning);
+                ToastService.Show("Per favore, inserisci una cron expression valida.", ToastLevel.Warning);
                 return;
             }
 
@@ -185,14 +242,14 @@ namespace devbuddy.plugins.CronConverter
                 }
 
                 await DataModelService.AddOrUpdateAsync(nameof(CronConverter), Model);
-                ToastService.Show(isEditing ? "Expression updated" : "Expression saved", ToastLevel.Success);
+                ToastService.Show(isEditing ? "Cron expression modificata." : "Cron expression salvata.", ToastLevel.Success);
 
                 // Switch to the Saved Expressions tab
                 activeTab = "saved";
             }
             catch (Exception ex)
             {
-                ToastService.Show($"Error saving expression: {ex.Message}", ToastLevel.Error);
+                ToastService.Show($"Si è verificato un errore durante il salvataggio della cron expression: {ex.Message}", ToastLevel.Error);
             }
         }
 

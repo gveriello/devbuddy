@@ -22,7 +22,7 @@
 				<li class="nav-item" role="presentation">
 					<button class="nav-link @(activeTab == "saved" ? "active" : "")" @onclick=@(()=> activeTab = "saved")
 							id="saved-tab" type="button" role="tab" aria-controls="saved" aria-selected="@(activeTab == "saved")">
-						Espressioni Salvate
+						Espressioni salvate
 					</button>
 				</li>
 			</ul>
@@ -182,20 +182,6 @@
 
 					<div class="row mt-4">
 						<div class="col-md-12">
-							<div class="form-group">
-								<label>Espressione Cron Generata</label>
-								<div class="input-group">
-									<input type="text" class="form-control" readonly value="@currentExpression" />
-									<button class="btn btn-outline-primary" @onclick="() => CopyToClipboard(currentExpression)">
-										<i class="fas fa-copy"></i> Copia
-									</button>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div class="row mt-4">
-						<div class="col-md-12">
 							<button class="btn btn-primary" @onclick="SimulateExpression">
 								<i class="fas fa-play"></i> Simula
 							</button>
@@ -234,25 +220,11 @@
 						</div>
 					</div>
 
-					<div class="row mb-3">
-						<div class="col-md-6">
-							<div class="form-group">
-								<label>Numero di ricorrenze da mostrare</label>
-								<select class="form-select" @bind="occurrencesToShow">
-									<option value="5">5</option>
-									<option value="10">10</option>
-									<option value="20">20</option>
-									<option value="50">50</option>
-								</select>
-							</div>
-						</div>
-					</div>
-
 					<div class="row">
 						<div class="col-md-10">
 							<div class="card">
 								<div class="card-header">
-									<h5 class="mb-0">Prossime @occurrencesToShow Ricorrenze</h5>
+									<h5 class="mb-0">Mostro le prossime @occurrencesToShow ricorrenze</h5>
 								</div>
 								<div class="card-body">
 									@if (scheduleResults.Count > 0)
@@ -264,7 +236,6 @@
 													<tr>
 														<th>#</th>
 														<th>Data e Ora</th>
-														<th>Da Ora</th>
 													</tr>
 												</thead>
 												<tbody>
@@ -276,7 +247,7 @@
 														<tr>
 															<td>@(i + 1)</td>
 															<td>@result.DateTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
-															<td>
+															@* <td>
 																@if (timeSpan.TotalDays >= 1)
 																{
 																	@($"{(int)timeSpan.TotalDays} giorn{((int)timeSpan.TotalDays != 1 ? "i" : "o")} {timeSpan.Hours:D2}:{timeSpan.Minutes:D2}:{timeSpan.Seconds:D2}")
@@ -285,7 +256,7 @@
 																{
 																	@($"{timeSpan.Hours:D2}:{timeSpan.Minutes:D2}:{timeSpan.Seconds:D2}")
 																}
-															</td>
+															</td> *@
 														</tr>
 													}
 												</tbody>
@@ -315,7 +286,7 @@
 					<div class="row mb-3">
 						<div class="col-12">
 							<button class="btn btn-primary" @onclick="ShowSaveDialog">
-								<i class="fas fa-plus"></i> Aggiungi Nuova Espressione
+								<i class="fas fa-plus"></i> Aggiungi nuova espressione
 							</button>
 						</div>
 					</div>
@@ -370,7 +341,7 @@
 							else
 							{
 								<div class="alert alert-info">
-									Nessuna espressione salvata. Fai clic su "Aggiungi Nuova Espressione" per crearne una.
+									Nessuna espressione salvata. Fai clic su "Aggiungi nuova espressione" per crearne una.
 								</div>
 							}
 						</div>

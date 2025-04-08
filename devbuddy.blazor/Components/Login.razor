@@ -1,25 +1,139 @@
 ﻿@using devbuddy.common.Applications
 @inherits PageComponentsBase
 
-<div class="row" hidden="@(IsLoggedIn)">
-	<div class="d-flex align-items-center py-4 bg-body-tertiary">
+<div class="auth-container">
+    <div class="row vh-100" hidden="@(IsLoggedIn)">
+        <div class="d-flex align-items-center justify-content-center py-4 bg-body-tertiary h-100">
+            <div class="form-signin w-100 m-auto">
+                <Logo />
 
-		<div class="form-signin w-100 m-auto">
-			<Logo />
+                <div class="alert alert-danger" role="alert" hidden="@(!HasErrors)">
+                    Attenzione: @Errors
+                </div>
 
-			<div class="alert alert-danger" role="alert" hidden="@(!HasErrors)">
-				Attenzione: @Errors
-			</div>
-			<div class="form-floating mb-3">
-				<input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" @bind="Model.Email">
-				<label for="floatingInput">Email</label>
-			</div>
-			<div class="form-floating mb-3">
-				<input type="password" class="form-control" id="floatingPassword" placeholder="Password" @bind="Model.Password">
-				<label for="floatingPassword">Password</label>
-			</div>
-			<button class="btn btn-primary w-100 py-2" @onclick="@SignIn" type="button">Accedi</button>
-			<p class="mt-5 mb-3 text-body-secondary">&copy; 2024–2025</p>
-		</div>
-	</div>
+                <div class="card border-0">
+                    <div class="card-body">
+                        <h3 class="card-title text-center mb-4">@(IsRegistering ? "Registrazione" : "Accesso")</h3>
+
+                        @if (IsRegistering)
+                        {
+                            <!-- Form di registrazione -->
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="floatingName" placeholder="Nome" @bind="RegisterModel.Name">
+                                <label for="floatingName">Nome</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="floatingSurname" placeholder="Cognome" @bind="RegisterModel.Surname">
+                                <label for="floatingSurname">Cognome</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="email" class="form-control" id="floatingRegisterEmail" placeholder="name@example.com" @bind="RegisterModel.Email">
+                                <label for="floatingRegisterEmail">Email</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="password" class="form-control" id="floatingRegisterPassword" placeholder="Password" @bind="RegisterModel.Password">
+                                <label for="floatingRegisterPassword">Password</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="password" class="form-control" id="floatingConfirmPassword" placeholder="Conferma Password" @bind="RegisterModel.ConfirmPassword">
+                                <label for="floatingConfirmPassword">Conferma Password</label>
+                            </div>
+                            <button class="btn btn-primary w-100 py-2 mb-3" @onclick="@Register" type="button" disabled="@LoadingInProgress">
+                                @if (LoadingInProgress)
+                                {
+                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                    <span> Registrazione in corso...</span>
+                                }
+                                else
+                                {
+                                    <span>Registrati</span>
+                                }
+                            </button>
+                        }
+                        else
+                        {
+                            <!-- Form di login -->
+                            <div class="form-floating mb-3">
+                                <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" @bind="LoginModel.Email">
+                                <label for="floatingInput">Email</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="password" class="form-control" id="floatingPassword" placeholder="Password" @bind="LoginModel.Password">
+                                <label for="floatingPassword">Password</label>
+                            </div>
+                            <button class="btn btn-primary w-100 py-2 mb-3" @onclick="@SignIn" type="button" disabled="@LoadingInProgress">
+                                @if (LoadingInProgress)
+                                {
+                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                    <span> Accesso in corso...</span>
+                                }
+                                else
+                                {
+                                    <span>Accedi</span>
+                                }
+                            </button>
+                        }
+
+                        <div class="text-center mt-2">
+                            @if (IsRegistering)
+                            {
+                                <p>Hai già un account? <a href="javascript:void(0)" @onclick="() => ToggleAuthForm(false)" class="text-decoration-none">Accedi</a></p>
+                            }
+                            else
+                            {
+                                <p>Non hai un account? <a href="javascript:void(0)" @onclick="() => ToggleAuthForm(true)" class="text-decoration-none">Registrati</a></p>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <p class="mt-4 mb-3 text-body-secondary text-center">&copy; 2024–2025</p>
+            </div>
+        </div>
+    </div>
 </div>
+
+<style>
+    .auth-container {
+        min-height: 100vh;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        background-color: #f5f5f5;
+    }
+
+    .form-signin {
+        max-width: 400px;
+        padding: 15px;
+    }
+
+    .card {
+        transition: all 0.3s ease;
+        opacity: 1;
+        transform: translateY(0);
+        background-color: white;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-control:focus {
+        border-color: #4f46e5;
+        box-shadow: 0 0 0 0.25rem rgba(79, 70, 229, 0.25);
+    }
+
+    .btn-primary {
+        background-color: #4f46e5;
+        border-color: #4f46e5;
+    }
+
+        .btn-primary:hover, .btn-primary:focus {
+            background-color: #4338ca;
+            border-color: #4338ca;
+        }
+
+    a {
+        color: #4f46e5;
+    }
+
+        a:hover {
+            color: #4338ca;
+        }
+</style>

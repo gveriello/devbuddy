@@ -39,5 +39,45 @@ namespace devbuddy.business
 
             throw new UnauthorizedAccessException(httpResponse.Message);
         }
+
+        public async Task<string> RegisterAsync(RegisterRequest request)
+        {
+            ArgumentNullException.ThrowIfNull("Il nome non può essere vuoto.", request.Name);
+            ArgumentNullException.ThrowIfNull("Il cognome non può essere vuoto.", request.Surname);
+            ArgumentNullException.ThrowIfNull("L'email non può essere vuota.", request.Email);
+            ArgumentNullException.ThrowIfNull("La password non può essere vuota.", request.Password);
+
+            if (request.Password != request.ConfirmPassword)
+                throw new ArgumentException("Le password non coincidono.");
+
+            var body = new
+            {
+                Name = request.Name,
+                Surname = request.Surname,
+                Email = request.Email,
+                Password = request.Password,
+                AppId = Endpoints.APP_ID
+            };
+
+            var content = new StringContent(
+                JsonSerializer.Serialize(body),
+                Encoding.UTF8,
+                "application/json"
+            );
+
+            var httpClient = new HttpClient();
+            // Invia la richiesta POST
+            var response = await httpClient.PostAsync(AuthEndpoints.REGISTER, content);
+
+            // Leggi la risposta
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+            var httpResponse = JsonSerializer.Deserialize<HttpResponse<string>>(jsonResponse);
+
+            if (response.IsSuccessStatusCode && (httpResponse?.Success ?? false))
+                if (!string.IsNullOrEmpty(httpResponse.Data))
+                    return httpResponse.Data;
+
+            throw new Exception(httpResponse?.Message ?? "Errore durante la registrazione.");
+        }
     }
 }

@@ -10,7 +10,8 @@
     {
         private const string CONTROLLER = "auth";
 
-        public const string LOGIN = $"{Endpoints.URI_HUBCONNECT}{CONTROLLER}/login";
+        public const string LOGIN = $"{Endpoints.URI_HUBCONNECT}{CONTROLLER}/login"; 
+        public const string REGISTER = $"{Endpoints.URI_HUBCONNECT}{CONTROLLER}/register";
     }
 
     public static class UserEndpoints

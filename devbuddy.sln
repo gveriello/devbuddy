@@ -33,7 +33,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devbuddy.plugins.QRCodeEnco
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devbuddy.plugins.CodeMetricsAnalyzer", "devbuddy.plugins\devbuddy.plugins.CodeMetricsAnalyzer\devbuddy.plugins.CodeMetricsAnalyzer.csproj", "{5422863F-AE88-4436-A5AA-875CA909AC11}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devbuddy.plugins.CronConverter", "devbuddy.plugins\devbuddy.plugins.CronConverter\devbuddy.plugins.CronConverter.csproj", "{636985C7-0A4A-4592-B908-43AF09CC3BC6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devbuddy.plugins.CronExpression", "devbuddy.plugins\devbuddy.plugins.CronExpression\devbuddy.plugins.CronExpression.csproj", "{636985C7-0A4A-4592-B908-43AF09CC3BC6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devbuddy.plugins.YamlFormatter", "devbuddy.plugins\devbuddy.plugins.YamlFormatter\devbuddy.plugins.YamlFormatter.csproj", "{5F323182-7FF3-4655-B6A2-EB2B344C1F75}"
 EndProject

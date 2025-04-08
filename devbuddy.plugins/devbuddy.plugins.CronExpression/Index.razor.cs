@@ -1,11 +1,11 @@
 ﻿using devbuddy.common.Applications;
 using devbuddy.common.Services;
-using devbuddy.plugins.CronConverter.Business.Services;
-using devbuddy.plugins.CronConverter.Models;
+using devbuddy.plugins.CronExpression.Business.Services;
+using devbuddy.plugins.CronExpression.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
-namespace devbuddy.plugins.CronConverter
+namespace devbuddy.plugins.CronExpression
 {
     public sealed partial class Index : AppComponentBase<CronExpressionDataModel>
     {

@@ -1,6 +1,6 @@
 ﻿using devbuddy.common.Applications;
 
-namespace devbuddy.plugins.CronConverter.Models
+namespace devbuddy.plugins.CronExpression.Models
 {
     public class CronExpressionDataModel : CustomDataModelBase
     {

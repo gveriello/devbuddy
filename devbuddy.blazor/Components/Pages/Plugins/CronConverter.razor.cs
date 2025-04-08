@@ -3,7 +3,7 @@ using devbuddy.common.Enums;
 
 namespace devbuddy.blazor.Components.Pages.Plugins
 {
-    [DynamicallyLoadable(ModulesItems.CronConverter)]
+    [DynamicallyLoadable(ModulesItems.CronExpression)]
     public sealed partial class CronConverter
     {
     }

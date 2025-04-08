@@ -1,4 +1,4 @@
-﻿namespace devbuddy.plugins.CronConverter.Models
+﻿namespace devbuddy.plugins.CronExpression.Models
 {
     public class CronExpressionParts
     {

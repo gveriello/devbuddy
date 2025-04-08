@@ -1,8 +1,8 @@
-﻿// File: DevBuddy.Plugins.CronConverter/Services/CronService.cs
+﻿// File: DevBuddy.Plugins.CronExpression/Services/CronService.cs
 using Cronos;
-using devbuddy.plugins.CronConverter.Models;
+using devbuddy.plugins.CronExpression.Models;
 
-namespace devbuddy.plugins.CronConverter.Business.Services
+namespace devbuddy.plugins.CronExpression.Business.Services
 {
     public class CronService
     {

@@ -1,6 +1,4 @@
 ﻿using devbuddy.common.Applications;
-using devbuddy.common.Attributes;
-using devbuddy.common.Enums;
 using devbuddy.common.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;

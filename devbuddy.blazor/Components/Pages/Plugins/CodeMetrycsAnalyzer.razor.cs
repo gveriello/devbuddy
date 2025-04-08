@@ -5,7 +5,7 @@ using devbuddy.common.Enums;
 namespace devbuddy.blazor.Components.Pages.Plugins
 {
     [DynamicallyLoadable(ModulesItems.CodeMetricsAnalyzer)]
-    public sealed partial class CodeMetricsAnalyzer: PageComponentsBase
+    public sealed partial class CodeMetricsAnalyzer : PageComponentsBase
     {
         protected override Task OnInitializedAsync()
         {

@@ -1,5 +1,4 @@
 ﻿// File: DevBuddy.Plugins.CronExpression/Services/CronService.cs
-using Cronos;
 using devbuddy.plugins.CronExpression.Models;
 
 namespace devbuddy.plugins.CronExpression.Business.Services
@@ -130,112 +129,112 @@ namespace devbuddy.plugins.CronExpression.Business.Services
 
         private static string DescribeMinuteExpression(string minute)
         {
-            if (minute == "*") return "ogni minuto";  
-            if (minute == "0") return "all'inizio dell'ora";  
+            if (minute == "*") return "ogni minuto";
+            if (minute == "0") return "all'inizio dell'ora";
             if (minute.StartsWith("*/"))
             {
                 var interval = int.Parse(minute.Substring(2));
-                return $"ogni {interval} minut{(interval > 1 ? "i" : "o")}";  
+                return $"ogni {interval} minut{(interval > 1 ? "i" : "o")}";
             }
             if (minute.Contains(","))
             {
                 var minutes = minute.Split(',');
-                return $"al minut{(minutes.Length > 1 ? "i" : "o")} {string.Join(", ", minutes)}";  
+                return $"al minut{(minutes.Length > 1 ? "i" : "o")} {string.Join(", ", minutes)}";
             }
             if (minute.Contains("-"))
             {
                 var range = minute.Split('-');
-                return $"ogni minuto da {range[0]} a {range[1]}";  
+                return $"ogni minuto da {range[0]} a {range[1]}";
             }
-            return $"al minuto {minute}"; 
+            return $"al minuto {minute}";
         }
 
         private static string DescribeHourExpression(string hour)
         {
-            if (hour == "*") return "ogni ora";  
-            if (hour == "0") return "a mezzanotte";  
+            if (hour == "*") return "ogni ora";
+            if (hour == "0") return "a mezzanotte";
             if (hour == "12") return "a mezzogiorno";
             if (hour.StartsWith("*/"))
             {
                 var interval = int.Parse(hour.Substring(2));
-                return $"ogni {interval} or{(interval > 1 ? "e" : "a")}"; 
+                return $"ogni {interval} or{(interval > 1 ? "e" : "a")}";
             }
             if (hour.Contains(","))
             {
                 var hours = hour.Split(',');
-                return $"all'or{(hours.Length > 1 ? "e" : "a")} {string.Join(", ", hours)}"; 
+                return $"all'or{(hours.Length > 1 ? "e" : "a")} {string.Join(", ", hours)}";
             }
             if (hour.Contains("-"))
             {
                 var range = hour.Split('-');
-                return $"ogni ora da {range[0]} a {range[1]}"; 
+                return $"ogni ora da {range[0]} a {range[1]}";
             }
-            return $"alle {hour}:00"; 
+            return $"alle {hour}:00";
         }
 
         private static string DescribeDayOfMonthExpression(string dayOfMonth)
         {
-            if (dayOfMonth == "*") return "ogni giorno del mese"; 
+            if (dayOfMonth == "*") return "ogni giorno del mese";
             if (dayOfMonth.StartsWith("*/"))
             {
                 var interval = int.Parse(dayOfMonth.Substring(2));
-                return $"ogni {interval} giorn{(interval > 1 ? "i" : "o")} del mese";  
+                return $"ogni {interval} giorn{(interval > 1 ? "i" : "o")} del mese";
             }
             if (dayOfMonth.Contains(","))
             {
                 var days = dayOfMonth.Split(',');
-                return $"il giorn{(days.Length > 1 ? "i" : "o")} {string.Join(", ", days)} del mese";  
+                return $"il giorn{(days.Length > 1 ? "i" : "o")} {string.Join(", ", days)} del mese";
             }
             if (dayOfMonth.Contains("-"))
             {
                 var range = dayOfMonth.Split('-');
-                return $"nei giorni dal {range[0]} al {range[1]} del mese";  
+                return $"nei giorni dal {range[0]} al {range[1]} del mese";
             }
-            return $"il giorno {dayOfMonth} del mese";  
+            return $"il giorno {dayOfMonth} del mese";
         }
 
         private static string DescribeMonthExpression(string month)
         {
-            if (month == "*") return "ogni mese";  
+            if (month == "*") return "ogni mese";
             if (month.StartsWith("*/"))
             {
                 var interval = int.Parse(month.Substring(2));
-                return $"ogni {interval} mes{(interval > 1 ? "i" : "e")}";  
+                return $"ogni {interval} mes{(interval > 1 ? "i" : "e")}";
             }
             if (month.Contains(","))
             {
                 var months = month.Split(',');
                 var monthNames = months.Select(m => GetMonthName(int.Parse(m))).ToList();
-                return $"in {string.Join(", ", monthNames)}";  
+                return $"in {string.Join(", ", monthNames)}";
             }
             if (month.Contains("-"))
             {
                 var range = month.Split('-');
-                return $"da {GetMonthName(int.Parse(range[0]))} a {GetMonthName(int.Parse(range[1]))}";  
+                return $"da {GetMonthName(int.Parse(range[0]))} a {GetMonthName(int.Parse(range[1]))}";
             }
-            return $"in {GetMonthName(int.Parse(month))}"; 
+            return $"in {GetMonthName(int.Parse(month))}";
         }
 
         private static string DescribeDayOfWeekExpression(string dayOfWeek)
         {
-            if (dayOfWeek == "*") return "ogni giorno della settimana"; 
+            if (dayOfWeek == "*") return "ogni giorno della settimana";
             if (dayOfWeek.StartsWith("*/"))
             {
                 var interval = int.Parse(dayOfWeek.Substring(2));
-                return $"ogni {interval} giorn{(interval > 1 ? "i" : "o")} della settimana";  
+                return $"ogni {interval} giorn{(interval > 1 ? "i" : "o")} della settimana";
             }
             if (dayOfWeek.Contains(","))
             {
                 var days = dayOfWeek.Split(',');
                 var dayNames = days.Select(d => GetDayName(int.Parse(d))).ToList();
-                return $"il {string.Join(", ", dayNames)}";  
+                return $"il {string.Join(", ", dayNames)}";
             }
             if (dayOfWeek.Contains("-"))
             {
                 var range = dayOfWeek.Split('-');
-                return $"dal {GetDayName(int.Parse(range[0]))} al {GetDayName(int.Parse(range[1]))}";  
+                return $"dal {GetDayName(int.Parse(range[0]))} al {GetDayName(int.Parse(range[1]))}";
             }
-            return $"il {GetDayName(int.Parse(dayOfWeek))}";  
+            return $"il {GetDayName(int.Parse(dayOfWeek))}";
         }
 
         public static bool ValidateCronExpression(string expression)

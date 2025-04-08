@@ -3,8 +3,8 @@ using devbuddy.common.Enums;
 
 namespace devbuddy.blazor.Components.Pages.Plugins
 {
-    [DynamicallyLoadable(ModulesItems.XmlFormatter)]
-    public sealed partial class XmlFormatter
+    [DynamicallyLoadable(ModulesItems.Base64)]
+    public sealed partial class Base64
     {
     }
 }

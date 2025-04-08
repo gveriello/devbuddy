@@ -3,8 +3,8 @@ using devbuddy.common.Enums;
 
 namespace devbuddy.blazor.Components.Pages.Plugins
 {
-    [DynamicallyLoadable(ModulesItems.CronExpression)]
-    public sealed partial class CronConverter
+    [DynamicallyLoadable(ModulesItems.QRCode)]
+    public sealed partial class QRCode
     {
     }
 }

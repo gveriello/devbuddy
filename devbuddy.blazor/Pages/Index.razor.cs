@@ -37,13 +37,7 @@ namespace devbuddy.blazor.Pages
             try
             {
                 this.User = await UserService.GetUserDataAsync();
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                await OnLogout();
-            }
-            finally
-            {
+
                 if (IsLogged)
                 {
                     await DataModelService.InitializeAsync();
@@ -63,6 +57,14 @@ namespace devbuddy.blazor.Pages
                     ComponentParameters.Add("User", User);
                     Loading = false;
                 }
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                await OnLogout();
+                return;
+            }
+            finally
+            {
                 StateHasChanged();
                 await base.OnInitializedAsync();
             }

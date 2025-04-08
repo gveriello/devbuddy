@@ -38,6 +38,7 @@ namespace devbuddy.blazor.Components
             }
             catch (Exception ex)
             {
+                this.Token = null;
                 ShowError(ex.Message);
             }
             finally

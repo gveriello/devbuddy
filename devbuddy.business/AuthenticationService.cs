@@ -39,6 +39,5 @@ namespace devbuddy.business
 
             throw new UnauthorizedAccessException(httpResponse.Message);
         }
-
     }
 }

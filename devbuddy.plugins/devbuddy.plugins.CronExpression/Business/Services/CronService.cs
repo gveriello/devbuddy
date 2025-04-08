@@ -66,7 +66,7 @@ namespace devbuddy.plugins.CronExpression.Business.Services
             try
             {
                 // Parse the expression
-                var cronExpression = CronExpression.Parse(expression);
+                var cronExpression = Cronos.CronExpression.Parse(expression);
 
                 // Get the next 'count' occurrences
                 DateTime? nextUtc = DateTime.UtcNow;
@@ -242,7 +242,7 @@ namespace devbuddy.plugins.CronExpression.Business.Services
         {
             try
             {
-                CronExpression.Parse(expression);
+                Cronos.CronExpression.Parse(expression);
                 return true;
             }
             catch

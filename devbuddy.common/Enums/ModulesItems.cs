@@ -30,7 +30,7 @@ namespace devbuddy.common.Enums
         CodeMetricsAnalyzer,
 
         [ModuleKey("753857f1-b31d-4e80-9c8e-f3a2dc123e68")]
-        CronConverter,
+        CronExpression,
 
         [ModuleKey("874e9d5f-a2b3-48c7-9d5e-8b6f21c0e379")]
         YamlFormatter

@@ -59,7 +59,7 @@ namespace devbuddy.plugins.CronExpression
 
         protected override void OnInitialized()
         {
-            Model = DataModelService.ValueByKey<CronExpressionDataModel>(nameof(CronConverter));
+            Model = DataModelService.ValueByKey<CronExpressionDataModel>(nameof(CronExpression));
             presets = CronService.GetCommonPresets();
 
             if (!string.IsNullOrEmpty(Model.CurrentExpression))
@@ -241,7 +241,7 @@ namespace devbuddy.plugins.CronExpression
                     });
                 }
 
-                await DataModelService.AddOrUpdateAsync(nameof(CronConverter), Model);
+                await DataModelService.AddOrUpdateAsync(nameof(CronExpression), Model);
                 ToastService.Show(isEditing ? "Cron expression modificata." : "Cron expression salvata.", ToastLevel.Success);
 
                 // Switch to the Saved Expressions tab
@@ -285,14 +285,14 @@ namespace devbuddy.plugins.CronExpression
             if (expressionToDelete != null)
             {
                 Model.SavedExpressions.Remove(expressionToDelete);
-                await DataModelService.AddOrUpdateAsync(nameof(CronConverter), Model);
+                await DataModelService.AddOrUpdateAsync(nameof(CronExpression), Model);
                 ToastService.Show("Expression deleted", ToastLevel.Success);
             }
         }
 
         protected override async Task OnModelChangedAsync()
         {
-            await DataModelService.AddOrUpdateAsync(nameof(CronConverter), Model);
+            await DataModelService.AddOrUpdateAsync(nameof(CronExpression), Model);
             await base.OnModelChangedAsync();
         }
     }

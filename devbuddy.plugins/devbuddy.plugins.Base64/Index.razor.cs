@@ -6,7 +6,7 @@ using devbuddy.common.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
-namespace devbuddy.plugins.Base64Encoder
+namespace devbuddy.plugins.Base64
 {
     public partial class Index : AppComponentBase
     {

@@ -7,7 +7,7 @@ using Microsoft.JSInterop;
 using QRCoder;
 
 
-namespace devbuddy.plugins.QRCodeEncoder
+namespace devbuddy.plugins.QRCode
 {
     public partial class Index : PageComponentsBase
     {

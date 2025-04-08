@@ -104,36 +104,6 @@ namespace devbuddy.blazor.Components
                 LoadingInProgress = true;
                 ShowError();
 
-                if (string.IsNullOrWhiteSpace(RegisterModel.Name))
-                {
-                    ShowError("Il nome è obbligatorio.");
-                    return;
-                }
-
-                if (string.IsNullOrWhiteSpace(RegisterModel.Surname))
-                {
-                    ShowError("Il cognome è obbligatorio.");
-                    return;
-                }
-
-                if (string.IsNullOrWhiteSpace(RegisterModel.Email))
-                {
-                    ShowError("L'email è obbligatoria.");
-                    return;
-                }
-
-                if (string.IsNullOrWhiteSpace(RegisterModel.Password))
-                {
-                    ShowError("La password è obbligatoria.");
-                    return;
-                }
-
-                if (RegisterModel.Password != RegisterModel.ConfirmPassword)
-                {
-                    ShowError("Le password non coincidono.");
-                    return;
-                }
-
                 // Registrazione utente
                 this.Token = await AuthenticationService.RegisterAsync(RegisterModel);
                 await LocalStorage.SetItemAsync(nameof(Token), Token);
@@ -143,6 +113,7 @@ namespace devbuddy.blazor.Components
             catch (Exception ex)
             {
                 ShowError(ex.Message);
+                return;
             }
             finally
             {

@@ -27,9 +27,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6C83A596-D32
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devbuddy.plugins.QueryOptimizer", "devbuddy.plugins\devbuddy.plugins.QueryOptimizer\devbuddy.plugins.QueryOptimizer.csproj", "{1FEC38C8-2830-4946-9068-2961FB1B8882}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devbuddy.plugins.Base64Encoder", "devbuddy.plugins\devbuddy.plugins.Base64Encoder\devbuddy.plugins.Base64Encoder.csproj", "{83378767-FACB-4A15-8C75-F32D06B5376B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devbuddy.plugins.Base64", "devbuddy.plugins\devbuddy.plugins.Base64\devbuddy.plugins.Base64.csproj", "{83378767-FACB-4A15-8C75-F32D06B5376B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devbuddy.plugins.QRCodeEncoder", "devbuddy.plugins\devbuddy.plugins.QRCodeEncoder\devbuddy.plugins.QRCodeEncoder.csproj", "{ADE84F52-C580-4D7E-BE4E-5D4FF1B71117}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devbuddy.plugins.QRCode", "devbuddy.plugins\devbuddy.plugins.QRCode\devbuddy.plugins.QRCode.csproj", "{ADE84F52-C580-4D7E-BE4E-5D4FF1B71117}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devbuddy.plugins.CodeMetricsAnalyzer", "devbuddy.plugins\devbuddy.plugins.CodeMetricsAnalyzer\devbuddy.plugins.CodeMetricsAnalyzer.csproj", "{5422863F-AE88-4436-A5AA-875CA909AC11}"
 EndProject

@@ -116,6 +116,19 @@
 								</div>
 							</div>
 						</div>
+						<div class="row g-3">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label>Espressione Cron Generata</label>
+									<div class="input-group">
+										<input type="text" class="form-control" readonly value="@currentExpression" />
+										<button class="btn btn-outline-primary" @onclick="() => CopyToClipboard(currentExpression)">
+											<i class="fas fa-copy"></i> Copia
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
 					}
 					else if (expressionType == CronExpressionType.Advanced)
 					{

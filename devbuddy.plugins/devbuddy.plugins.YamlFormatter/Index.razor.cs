@@ -25,6 +25,7 @@ namespace devbuddy.plugins.YamlFormatter
         private int _yamlSize = 0;
         private int _yamlLines = 0;
         private int _yamlNodes = 0;
+        private string activeTab = "formatter";
 
         // Modal references and properties
         private ModalComponentBase saveModal;

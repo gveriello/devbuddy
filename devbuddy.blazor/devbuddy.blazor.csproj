@@ -8,6 +8,21 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Attributes\**" />
+	  <Compile Remove="Enums\**" />
+	  <Compile Remove="wwwroot\**" />
+	  <Content Remove="Attributes\**" />
+	  <Content Remove="Enums\**" />
+	  <Content Remove="wwwroot\**" />
+	  <EmbeddedResource Remove="Attributes\**" />
+	  <EmbeddedResource Remove="Enums\**" />
+	  <EmbeddedResource Remove="wwwroot\**" />
+	  <None Remove="Attributes\**" />
+	  <None Remove="Enums\**" />
+	  <None Remove="wwwroot\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<Resource Include="_Imports.razor">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Resource>
@@ -23,12 +38,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Attributes\" />
-		<Folder Include="Enums\" />
-		<Folder Include="wwwroot\css\" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <ProjectReference Include="..\devbuddy.business\devbuddy.business.csproj" />
 	  <ProjectReference Include="..\devbuddy.common\devbuddy.common.csproj" />
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.Base64Encoder\devbuddy.plugins.Base64Encoder.csproj" />
@@ -38,12 +47,6 @@
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.QRCodeEncoder\devbuddy.plugins.QRCodeEncoder.csproj" />
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.QueryOptimizer\devbuddy.plugins.QueryOptimizer.csproj" />
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.YamlFormatter\devbuddy.plugins.YamlFormatter.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Content Update="wwwroot\**\*.*">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Content>
 	</ItemGroup>
 
 </Project>

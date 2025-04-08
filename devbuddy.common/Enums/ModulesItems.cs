@@ -33,6 +33,9 @@ namespace devbuddy.common.Enums
         CronExpression,
 
         [ModuleKey("874e9d5f-a2b3-48c7-9d5e-8b6f21c0e379")]
-        YamlFormatter
+        YamlFormatter,
+
+        [ModuleKey("62e8bbea-9b10-4687-a65e-4fc5633db014")]
+        XmlFormatter,
     }
 }

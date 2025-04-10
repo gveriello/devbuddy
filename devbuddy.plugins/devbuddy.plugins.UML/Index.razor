@@ -1,0 +1,343 @@
+﻿@using devbuddy.common.Applications
+@using devbuddy.plugins.UML.Models
+@inherits AppComponentBase<UmlDesignerDataModel>
+
+<div class="container-fluid mt-4">
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">UML Designer</h4>
+                    <div>
+                        <div class="btn-group me-2">
+                            <button class="btn btn-outline-primary" @onclick="NewDiagram">
+                                <i class="fa-solid fa-plus me-1"></i>Nuovo
+                            </button>
+                            <button class="btn btn-outline-primary" @onclick="OpenModal">
+                                <i class="fa-solid fa-folder-open me-1"></i>Apri
+                            </button>
+                            <button class="btn btn-outline-primary" @onclick="SaveDiagram" disabled="@(!IsEditorActive)">
+                                <i class="fa-solid fa-save me-1"></i>Salva
+                            </button>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-outline-secondary" @onclick="ExportAsPng" disabled="@(!IsEditorActive)">
+                                <i class="fa-solid fa-file-image me-1"></i>Esporta PNG
+                            </button>
+                            <button class="btn btn-outline-secondary" @onclick="ExportAsXml" disabled="@(!IsEditorActive)">
+                                <i class="fa-solid fa-file-code me-1"></i>Esporta XML
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (!IsEditorActive)
+    {
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body text-center py-5">
+                        <h5>Benvenuto nell'UML Designer</h5>
+                        <p>Crea o apri un diagramma UML per iniziare.</p>
+                        <div>
+                            <button class="btn btn-primary me-2" @onclick="NewDiagram">
+                                <i class="fa-solid fa-plus me-1"></i>Nuovo Diagramma
+                            </button>
+                            <button class="btn btn-outline-primary" @onclick="OpenModal">
+                                <i class="fa-solid fa-folder-open me-1"></i>Apri Diagramma
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="input-group" style="max-width: 300px;">
+                                <span class="input-group-text">Nome</span>
+                                <input type="text" class="form-control" @bind="CurrentDiagram.Name" placeholder="Untitled Diagram">
+                            </div>
+                            <div>
+                                <select class="form-select" value="@CurrentDiagram.DiagramType" @onchange="OnDiagramTypeChange">
+                                    <option value="class">Diagramma delle Classi</option>
+                                    <option value="sequence">Diagramma di Sequenza</option>
+                                    <option value="activity">Diagramma di Attività</option>
+                                    <option value="usecase">Diagramma dei Casi d'Uso</option>
+                                    <option value="er">Entity Relationship</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-2">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0">Elementi</h5>
+                    </div>
+                    <div class="card-body p-2">
+                        <div class="uml-sidebar">
+                            <!-- Palette dinamica che cambierà in base al tipo di diagramma -->
+                            @if (CurrentDiagram.DiagramType == "class")
+                            {
+                                <div class="sidebar-group">
+                                    <h6>Class Diagram</h6>
+                                    <div class="palette-item" @onclick=@(() => AddElement("class"))>
+                                        <i class="fa-solid fa-cube me-2"></i>Class
+                                    </div>
+                                    <div class="palette-item" @onclick=@(() => AddElement("interface"))>
+                                        <i class="fa-solid fa-circle-dot me-2"></i>Interface
+                                    </div>
+                                    <div class="palette-item" @onclick=@(() => AddElement("enum"))>
+                                        <i class="fa-solid fa-list-ol me-2"></i>Enumeration
+                                    </div>
+                                    <div class="palette-item" @onclick=@(() => AddElement("package"))>
+                                        <i class="fa-solid fa-folder me-2"></i>Package
+                                    </div>
+                                </div>
+                                <div class="sidebar-group">
+                                    <h6>Connettori</h6>
+                                    <div class="palette-item" @onclick=@(() => AddElement("association"))>
+                                        <i class="fa-solid fa-arrows-left-right me-2"></i>Association
+                                    </div>
+                                    <div class="palette-item" @onclick=@(() => AddElement("inheritance"))>
+                                        <i class="fa-solid fa-arrow-up me-2"></i>Inheritance
+                                    </div>
+                                    <div class="palette-item" @onclick=@(() => AddElement("aggregation"))>
+                                        <i class="fa-regular fa-square me-2"></i>Aggregation
+                                    </div>
+                                    <div class="palette-item" @onclick=@(() => AddElement("composition"))>
+                                        <i class="fa-solid fa-square me-2"></i>Composition
+                                    </div>
+                                    <div class="palette-item" @onclick=@(() => AddElement("dependency"))>
+                                        <i class="fa-solid fa-arrow-right-long me-2"></i>Dependency
+                                    </div>
+                                </div>
+                            }
+                            else if (CurrentDiagram.DiagramType == "sequence")
+                            {
+                                <div class="sidebar-group">
+                                    <h6>Sequence Diagram</h6>
+                                    <div class="palette-item" @onclick=@(() => AddElement("participant"))>
+                                        <i class="fa-solid fa-user me-2"></i>Participant
+                                    </div>
+                                    <div class="palette-item" @onclick=@(() => AddElement("lifeline"))>
+                                        <i class="fa-solid fa-grip-lines-vertical me-2"></i>Lifeline
+                                    </div>
+                                    <div class="palette-item" @onclick=@(() => AddElement("message"))>
+                                        <i class="fa-solid fa-arrow-right me-2"></i>Message
+                                    </div>
+                                    <div class="palette-item" @onclick=@(() => AddElement("return"))>
+                                        <i class="fa-solid fa-reply me-2"></i>Return
+                                    </div>
+                                    <div class="palette-item" @onclick=@(() => AddElement("activation"))>
+                                        <i class="fa-solid fa-rectangle-list me-2"></i>Activation
+                                    </div>
+                                </div>
+                            }
+                            else if (CurrentDiagram.DiagramType == "activity")
+                            {
+                                <div class="sidebar-group">
+                                    <h6>Activity Diagram</h6>
+                                    <div class="palette-item" @onclick=@(() => AddElement("start"))>
+                                        <i class="fa-solid fa-circle me-2"></i>Start
+                                    </div>
+                                    <div class="palette-item" @onclick=@(() => AddElement("end"))>
+                                        <i class="fa-regular fa-circle me-2"></i>End
+                                    </div>
+                                    <div class="palette-item" @onclick=@(() => AddElement("activity"))>
+                                        <i class="fa-solid fa-square me-2"></i>Activity
+                                    </div>
+                                    <div class="palette-item" @onclick=@(() => AddElement("decision"))>
+                                        <i class="fa-solid fa-diamond me-2"></i>Decision
+                                    </div>
+                                    <div class="palette-item" @onclick=@(() => AddElement("fork"))>
+                                        <i class="fa-solid fa-code-branch me-2"></i>Fork/Join
+                                    </div>
+                                    <div class="palette-item" @onclick=@(() => AddElement("flow"))>
+                                        <i class="fa-solid fa-arrow-right me-2"></i>Flow
+                                    </div>
+                                </div>
+                            }
+                            else if (CurrentDiagram.DiagramType == "usecase")
+                            {
+                                <div class="sidebar-group">
+                                    <h6>Use Case Diagram</h6>
+                                    <div class="palette-item" @onclick=@(() => AddElement("actor"))>
+                                        <i class="fa-solid fa-user me-2"></i>Actor
+                                    </div>
+                                    <div class="palette-item" @onclick=@(() => AddElement("usecase"))>
+                                        <i class="fa-solid fa-ellipsis me-2"></i>Use Case
+                                    </div>
+                                    <div class="palette-item" @onclick=@(() => AddElement("system"))>
+                                        <i class="fa-solid fa-box me-2"></i>System
+                                    </div>
+                                    <div class="palette-item" @onclick=@(() => AddElement("include"))>
+                                        <i class="fa-solid fa-arrow-right me-2"></i>Include
+                                    </div>
+                                    <div class="palette-item" @onclick=@(() => AddElement("extend"))>
+                                        <i class="fa-solid fa-arrow-right-long me-2"></i>Extend
+                                    </div>
+                                </div>
+                            }
+                            else if (CurrentDiagram.DiagramType == "er")
+                            {
+                                <div class="sidebar-group">
+                                    <h6>Entity Relationship</h6>
+                                    <div class="palette-item" @onclick=@(() => AddElement("entity"))>
+                                        <i class="fa-solid fa-table me-2"></i>Entity
+                                    </div>
+                                    <div class="palette-item" @onclick=@(() => AddElement("attribute"))>
+                                        <i class="fa-solid fa-tag me-2"></i>Attribute
+                                    </div>
+                                    <div class="palette-item" @onclick=@(() => AddElement("relationship"))>
+                                        <i class="fa-solid fa-diamond me-2"></i>Relationship
+                                    </div>
+                                    <div class="palette-item" @onclick=@(() => AddElement("connection"))>
+                                        <i class="fa-solid fa-arrow-right me-2"></i>Connection
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-10">
+                <div class="card">
+                    <div class="card-body p-0">
+                        <div id="uml-editor" class="uml-editor" @ref="EditorElement" style="height: 600px;">
+                            <div class="editor-loading-overlay" hidden="@(!IsLoading)">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Modal per apertura diagramma -->
+<ModalComponentBase @ref="OpenDiagramModal" Title="Apri Diagramma" ModalSize="modal-lg">
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Tipo</th>
+                    <th>Descrizione</th>
+                    <th>Data Modifica</th>
+                    <th>Azioni</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.SavedDiagrams.Count == 0)
+                {
+                    <tr>
+                        <td colspan="5" class="text-center">Nessun diagramma salvato</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var diagram in Model.SavedDiagrams.OrderByDescending(d => d.ModifiedDate))
+                    {
+                        <tr>
+                            <td>@diagram.Name</td>
+                            <td>@GetDiagramTypeName(diagram.DiagramType)</td>
+                            <td>@diagram.Description</td>
+                            <td>@diagram.ModifiedDate.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-primary" @onclick="@(() => LoadDiagram(diagram))">
+                                        <i class="fa-solid fa-folder-open"></i>
+                                    </button>
+                                    <button class="btn btn-danger" @onclick="@(() => DeleteDiagram(diagram))">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</ModalComponentBase>
+
+<!-- Modal per salvare diagramma -->
+<ModalComponentBase @ref="SaveDiagramModal" Title="Salva Diagramma" ModalSize="modal-lg" OnConfirmCallback="SaveDiagramConfirm">
+    <div class="mb-3">
+        <label for="diagramName" class="form-label">Nome</label>
+        <input type="text" class="form-control" id="diagramName" @bind="CurrentDiagram.Name" />
+    </div>
+    <div class="mb-3">
+        <label for="diagramDescription" class="form-label">Descrizione</label>
+        <textarea class="form-control" id="diagramDescription" rows="3" @bind="CurrentDiagram.Description"></textarea>
+    </div>
+</ModalComponentBase>
+
+<!-- Modal di conferma eliminazione -->
+<ModalComponentBase @ref="DeleteDiagramModal" Title="Conferma Eliminazione" ModalSize="modal-md" OnConfirmCallback="DeleteDiagramConfirm">
+    <p>Sei sicuro di voler eliminare il diagramma "@(DiagramToDelete?.Name)"?</p>
+    <p>Questa azione non può essere annullata.</p>
+</ModalComponentBase>
+
+<style>
+    .uml-editor {
+        height: calc(100vh - 220px);
+        min-height: 500px;
+        position: relative;
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+    }
+
+    .editor-loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(255, 255, 255, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .uml-sidebar {
+        height: 100%;
+        overflow-y: auto;
+    }
+
+    .sidebar-group {
+        margin-bottom: 15px;
+    }
+
+    .palette-item {
+        padding: 8px;
+        margin-bottom: 5px;
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .palette-item:hover {
+        background-color: #e9ecef;
+    }
+</style>

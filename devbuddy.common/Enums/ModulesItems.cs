@@ -37,5 +37,9 @@ namespace devbuddy.common.Enums
 
         [ModuleKey("62e8bbea-9b10-4687-a65e-4fc5633db014")]
         XmlFormatter,
+
+        [ModuleKey("9ac57f2b-6d8e-4b1c-9a0f-854c7c3b5e1a")]
+        //[Icon("fa-diagram-project")]
+        DiagramEditor
     }
 }

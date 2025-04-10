@@ -46,6 +46,7 @@
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.JsonFormatters\devbuddy.plugins.JsonFormatters.csproj" />
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.QRCode\devbuddy.plugins.QRCode.csproj" />
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.QueryOptimizer\devbuddy.plugins.QueryOptimizer.csproj" />
+	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.UML\devbuddy.plugins.UML.csproj" />
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.XmlFormatter\devbuddy.plugins.XmlFormatter.csproj" />
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.YamlFormatter\devbuddy.plugins.YamlFormatter.csproj" />
 	</ItemGroup>

@@ -1,0 +1,244 @@
+@using devbuddy.common.Applications
+@using devbuddy.plugins.MyNotes.Models
+@inherits AppComponentBase<MyNotesDataModel>
+
+<div class="mynotes-container">
+	<div class="row g-0 h-100">
+		<div class="col-md-3 notes-sidebar-container">
+			<NotesList Notes="@Model.Notes"
+					   SelectedNote="@CurrentNote"
+					   OnNoteSelected="@SelectNote"
+					   OnNoteAdded="@AddNote" />
+		</div>
+		<div class="col-md-9 editor-container">
+			<NoteEditor Note="@CurrentNote"
+						OnNoteChanged="@NoteChanged"
+						OnNoteDeleted="@DeleteNote" />
+		</div>
+	</div>
+</div>
+
+<style>
+	.mynotes-container {
+		height: calc(100vh - 100px);
+		display: flex;
+		flex-direction: column;
+	}
+
+	.notes-sidebar-container {
+		background-color: #f8f9fa;
+		border-right: 1px solid #dee2e6;
+		overflow-y: hidden;
+		height: 100%;
+	}
+
+	.notes-sidebar {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+	}
+
+	.notes-header {
+		padding: 10px;
+		border-bottom: 1px solid #dee2e6;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.search-box {
+		position: relative;
+		flex-grow: 1;
+		margin-right: 10px;
+	}
+
+	.search-icon {
+		position: absolute;
+		right: 10px;
+		top: 50%;
+		transform: translateY(-50%);
+		color: #6c757d;
+	}
+
+	.notes-list {
+		flex-grow: 1;
+		overflow-y: auto;
+		padding: 10px;
+	}
+
+	.no-notes {
+		text-align: center;
+		padding: 20px;
+		color: #6c757d;
+	}
+
+	.note-item {
+		padding: 10px;
+		margin-bottom: 10px;
+		border-radius: 5px;
+		background-color: white;
+		border: 1px solid #dee2e6;
+		cursor: pointer;
+		transition: all 0.2s;
+	}
+
+		.note-item:hover {
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+		}
+
+		.note-item.selected {
+			border-left: 4px solid #0d6efd;
+			background-color: #f0f7ff;
+		}
+
+	.note-title {
+		font-weight: bold;
+		margin-bottom: 5px;
+		display: flex;
+		align-items: center;
+	}
+
+	.favorite-icon {
+		color: #ffc107;
+		margin-right: 5px;
+	}
+
+	.note-preview {
+		font-size: 0.8rem;
+		color: #6c757d;
+		margin-bottom: 5px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+	}
+
+	.note-meta {
+		display: flex;
+		justify-content: space-between;
+		font-size: 0.75rem;
+		color: #adb5bd;
+	}
+
+	.filter-options {
+		padding: 10px;
+	}
+
+	.notes-tags {
+		padding: 0 10px;
+	}
+
+	.all-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 5px;
+	}
+
+	.tag-badge {
+		background-color: #e9ecef;
+		color: #495057;
+		padding: 3px 6px;
+		border-radius: 10px;
+		font-size: 0.75rem;
+		cursor: pointer;
+	}
+
+		.tag-badge.selected {
+			background-color: #0d6efd;
+			color: white;
+		}
+
+	.editor-container {
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.note-editor {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		padding: 15px;
+	}
+
+	.editor-header {
+		margin-bottom: 15px;
+	}
+
+	.title-row {
+		display: flex;
+		margin-bottom: 10px;
+	}
+
+	.note-title-input {
+		flex-grow: 1;
+		font-weight: bold;
+		font-size: 1.25rem;
+		margin-right: 10px;
+	}
+
+	.note-actions {
+		display: flex;
+		gap: 5px;
+	}
+
+	.type-and-tags-row {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px;
+		margin-bottom: 10px;
+	}
+
+	.note-type-selector,
+	.language-selector {
+		width: 150px;
+	}
+
+	.tags-input {
+		flex-grow: 1;
+		min-width: 200px;
+	}
+
+	.tags-container {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 5px;
+		margin-top: 10px;
+	}
+
+	.remove-tag {
+		margin-left: 5px;
+		cursor: pointer;
+	}
+
+	.editor-content {
+		flex-grow: 1;
+		margin-bottom: 15px;
+	}
+
+	.content-editor {
+		height: 100%;
+		resize: none;
+		font-family: 'Courier New', Courier, monospace;
+	}
+
+	.editor-footer {
+		border-top: 1px solid #dee2e6;
+		padding-top: 10px;
+		color: #6c757d;
+		font-size: 0.8rem;
+	}
+
+	.no-note-selected {
+		display: flex;
+		height: 100%;
+		align-items: center;
+		justify-content: center;
+		color: #6c757d;
+	}
+
+		.no-note-selected .message {
+			text-align: center;
+		}
+</style>

@@ -1,0 +1,93 @@
+@using System.Text.RegularExpressions
+@using System.ComponentModel
+@using devbuddy.plugins.MyNotes.Models
+
+<div class="notes-sidebar">
+    <div class="notes-header">
+        <div class="search-box">
+            <input type="text" class="form-control" placeholder="Cerca note..." @bind="SearchQuery" @bind:event="oninput" />
+            <i class="fa-solid fa-search search-icon"></i>
+        </div>
+        <div class="notes-actions">
+            <button class="btn btn-sm btn-primary" @onclick="AddNewNote" title="Nuova nota">
+                <i class="fa-solid fa-plus"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="filter-options mb-2">
+        <div class="btn-group btn-group-sm w-100">
+            <button class="btn @(FilterType == NoteFilterType.All ? "btn-primary" : "btn-outline-secondary")"
+                    @onclick="() => SetFilter(NoteFilterType.All)">
+                Tutte
+            </button>
+            <button class="btn @(FilterType == NoteFilterType.Favorites ? "btn-primary" : "btn-outline-secondary")"
+                    @onclick="() => SetFilter(NoteFilterType.Favorites)">
+                <i class="fa-solid fa-star"></i>
+            </button>
+            <button class="btn @(FilterType == NoteFilterType.Recent ? "btn-primary" : "btn-outline-secondary")"
+                    @onclick="() => SetFilter(NoteFilterType.Recent)">
+                Recenti
+            </button>
+        </div>
+    </div>
+
+    <div class="notes-tags mb-2">
+        @if (AllTags.Any())
+        {
+            <div class="all-tags">
+                @foreach (var tag in AllTags)
+                {
+                    <span class="tag-badge @(SelectedTags.Contains(tag) ? "selected" : "")"
+                          @onclick="() => ToggleTagFilter(tag)">
+                        #@tag
+                    </span>
+                }
+            </div>
+        }
+    </div>
+
+    <div class="notes-list">
+        @if (!FilteredNotes.Any())
+        {
+            <div class="no-notes">
+                <p>Nessuna nota trovata</p>
+            </div>
+        }
+        else
+        {
+            @foreach (var note in FilteredNotes)
+            {
+                <div class="note-item @(SelectedNote?.Id == note.Id ? "selected" : "")" @onclick="() => SelectNote(note)">
+                    <div class="note-title">
+                        @if (note.IsFavorite)
+                        {
+                            <i class="fa-solid fa-star favorite-icon"></i>
+                        }
+                        @note.Title
+                    </div>
+                    <div class="note-preview">
+                        @GetPreview(note)
+                    </div>
+                    <div class="note-meta">
+                        <span class="note-date">@note.ModifiedAt.ToString("dd/MM/yyyy HH:mm")</span>
+                        <span class="note-type">
+                            @switch (note.Type)
+                            {
+                                case NoteType.Code:
+                                    <i class="fa-solid fa-code" title="Codice"></i>
+                                    break;
+                                case NoteType.Markdown:
+                                    <i class="fa-brands fa-markdown" title="Markdown"></i>
+                                    break;
+                                default:
+                                    <i class="fa-solid fa-file-lines" title="Testo"></i>
+                                    break;
+                            }
+                        </span>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>

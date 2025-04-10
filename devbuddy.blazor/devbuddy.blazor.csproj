@@ -44,6 +44,7 @@
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.CodeMetricsAnalyzer\devbuddy.plugins.CodeMetricsAnalyzer.csproj" />
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.CronExpression\devbuddy.plugins.CronExpression.csproj" />
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.JsonFormatters\devbuddy.plugins.JsonFormatters.csproj" />
+	  <ProjectReference Include="..\devbuddy.plugins\DevBuddy.Plugins.MyNotes\devbuddy.plugins.MyNotes.csproj" />
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.QRCode\devbuddy.plugins.QRCode.csproj" />
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.QueryOptimizer\devbuddy.plugins.QueryOptimizer.csproj" />
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.UML\devbuddy.plugins.UML.csproj" />

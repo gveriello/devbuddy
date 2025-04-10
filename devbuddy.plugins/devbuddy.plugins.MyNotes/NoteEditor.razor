@@ -1,0 +1,115 @@
+@using devbuddy.common.Applications
+@using devbuddy.plugins.MyNotes.Models
+@inherits AppComponentBase
+
+<div class="note-editor @(Note == null ? "d-none" : "")">
+    @if (Note != null)
+    {
+        <div class="editor-header">
+            <div class="title-row">
+                <input type="text" class="form-control note-title-input" 
+                       placeholder="Titolo della nota" 
+                       @bind="Note.Title" 
+                       @bind:event="oninput" 
+                       @onblur="OnTitleChanged" />
+                
+                <div class="note-actions">
+                    <button type="button" class="btn btn-sm @(Note.IsFavorite ? "btn-warning" : "btn-outline-warning")" 
+                            @onclick="ToggleFavorite" 
+                            @attributes="@Tooltip("Aggiungi ai preferiti")">
+                        <i class="fa-solid fa-star"></i>
+                    </button>
+                    
+                    <button type="button" class="btn btn-sm btn-outline-danger" 
+                            @onclick="DeleteNote" 
+                            @attributes="@Tooltip("Elimina nota")">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="type-and-tags-row">
+                <div class="note-type-selector">
+                    <select class="form-select" @bind="Note.Type">
+                        <option value="@NoteType.Text">Testo semplice</option>
+                        <option value="@NoteType.Code">Codice</option>
+                        <option value="@NoteType.Markdown">Markdown</option>
+                    </select>
+                </div>
+                
+                @if (Note.Type == NoteType.Code)
+                {
+                    <div class="language-selector">
+                        <select class="form-select" @bind="Note.Language">
+                            <option value="plaintext">Testo</option>
+                            <option value="csharp">C#</option>
+                            <option value="javascript">JavaScript</option>
+                            <option value="html">HTML</option>
+                            <option value="css">CSS</option>
+                            <option value="sql">SQL</option>
+                            <option value="json">JSON</option>
+                            <option value="xml">XML</option>
+                            <option value="php">PHP</option>
+                            <option value="java">Java</option>
+                            <option value="python">Python</option>
+                        </select>
+                    </div>
+                }
+                
+                <div class="tags-input">
+                    <div class="input-group">
+                        <input type="text" class="form-control" 
+                               placeholder="Aggiungi tag" 
+                               @bind="NewTag" 
+                               @onkeydown="HandleTagInputKeyDown" />
+                        <button class="btn btn-outline-secondary" type="button" @onclick="AddTag">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="tags-container">
+                        @foreach (var tag in Note.Tags)
+                        {
+                            <span class="badge bg-secondary tag-badge">
+                                #@tag
+                                <span class="remove-tag" @onclick="() => RemoveTag(tag)">×</span>
+                            </span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="editor-content">
+            <textarea class="form-control content-editor" 
+                      placeholder="Contenuto della nota..." 
+                      @bind="Note.Content" 
+                      @bind:event="oninput" 
+                      @onblur="OnContentChanged"></textarea>
+        </div>
+        
+        <div class="editor-footer">
+            <span class="note-stats">
+                @Note.Content.Length caratteri | Ultima modifica: @Note.ModifiedAt.ToString("dd/MM/yyyy HH:mm")
+            </span>
+        </div>
+    }
+    else
+    {
+        <div class="no-note-selected">
+            <div class="message">
+                <i class="fa-solid fa-file-lines fa-3x mb-3"></i>
+                <h5>Nessuna nota selezionata</h5>
+                <p>Seleziona una nota esistente o creane una nuova</p>
+            </div>
+        </div>
+    }
+</div>
+
+<ModalComponentBase @ref="_deleteModal"
+                    Title="Conferma eliminazione"
+                    ModalSize="modal-md"
+                    OnConfirmCallback="ConfirmDelete">
+    <p>Sei sicuro di voler eliminare la nota "<strong>@(Note?.Title)</strong>"?</p>
+    <p>Questa azione non può essere annullata.</p>
+</ModalComponentBase>

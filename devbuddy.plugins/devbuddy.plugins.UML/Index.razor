@@ -3,105 +3,111 @@
 @using devbuddy.plugins.UML.Models
 @inherits AppComponentBase<UMLDataModel>
 
+<HeadContent>
+	<script src="_content/devbuddy.plugins.UML/js/uml-editor.js"></script>
+	<link rel="stylesheet" href="https://jgraph.github.io/mxgraph/javascript/src/css/common.css">
+	<link rel="stylesheet" href="_content/devbuddy.plugins.UML/css/uml-editor.css">
+</HeadContent>
+
 <div class="container-fluid mt-4">
-    <div class="row mb-4">
-        <div class="col-12">
-            <h2>UML Diagram Designer</h2>
-            <p class="text-muted">Crea e modifica diagrammi UML con drag and drop</p>
-        </div>
-    </div>
+	<div class="row mb-4">
+		<div class="col-12">
+			<h2>UML Diagram Designer</h2>
+			<p class="text-muted">Crea e modifica diagrammi UML con drag and drop</p>
+		</div>
+	</div>
 
-    <div class="row mb-3">
-        <div class="col-12">
-            <div class="btn-toolbar" role="toolbar">
-                <div class="btn-group me-2" role="group">
-                    <button type="button" class="btn btn-outline-primary" @onclick="NewDiagram">
-                        <i class="fa-solid fa-file"></i> Nuovo
-                    </button>
-                    <button type="button" class="btn btn-outline-primary" @onclick="SaveDiagram">
-                        <i class="fa-solid fa-save"></i> Salva
-                    </button>
-                    <button type="button" class="btn btn-outline-primary" @onclick="LoadDiagram">
-                        <i class="fa-solid fa-folder-open"></i> Carica
-                    </button>
-                </div>
-                <div class="btn-group me-2" role="group">
-                    <button type="button" class="btn btn-outline-secondary" @onclick="ExportDiagram">
-                        <i class="fa-solid fa-download"></i> Esporta
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+	<div class="row mb-3">
+		<div class="col-12">
+			<div class="btn-toolbar" role="toolbar">
+				<div class="btn-group me-2" role="group">
+					<button type="button" class="btn btn-outline-primary" @onclick="NewDiagram">
+						<i class="fa-solid fa-file"></i> Nuovo
+					</button>
+					<button type="button" class="btn btn-outline-primary" @onclick="SaveDiagram">
+						<i class="fa-solid fa-save"></i> Salva
+					</button>
+					<button type="button" class="btn btn-outline-primary" @onclick="LoadDiagram">
+						<i class="fa-solid fa-folder-open"></i> Carica
+					</button>
+				</div>
+				<div class="btn-group me-2" role="group">
+					<button type="button" class="btn btn-outline-secondary" @onclick="ExportDiagram">
+						<i class="fa-solid fa-download"></i> Esporta
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
-    <div class="row">
-        <div class="col-md-2">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="mb-0">Elementi UML</h5>
-                </div>
-                <div class="card-body p-0">
-                    <div id="uml-palette" style="height: 600px; overflow-y: auto;"></div>
-                </div>
-            </div>
-        </div>
+	<div class="row">
+		<div class="col-md-2">
+			<div class="card mb-4">
+				<div class="card-header">
+					<h5 class="mb-0">Elementi UML</h5>
+				</div>
+				<div class="card-body p-0">
+					<div id="uml-palette" style="height: 600px; overflow-y: auto;"></div>
+				</div>
+			</div>
+		</div>
 
-        <div class="col-md-10">
-            <div class="card mb-4">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Editor Diagramma</h5>
-                    <div>
-                        <button class="btn btn-sm btn-outline-primary" @onclick="ZoomIn">
-                            <i class="fa-solid fa-magnifying-glass-plus"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-primary" @onclick="ZoomOut">
-                            <i class="fa-solid fa-magnifying-glass-minus"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-primary" @onclick="ResetZoom">
-                            <i class="fa-solid fa-arrows-to-dot"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="card-body p-0">
-                    <div id="uml-diagram-container" style="position: relative; height: 600px; overflow: hidden;">
-                        <div id="uml-diagram" style="position: absolute; left: 0; top: 0; right: 0; bottom: 0;"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+		<div class="col-md-10">
+			<div class="card mb-4">
+				<div class="card-header d-flex justify-content-between align-items-center">
+					<h5 class="mb-0">Editor Diagramma</h5>
+					<div>
+						<button class="btn btn-sm btn-outline-primary" @onclick="ZoomIn">
+							<i class="fa-solid fa-magnifying-glass-plus"></i>
+						</button>
+						<button class="btn btn-sm btn-outline-primary" @onclick="ZoomOut">
+							<i class="fa-solid fa-magnifying-glass-minus"></i>
+						</button>
+						<button class="btn btn-sm btn-outline-primary" @onclick="ResetZoom">
+							<i class="fa-solid fa-arrows-to-dot"></i>
+						</button>
+					</div>
+				</div>
+				<div class="card-body p-0">
+					<div id="uml-diagram-container" style="position: relative; height: 600px; overflow: hidden;">
+						<div id="uml-diagram" style="position: absolute; left: 0; top: 0; right: 0; bottom: 0;"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <ModalComponentBase @ref="saveModal" Title="Salva Diagramma" ShowFooter="true" OnConfirmCallback="ConfirmSave">
-    <div class="mb-3">
-        <label for="diagramName" class="form-label">Nome Diagramma</label>
-        <input type="text" class="form-control" id="diagramName" @bind="DiagramName" />
-    </div>
-    <div class="mb-3">
-        <label for="diagramDescription" class="form-label">Descrizione (opzionale)</label>
-        <textarea class="form-control" id="diagramDescription" rows="3" @bind="DiagramDescription"></textarea>
-    </div>
+	<div class="mb-3">
+		<label for="diagramName" class="form-label">Nome Diagramma</label>
+		<input type="text" class="form-control" id="diagramName" @bind="DiagramName" />
+	</div>
+	<div class="mb-3">
+		<label for="diagramDescription" class="form-label">Descrizione (opzionale)</label>
+		<textarea class="form-control" id="diagramDescription" rows="3" @bind="DiagramDescription"></textarea>
+	</div>
 </ModalComponentBase>
 
 <ModalComponentBase @ref="loadModal" Title="Carica Diagramma" ShowFooter="true" OnConfirmCallback="ConfirmLoad">
-    <div class="mb-3">
-        <label class="form-label">Seleziona Diagramma</label>
-        <select class="form-select" @bind="SelectedDiagramId">
-            @foreach (var diagram in SavedDiagrams)
-            {
-                <option value="@diagram.Id">@diagram.Name</option>
-            }
-        </select>
-    </div>
+	<div class="mb-3">
+		<label class="form-label">Seleziona Diagramma</label>
+		<select class="form-select" @bind="SelectedDiagramId">
+			@foreach (var diagram in SavedDiagrams)
+			{
+				<option value="@diagram.Id">@diagram.Name</option>
+			}
+		</select>
+	</div>
 </ModalComponentBase>
 
 <ModalComponentBase @ref="exportModal" Title="Esporta Diagramma" ShowFooter="true" OnConfirmCallback="ConfirmExport">
-    <div class="mb-3">
-        <label class="form-label">Formato</label>
-        <select class="form-select" @bind="ExportFormat">
-            <option value="png">PNG</option>
-            <option value="xml">XML</option>
-            <option value="svg">SVG</option>
-        </select>
-    </div>
+	<div class="mb-3">
+		<label class="form-label">Formato</label>
+		<select class="form-select" @bind="ExportFormat">
+			<option value="png">PNG</option>
+			<option value="xml">XML</option>
+			<option value="svg">SVG</option>
+		</select>
+	</div>
 </ModalComponentBase>

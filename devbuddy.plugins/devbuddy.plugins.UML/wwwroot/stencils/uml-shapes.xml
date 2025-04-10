@@ -1,0 +1,63 @@
+﻿<shapes name="UML">
+	<shape name="Class" h="90" w="160" aspect="variable" strokewidth="inherit">
+		<connections>
+			<constraint x="0.5" y="0" perimeter="0" name="N"/>
+			<constraint x="0.5" y="1" perimeter="0" name="S"/>
+			<constraint x="0" y="0.5" perimeter="0" name="W"/>
+			<constraint x="1" y="0.5" perimeter="0" name="E"/>
+			<constraint x="0" y="0" perimeter="0" name="NW"/>
+			<constraint x="1" y="0" perimeter="0" name="NE"/>
+			<constraint x="1" y="1" perimeter="0" name="SE"/>
+			<constraint x="0" y="1" perimeter="0" name="SW"/>
+		</connections>
+		<background>
+			<path>
+				<move x="0" y="0"/>
+				<line x="160" y="0"/>
+				<line x="160" y="90"/>
+				<line x="0" y="90"/>
+				<close/>
+				<move x="0" y="30"/>
+				<line x="160" y="30"/>
+				<move x="0" y="60"/>
+				<line x="160" y="60"/>
+			</path>
+		</background>
+		<foreground>
+			<fillstroke/>
+			<text str="Classe" x="80" y="15" align="center" valign="middle" fontStyle="1"/>
+			<text str="+ attributo : tipo" x="5" y="45" align="left" valign="middle"/>
+			<text str="+ metodo() : tipo" x="5" y="75" align="left" valign="middle"/>
+		</foreground>
+	</shape>
+	<shape name="Interface" h="90" w="160" aspect="variable" strokewidth="inherit">
+		<connections>
+			<constraint x="0.5" y="0" perimeter="0" name="N"/>
+			<constraint x="0.5" y="1" perimeter="0" name="S"/>
+			<constraint x="0" y="0.5" perimeter="0" name="W"/>
+			<constraint x="1" y="0.5" perimeter="0" name="E"/>
+			<constraint x="0" y="0" perimeter="0" name="NW"/>
+			<constraint x="1" y="0" perimeter="0" name="NE"/>
+			<constraint x="1" y="1" perimeter="0" name="SE"/>
+			<constraint x="0" y="1" perimeter="0" name="SW"/>
+		</connections>
+		<background>
+			<path>
+				<move x="0" y="0"/>
+				<line x="160" y="0"/>
+				<line x="160" y="90"/>
+				<line x="0" y="90"/>
+				<close/>
+				<move x="0" y="30"/>
+				<line x="160" y="30"/>
+			</path>
+		</background>
+		<foreground>
+			<fillstroke/>
+			<text str="«interface»" x="80" y="10" align="center" valign="middle"/>
+			<text str="NomeInterfaccia" x="80" y="20" align="center" valign="middle" fontStyle="1"/>
+			<text str="+ metodo() : tipo" x="5" y="45" align="left" valign="middle"/>
+		</foreground>
+	</shape>
+	<!-- Aggiungi qui altre forme personalizzate se necessario -->
+</shapes>

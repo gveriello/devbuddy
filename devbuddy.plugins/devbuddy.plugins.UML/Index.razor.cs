@@ -1,239 +1,260 @@
 ﻿using devbuddy.common.Applications;
+using devbuddy.common.Attributes;
+using devbuddy.common.Enums;
 using devbuddy.common.Services;
 using devbuddy.plugins.UML.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Threading.Tasks;
 
 namespace devbuddy.plugins.UML
 {
-    public partial class Index : AppComponentBase<UmlDesignerDataModel>
+    public partial class Index : AppComponentBase<UMLDataModel>
     {
-        [Inject] private IJSRuntime JSRuntime { get; set; }
+        private string DiagramName { get; set; } = string.Empty;
+        private string DiagramDescription { get; set; } = string.Empty;
+        private string SelectedDiagramId { get; set; } = string.Empty;
+        private string ExportFormat { get; set; } = "png";
 
-        private ElementReference EditorElement;
-        private UmlDiagram CurrentDiagram = new();
-        private UmlDiagram DiagramToDelete;
+        private List<SavedDiagram> SavedDiagrams => Model?.SavedDiagrams ?? new List<SavedDiagram>();
 
-        private bool IsEditorActive = false;
-        private bool IsLoading = false;
+        // Modal references
+        private ModalComponentBase saveModal;
+        private ModalComponentBase loadModal;
+        private ModalComponentBase exportModal;
 
-        // Modali
-        private ModalComponentBase OpenDiagramModal;
-        private ModalComponentBase SaveDiagramModal;
-        private ModalComponentBase DeleteDiagramModal;
-        private readonly Lazy<Task<IJSObjectReference>> moduleTask;
+        // JavaScript module reference
+        private IJSObjectReference _jsModule;
 
         protected override async Task OnInitializedAsync()
         {
-            Model = DataModelService.ValueByKey<UmlDesignerDataModel>(nameof(UML));
+            // Inizializza il modello se necessario
+            Model = DataModelService.ValueByKey<UMLDataModel>(nameof(UML));
+
             await base.OnInitializedAsync();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            await base.OnAfterRenderAsync(firstRender);
-
             if (firstRender)
             {
-                _ = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/devbuddy.plugins.UML/js/diagram-editor.js").AsTask();
+                try
+                {
+                    // Importa il modulo JavaScript
+                    _jsModule = await JSRuntime.InvokeAsync<IJSObjectReference>(
+                        "import", "/_content/devbuddy.plugins.UML/js/uml-editor.js");
 
-                // Registra globalmente l'elemento editor per poterlo utilizzare con mxGraph
-                await JSRuntime.InvokeVoidAsync("window.umlEditorElement", EditorElement);
+                    // Inizializza l'editor UML
+                    var result = await _jsModule.InvokeAsync<bool>("umlEditor.initialize",
+                        "uml-diagram", "uml-palette");
 
-                // Inizializza mxGraph se necessario
-                await JSRuntime.InvokeVoidAsync("initMxGraph");
+                    if (!result)
+                    {
+                        ToastService.Show("Errore nell'inizializzazione dell'editor UML", ToastLevel.Error);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ToastService.Show($"Errore nell'inizializzazione dell'editor UML: {ex.Message}", ToastLevel.Error);
+                    Console.Error.WriteLine($"Errore nell'inizializzazione dell'editor UML: {ex}");
+                }
             }
-        }
 
-        private string GetDiagramTypeName(string type)
-        {
-            return type switch
-            {
-                "class" => "Diagramma delle Classi",
-                "sequence" => "Diagramma di Sequenza",
-                "activity" => "Diagramma di Attività",
-                "usecase" => "Diagramma dei Casi d'Uso",
-                "er" => "Entity Relationship",
-                _ => type
-            };
+            await base.OnAfterRenderAsync(firstRender);
         }
 
         private async Task NewDiagram()
         {
-            IsLoading = true;
-            IsEditorActive = true;
-            CurrentDiagram = new UmlDiagram();
-            StateHasChanged();
-
-            // Inizializza l'editor
-            await Task.Delay(100);
-            await JSRuntime.InvokeVoidAsync("initUmlDiagram", CurrentDiagram.DiagramType);
-
-            IsLoading = false;
-            StateHasChanged();
-        }
-
-        private async Task DiagramTypeChanged()
-        {
-            if (IsEditorActive)
+            try
             {
-                IsLoading = true;
-                StateHasChanged();
-
-                // Salva il contenuto corrente prima di cambiare tipo
-                CurrentDiagram.XmlContent = await JSRuntime.InvokeAsync<string>("getUmlDiagramXml");
-
-                // Cambia il tipo di diagramma
-                await Task.Delay(100);
-                await JSRuntime.InvokeVoidAsync("changeUmlDiagramType", CurrentDiagram.DiagramType);
-
-                IsLoading = false;
-                StateHasChanged();
+                await _jsModule.InvokeVoidAsync("umlEditor.newDiagram");
+                DiagramName = string.Empty;
+                DiagramDescription = string.Empty;
+                ToastService.Show("Nuovo diagramma creato", ToastLevel.Success);
             }
-        }
-
-        private async Task AddElement(string elementType)
-        {
-            if (IsEditorActive)
+            catch (Exception ex)
             {
-                await JSRuntime.InvokeVoidAsync("addUmlElement", elementType);
+                ToastService.Show($"Errore nella creazione di un nuovo diagramma: {ex.Message}", ToastLevel.Error);
             }
-        }
-
-        private async Task AddConnection(string connectionType)
-        {
-            if (IsEditorActive)
-            {
-                await JSRuntime.InvokeVoidAsync("addUmlConnection", connectionType);
-            }
-        }
-
-        private void OpenModal()
-        {
-            OpenDiagramModal.Show();
-        }
-
-        private async Task OnDiagramTypeChange(ChangeEventArgs e)
-        {
-            if (e.Value is string newType)
-            {
-                CurrentDiagram.DiagramType = newType;
-                await DiagramTypeChanged();
-            }
-        }
-
-        private async Task LoadDiagram(UmlDiagram diagram)
-        {
-            IsLoading = true;
-            IsEditorActive = true;
-            CurrentDiagram = new UmlDiagram
-            {
-                Id = diagram.Id,
-                Name = diagram.Name,
-                Description = diagram.Description,
-                DiagramType = diagram.DiagramType,
-                XmlContent = diagram.XmlContent,
-                CreatedDate = diagram.CreatedDate,
-                ModifiedDate = diagram.ModifiedDate
-            };
-            OpenDiagramModal.Close();
-            StateHasChanged();
-
-            // Inizializza l'editor con il tipo di diagramma
-            await Task.Delay(100);
-            await JSRuntime.InvokeVoidAsync("initUmlDiagram", CurrentDiagram.DiagramType);
-
-            // Carica il contenuto XML del diagramma
-            if (!string.IsNullOrEmpty(CurrentDiagram.XmlContent))
-            {
-                await JSRuntime.InvokeVoidAsync("loadUmlDiagramXml", CurrentDiagram.XmlContent);
-            }
-
-            IsLoading = false;
-            StateHasChanged();
         }
 
         private void SaveDiagram()
         {
-            SaveDiagramModal.Show();
+            saveModal.Show();
         }
 
-        private async Task SaveDiagramConfirm()
+        private async Task ConfirmSave()
         {
-            if (string.IsNullOrWhiteSpace(CurrentDiagram.Name))
+            if (string.IsNullOrWhiteSpace(DiagramName))
             {
-                CurrentDiagram.Name = "Untitled Diagram";
+                ToastService.Show("Inserisci un nome per il diagramma", ToastLevel.Warning);
+                return;
             }
 
             try
             {
-                // Ottieni il contenuto XML del grafico
-                CurrentDiagram.XmlContent = await JSRuntime.InvokeAsync<string>("getUmlDiagramXml");
-                CurrentDiagram.ModifiedDate = DateTime.Now;
+                // Ottieni i dati del diagramma dall'editor
+                var diagramXml = await _jsModule.InvokeAsync<string>("umlEditor.saveDiagram");
 
-                // Se è un nuovo diagramma, aggiungi alla lista
-                var existingDiagram = Model.SavedDiagrams.FirstOrDefault(d => d.Id == CurrentDiagram.Id);
-                if (existingDiagram == null)
+                // Genera un ID univoco o aggiorna un diagramma esistente
+                string diagramId = Guid.NewGuid().ToString();
+                var existingDiagram = SavedDiagrams.Find(d => d.Name == DiagramName);
+
+                if (existingDiagram != null)
                 {
-                    Model.SavedDiagrams.Add(CurrentDiagram);
+                    // Aggiorna il diagramma esistente
+                    existingDiagram.Content = diagramXml;
+                    existingDiagram.Description = DiagramDescription;
+                    existingDiagram.LastModified = DateTime.Now;
                 }
                 else
                 {
-                    // Aggiorna il diagramma esistente
-                    var index = Model.SavedDiagrams.IndexOf(existingDiagram);
-                    Model.SavedDiagrams[index] = CurrentDiagram;
+                    // Crea un nuovo diagramma
+                    var savedDiagram = new SavedDiagram
+                    {
+                        Id = diagramId,
+                        Name = DiagramName,
+                        Description = DiagramDescription,
+                        Content = diagramXml,
+                        LastModified = DateTime.Now
+                    };
+
+                    Model.SavedDiagrams.Add(savedDiagram);
                 }
 
+                // Salva nel data model service
                 await DataModelService.AddOrUpdateAsync(nameof(UML), Model);
-                SaveDiagramModal.Close();
+
                 ToastService.Show("Diagramma salvato con successo", ToastLevel.Success);
             }
             catch (Exception ex)
             {
-                ToastService.Show($"Errore durante il salvataggio: {ex.Message}", ToastLevel.Error);
+                ToastService.Show($"Errore durante il salvataggio del diagramma: {ex.Message}", ToastLevel.Error);
             }
         }
 
-        private void DeleteDiagram(UmlDiagram diagram)
+        private void LoadDiagram()
         {
-            DiagramToDelete = diagram;
-            DeleteDiagramModal.Show();
-        }
-
-        private async Task DeleteDiagramConfirm()
-        {
-            if (DiagramToDelete != null)
+            if (SavedDiagrams.Count == 0)
             {
-                Model.SavedDiagrams.Remove(DiagramToDelete);
-                await DataModelService.AddOrUpdateAsync(nameof(UML), Model);
-                ToastService.Show("Diagramma eliminato", ToastLevel.Success);
-                DiagramToDelete = null;
+                ToastService.Show("Nessun diagramma salvato", ToastLevel.Info);
+                return;
             }
+
+            SelectedDiagramId = SavedDiagrams[0].Id;
+            loadModal.Show();
         }
 
-        private async Task ExportAsPng()
+        private async Task ConfirmLoad()
         {
-            if (IsEditorActive)
+            if (string.IsNullOrWhiteSpace(SelectedDiagramId))
             {
-                await JSRuntime.InvokeVoidAsync("exportUmlDiagramAsPng", CurrentDiagram.Name);
-                ToastService.Show("Diagramma esportato come immagine", ToastLevel.Success);
+                ToastService.Show("Seleziona un diagramma da caricare", ToastLevel.Warning);
+                return;
             }
-        }
 
-        private async Task ExportAsXml()
-        {
-            if (IsEditorActive)
+            try
             {
-                var xml = await JSRuntime.InvokeAsync<string>("getUmlDiagramXml");
-                await JSRuntime.InvokeVoidAsync("downloadTextFile", $"{CurrentDiagram.Name}.xml", "application/xml", xml);
-                ToastService.Show("Diagramma esportato come XML", ToastLevel.Success);
+                var selectedDiagram = SavedDiagrams.Find(d => d.Id == SelectedDiagramId);
+                if (selectedDiagram != null)
+                {
+                    DiagramName = selectedDiagram.Name;
+                    DiagramDescription = selectedDiagram.Description;
+
+                    // Carica il diagramma nell'editor
+                    var result = await _jsModule.InvokeAsync<bool>(
+                        "umlEditor.loadDiagram", selectedDiagram.Content);
+
+                    if (result)
+                    {
+                        ToastService.Show("Diagramma caricato con successo", ToastLevel.Success);
+                    }
+                    else
+                    {
+                        ToastService.Show("Errore durante il caricamento del diagramma", ToastLevel.Error);
+                    }
+                }
+                else
+                {
+                    ToastService.Show("Diagramma selezionato non trovato", ToastLevel.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                ToastService.Show($"Errore durante il caricamento del diagramma: {ex.Message}", ToastLevel.Error);
             }
         }
 
-        protected override async Task OnModelChangedAsync()
+        private void ExportDiagram()
         {
-            await DataModelService.AddOrUpdateAsync(nameof(UML), Model);
-            await base.OnModelChangedAsync();
+            exportModal.Show();
+        }
+
+        private async Task ConfirmExport()
+        {
+            try
+            {
+                await _jsModule.InvokeVoidAsync("umlEditor.exportDiagram", ExportFormat);
+                ToastService.Show($"Diagramma esportato in formato {ExportFormat.ToUpper()}", ToastLevel.Success);
+            }
+            catch (Exception ex)
+            {
+                ToastService.Show($"Errore durante l'esportazione del diagramma: {ex.Message}", ToastLevel.Error);
+            }
+        }
+
+        private async Task ZoomIn()
+        {
+            try
+            {
+                await _jsModule.InvokeVoidAsync("umlEditor.zoomIn");
+            }
+            catch (Exception ex)
+            {
+                ToastService.Show($"Errore durante lo zoom in: {ex.Message}", ToastLevel.Error);
+            }
+        }
+
+        private async Task ZoomOut()
+        {
+            try
+            {
+                await _jsModule.InvokeVoidAsync("umlEditor.zoomOut");
+            }
+            catch (Exception ex)
+            {
+                ToastService.Show($"Errore durante lo zoom out: {ex.Message}", ToastLevel.Error);
+            }
+        }
+
+        private async Task ResetZoom()
+        {
+            try
+            {
+                await _jsModule.InvokeVoidAsync("umlEditor.resetZoom");
+            }
+            catch (Exception ex)
+            {
+                ToastService.Show($"Errore durante il reset dello zoom: {ex.Message}", ToastLevel.Error);
+            }
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            try
+            {
+                if (_jsModule != null)
+                {
+                    await _jsModule.DisposeAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Errore durante il dispose del componente UML: {ex}");
+            }
         }
     }
 }

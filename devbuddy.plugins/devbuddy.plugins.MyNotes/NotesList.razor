@@ -25,10 +25,6 @@
                     @onclick="() => SetFilter(NoteFilterType.Favorites)">
                 <i class="fa-solid fa-star"></i>
             </button>
-            <button class="btn @(FilterType == NoteFilterType.Recent ? "btn-primary" : "btn-outline-secondary")"
-                    @onclick="() => SetFilter(NoteFilterType.Recent)">
-                Recenti
-            </button>
         </div>
     </div>
 
@@ -58,7 +54,7 @@
         {
             @foreach (var note in FilteredNotes)
             {
-                <div class="note-item @(SelectedNote?.Id == note.Id ? "selected" : "")" @onclick="() => SelectNote(note)">
+                <div id="@(note.Id)" class="note-item @(SelectedNote?.Id == note.Id ? "selected" : "")" @onclick="() => SelectNote(note)">
                     <div class="note-title">
                         @if (note.IsFavorite)
                         {
@@ -67,10 +63,10 @@
                         @note.Title
                     </div>
                     <div class="note-preview">
-                        @GetPreview(note)
+                        @* @GetPreview(note) *@
                     </div>
                     <div class="note-meta">
-                        <span class="note-date">@note.ModifiedAt.ToString("dd/MM/yyyy HH:mm")</span>
+                        @* <span class="note-date">@note.ModifiedAt.ToString("dd/MM/yyyy HH:mm")</span>
                         <span class="note-type">
                             @switch (note.Type)
                             {
@@ -84,7 +80,7 @@
                                     <i class="fa-solid fa-file-lines" title="Testo"></i>
                                     break;
                             }
-                        </span>
+                        </span> *@
                     </div>
                 </div>
             }

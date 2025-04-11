@@ -1,3 +1,4 @@
+@using BlazorMonaco.Editor
 @using devbuddy.common.Applications
 @using devbuddy.plugins.MyNotes.Models
 @inherits AppComponentBase
@@ -70,23 +71,22 @@
                     <div class="tags-container">
                         @foreach (var tag in Note.Tags)
                         {
-                            <span class="badge bg-secondary tag-badge">
+                            @* <span id="@($"{Note.Id}{tag}")" class="badge bg-secondary tag-badge">
                                 #@tag
                                 <span class="remove-tag" @onclick="() => RemoveTag(tag)">×</span>
-                            </span>
+                            </span> *@
                         }
                     </div>
                 </div>
             </div>
         </div>
-        
-        <div class="editor-content">
-            <textarea class="form-control content-editor" 
+
+        <StandaloneCodeEditor @ref="_codeEditor" OnDidChangeModelContent="@OnContentChanged" CssClass="editor-content" />
+            @* <textarea class="form-control content-editor" 
                       placeholder="Contenuto della nota..." 
                       @bind="Note.Content" 
                       @bind:event="oninput" 
-                      @onblur="OnContentChanged"></textarea>
-        </div>
+                      @onblur="OnContentChanged"></textarea> *@
         
         <div class="editor-footer">
             <span class="note-stats">

@@ -1,4 +1,5 @@
-﻿using devbuddy.common.Applications;
+﻿using BlazorMonaco.Editor;
+using devbuddy.common.Applications;
 using devbuddy.common.Services;
 using devbuddy.plugins.MyNotes.Models;
 using Microsoft.AspNetCore.Components;
@@ -22,24 +23,39 @@ namespace devbuddy.plugins.MyNotes
         protected IJSRuntime JSRuntime { get; set; }
 
         private ModalComponentBase _deleteModal;
+        private StandaloneCodeEditor _codeEditor;
+
         private string NewTag { get; set; } = string.Empty;
         private bool _contentChanged = false;
         private bool _titleChanged = false;
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
+        protected override Task OnInitializedAsync()
         {
-            await base.OnAfterRenderAsync(firstRender);
+            _codeEditor?.SetValue(Note.Content);
+            return base.OnInitializedAsync();
+        }
+        private StandaloneEditorConstructionOptions _options => new()
+        {
+            AutomaticLayout = true,
+            Language = Note?.Language,
+            Value = Note?.Content
+        };
 
-            if (firstRender)
+        private StandaloneEditorConstructionOptions EditorConstructionOptions(StandaloneCodeEditor editor)
+        {
+            return new StandaloneEditorConstructionOptions
             {
-                await JSRuntime.InvokeVoidAsync("initializeEditor");
-            }
+                AutomaticLayout = true,
+                Language = Note?.Language,
+                Value = Note?.Content
+            };
         }
 
-        private async Task OnContentChanged()
+        private async Task OnContentChanged(ModelContentChangedEvent e)
         {
             if (Note != null)
             {
+                Note.Content = await _codeEditor.GetValue();
                 Note.ModifiedAt = DateTime.Now;
                 _contentChanged = true;
                 await OnNoteChanged.InvokeAsync(Note);

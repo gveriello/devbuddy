@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace devbuddy.plugins.MyNotes
 {
-    public partial class Index : AppComponentBase<MyNotesDataModel>
+    public partial class NotesIndex : AppComponentBase<MyNotesDataModel>
     {
         private Note? CurrentNote => Model.Notes.FirstOrDefault(n => n.Id == Model.LastOpenedNoteId);
 

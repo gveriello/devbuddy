@@ -6,14 +6,17 @@
 	<div class="row g-0 h-100">
 		<div class="col-md-3 notes-sidebar-container">
 			<NotesList Notes="@Model.Notes"
-					   SelectedNote="@CurrentNote"
-					   OnNoteSelected="@SelectNote"
-					   OnNoteAdded="@AddNote" />
+			SelectedNote="@CurrentNote"
+			OnNoteSelected="@SelectNote"
+			OnNoteAdded="@AddNote" />
 		</div>
 		<div class="col-md-9 editor-container">
-			<NoteEditor Note="@CurrentNote"
-						OnNoteChanged="@NoteChanged"
-						OnNoteDeleted="@DeleteNote" />
+			@if(CurrentNote != null)
+			{
+				<NoteEditor Note="@CurrentNote"
+							OnNoteChanged="@NoteChanged"
+							OnNoteDeleted="@DeleteNote" />
+			}
 		</div>
 	</div>
 </div>

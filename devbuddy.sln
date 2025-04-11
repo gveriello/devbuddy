@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "devbuddy.notificationhub", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "plugins", "plugins", "{255A78B8-75D1-4175-B9AA-5E9F2BE5EACC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "devbuddy.plugins.MyNotes", "devbuddy.plugins\DevBuddy.Plugins.MyNotes\devbuddy.plugins.MyNotes.csproj", "{0E92D3B9-0894-4119-A120-9C7EBD434A13}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "devbuddy.plugins.MyNotes", "devbuddy.plugins\devbuddy.plugins.MyNotes\devbuddy.plugins.MyNotes.csproj", "{0E92D3B9-0894-4119-A120-9C7EBD434A13}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "devbuddy.plugins.PomodoroTimer", "devbuddy.plugins\DevBuddy.Plugins.PomodoroTimer\devbuddy.plugins.PomodoroTimer.csproj", "{6BB1CA3B-9151-4AF0-8619-DA0CB0D1257A}"
 EndProject

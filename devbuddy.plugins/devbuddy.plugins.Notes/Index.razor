@@ -1,7 +1,7 @@
 @using BlazorMonaco.Editor
 @using devbuddy.common.Applications
-@using devbuddy.plugins.MyNotes.Models
-@inherits AppComponentBase<MyNotesDataModel>
+@using devbuddy.plugins.Notes.Models
+@inherits AppComponentBase<NotesDataModel>
 
 <ModalComponentBase @ref="_deleteModal"
 					Title="Conferma eliminazione"
@@ -11,7 +11,7 @@
 	<p>Questa azione non può essere annullata.</p>
 </ModalComponentBase>
 
-<div class="mynotes-container">
+<div class="Notes-container">
 	<div class="row g-0 h-100">
 		<div class="col-md-3 notes-sidebar-container">
 			<NotesList Notes="@Model.Notes"
@@ -123,7 +123,7 @@
 </div>
 
 <style>
-	.mynotes-container {
+	.Notes-container {
 		height: calc(100vh - 100px);
 		display: flex;
 		flex-direction: column;

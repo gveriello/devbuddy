@@ -1,8 +1,8 @@
 ﻿using devbuddy.common.Applications;
 
-namespace devbuddy.plugins.MyNotes.Models
+namespace devbuddy.plugins.Notes.Models
 {
-    public class MyNotesDataModel : CustomDataModelBase
+    public class NotesDataModel : CustomDataModelBase
     {
         public List<Note> Notes { get; set; } = [];
         public string? LastOpenedNoteId { get; set; }

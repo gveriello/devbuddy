@@ -1,8 +1,8 @@
 ﻿using System.Text.RegularExpressions;
-using devbuddy.plugins.MyNotes.Models;
+using devbuddy.plugins.Notes.Models;
 using Microsoft.AspNetCore.Components;
 
-namespace devbuddy.plugins.MyNotes
+namespace devbuddy.plugins.Notes
 {
     public enum NoteFilterType
     {

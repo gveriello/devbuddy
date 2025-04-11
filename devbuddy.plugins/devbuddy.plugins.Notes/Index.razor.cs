@@ -4,13 +4,13 @@ using devbuddy.common.Applications;
 using devbuddy.common.Attributes;
 using devbuddy.common.Enums;
 using devbuddy.common.Services;
-using devbuddy.plugins.MyNotes.Models;
+using devbuddy.plugins.Notes.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
-namespace devbuddy.plugins.MyNotes
+namespace devbuddy.plugins.Notes
 {
-    public partial class NotesIndex : AppComponentBase<MyNotesDataModel>
+    public partial class Index : AppComponentBase<NotesDataModel>
     {
         private ModalComponentBase _deleteModal;
         private StandaloneCodeEditor _codeEditor;
@@ -21,7 +21,7 @@ namespace devbuddy.plugins.MyNotes
         protected override async Task OnInitializedAsync()
         {
             // Carica i dati dal servizio
-            Model = DataModelService.ValueByKey<MyNotesDataModel>(nameof(MyNotes));
+            Model = DataModelService.ValueByKey<NotesDataModel>(nameof(Notes));
             await base.OnInitializedAsync();
         }
 
@@ -29,7 +29,7 @@ namespace devbuddy.plugins.MyNotes
         {
             Model.LastOpenedNoteId = note.Id;
             _codeEditor?.SetValue(CurrentNote?.Content);
-            await DataModelService.AddOrUpdateAsync(nameof(MyNotes), Model);
+            await DataModelService.AddOrUpdateAsync(nameof(Notes), Model);
             StateHasChanged();
         }
 
@@ -46,7 +46,7 @@ namespace devbuddy.plugins.MyNotes
         {
             Model.Notes.Add(note);
             Model.LastOpenedNoteId = note.Id;
-            await DataModelService.AddOrUpdateAsync(nameof(MyNotes), Model);
+            await DataModelService.AddOrUpdateAsync(nameof(Notes), Model);
             // Forza l'aggiornamento dell'interfaccia
             StateHasChanged();
             ToastService.Show("Nuova nota creata", ToastLevel.Success);
@@ -61,7 +61,7 @@ namespace devbuddy.plugins.MyNotes
             if (index >= 0)
             {
                 Model.Notes[index] = note;
-                await DataModelService.AddOrUpdateAsync(nameof(MyNotes), Model);
+                await DataModelService.AddOrUpdateAsync(nameof(Notes), Model);
             }
         }
 
@@ -120,7 +120,7 @@ namespace devbuddy.plugins.MyNotes
                     Model.LastOpenedNoteId = Model.Notes.FirstOrDefault()?.Id;
                 }
 
-                await DataModelService.AddOrUpdateAsync(nameof(MyNotes), Model);
+                await DataModelService.AddOrUpdateAsync(nameof(Notes), Model);
                 ToastService.Show("Nota eliminata.", ToastLevel.Success);
                 StateHasChanged();
             }

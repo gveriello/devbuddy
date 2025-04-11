@@ -43,6 +43,6 @@ namespace devbuddy.common.Enums
         DiagramEditor,
         
         [ModuleKey("38b6793f-3f2a-49ce-9583-ef98c811399c")]
-        MyNotes
+        Notes
     }
 }

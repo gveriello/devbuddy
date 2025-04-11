@@ -21,13 +21,13 @@ namespace devbuddy.common.Services.Browser
 
             try
             {
-                var content = JsonSerializer.Serialize(_dataModel, _options);
-                var contentCrypted = await _encryptionService.EncryptStringAsync(content);
-                await _localStorage.SetItemAsync("datamodel", contentCrypted);
-#if DEBUG
-                await _localStorage.SetItemAsync("datamodel_debug", content);
-#endif
-                _isDirty = false;
+//                var content = JsonSerializer.Serialize(_dataModel, _options);
+//                var contentCrypted = await _encryptionService.EncryptStringAsync(content);
+//                await _localStorage.SetItemAsync("datamodel", contentCrypted);
+//#if DEBUG
+//                await _localStorage.SetItemAsync("datamodel_debug", content);
+//#endif
+//                _isDirty = false;
             }
             catch (Exception ex)
             {

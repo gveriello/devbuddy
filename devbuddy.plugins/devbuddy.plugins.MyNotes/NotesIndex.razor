@@ -1,22 +1,123 @@
+@using BlazorMonaco.Editor
 @using devbuddy.common.Applications
 @using devbuddy.plugins.MyNotes.Models
 @inherits AppComponentBase<MyNotesDataModel>
+
+<ModalComponentBase @ref="_deleteModal"
+					Title="Conferma eliminazione"
+					ModalSize="modal-md"
+					OnConfirmCallback="ConfirmDelete">
+	<p>Sei sicuro di voler eliminare la nota "<strong>@(CurrentNote?.Title)</strong>"?</p>
+	<p>Questa azione non può essere annullata.</p>
+</ModalComponentBase>
 
 <div class="mynotes-container">
 	<div class="row g-0 h-100">
 		<div class="col-md-3 notes-sidebar-container">
 			<NotesList Notes="@Model.Notes"
-			SelectedNote="@CurrentNote"
-			OnNoteSelected="@SelectNote"
-			OnNoteAdded="@AddNote" />
+					   SelectedNote="@CurrentNote"
+					   OnNoteSelected="@SelectNote"
+					   OnNoteAdded="@AddNote" />
 		</div>
 		<div class="col-md-9 editor-container">
-			@if(CurrentNote != null)
-			{
-				<NoteEditor Note="@CurrentNote"
-							OnNoteChanged="@NoteChanged"
-							OnNoteDeleted="@DeleteNote" />
-			}
+			<div class="note-editor @(CurrentNote == null ? "d-none" : "")">
+				@if (CurrentNote != null)
+				{
+					<div class="editor-header">
+						<div class="title-row">
+							<input type="text" class="form-control note-title-input"
+								   placeholder="Titolo della nota"
+								   @bind="CurrentNote.Title"
+								   @bind:event="oninput"
+								   @onblur="OnTitleChanged" />
+
+							<div class="note-actions">
+								<button type="button" class="btn btn-sm @(CurrentNote.IsFavorite ? "btn-warning" : "btn-outline-warning")"
+										@onclick="ToggleFavorite"
+										@attributes="@Tooltip("Aggiungi ai preferiti")">
+									<i class="fa-solid fa-star"></i>
+								</button>
+
+								<button type="button" class="btn btn-sm btn-outline-danger"
+										@onclick="DeleteNote"
+										@attributes="@Tooltip("Elimina nota")">
+									<i class="fa-solid fa-trash"></i>
+								</button>
+							</div>
+						</div>
+
+						<div class="type-and-tags-row">
+							<div class="note-type-selector">
+								<select class="form-select" @bind="CurrentNote.Type">
+									<option value="@NoteType.Text">Testo semplice</option>
+									<option value="@NoteType.Code">Codice</option>
+									<option value="@NoteType.Markdown">Markdown</option>
+								</select>
+							</div>
+
+							@if (CurrentNote.Type == NoteType.Code)
+							{
+								<div class="language-selector">
+									<select class="form-select" @bind="CurrentNote.Language">
+										<option value="plaintext">Testo</option>
+										<option value="csharp">C#</option>
+										<option value="javascript">JavaScript</option>
+										<option value="html">HTML</option>
+										<option value="css">CSS</option>
+										<option value="sql">SQL</option>
+										<option value="json">JSON</option>
+										<option value="xml">XML</option>
+										<option value="php">PHP</option>
+										<option value="java">Java</option>
+										<option value="python">Python</option>
+									</select>
+								</div>
+							}
+
+							<div class="tags-input">
+								<div class="input-group">
+									<input type="text" class="form-control"
+										   placeholder="Aggiungi tag"
+										   @bind="NewTag"
+										   @onkeydown="HandleTagInputKeyDown" />
+									<button class="btn btn-outline-secondary" type="button" @onclick="AddTag">
+										<i class="fa-solid fa-plus"></i>
+									</button>
+								</div>
+
+								<div class="tags-container">
+									@foreach (var tag in CurrentNote.Tags)
+									{
+										<span id="@($"{CurrentNote.Id}{tag}")" class="badge bg-secondary tag-badge">
+											#@tag
+											<span class="remove-tag" @onclick="() => RemoveTag(tag)">×</span>
+										</span>
+									}
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<StandaloneCodeEditor @ref="_codeEditor" OnDidChangeModelContent="@OnContentChanged" ConstructionOptions="EditorConstructionOptions" CssClass="editor-content" />
+
+					<div class="editor-footer">
+						<span class="note-stats">
+							@CurrentNote.Content.Length caratteri | Ultima modifica: @CurrentNote.ModifiedAt.ToString("dd/MM/yyyy HH:mm")
+						</span>
+					</div>
+				}
+				else
+				{
+					<div class="no-note-selected">
+						<div class="message">
+							<i class="fa-solid fa-file-lines fa-3x mb-3"></i>
+							<h5>Nessuna nota selezionata</h5>
+							<p>Seleziona una nota esistente o creane una nuova</p>
+						</div>
+					</div>
+				}
+			</div>
+
 		</div>
 	</div>
 </div>

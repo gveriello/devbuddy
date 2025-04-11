@@ -56,32 +56,32 @@
             {
                 <div id="@(note.Id)" class="note-item @(SelectedNote?.Id == note.Id ? "selected" : "")" @onclick="() => SelectNote(note)">
                     <div class="note-title">
-                        @if (note.IsFavorite)
+                        <span>@note.Title</span>
+                        @* @if (note.IsFavorite)
                         {
-                            <i class="fa-solid fa-star favorite-icon"></i>
-                        }
-                        @note.Title
+                            <i id="@($"{note.Id}favorite")" class="fa-solid fa-star favorite-icon"></i>
+                        } *@
                     </div>
-                    <div class="note-preview">
-                        @* @GetPreview(note) *@
-                    </div>
-                    <div class="note-meta">
-                        @* <span class="note-date">@note.ModifiedAt.ToString("dd/MM/yyyy HH:mm")</span>
+                    @* <div class="note-preview">
+                        @GetPreview(note)
+                    </div> *@
+                    @* <div class="note-meta">
+                        <span class="note-date">@note.ModifiedAt.ToString("dd/MM/yyyy HH:mm")</span>
                         <span class="note-type">
                             @switch (note.Type)
                             {
                                 case NoteType.Code:
-                                    <i class="fa-solid fa-code" title="Codice"></i>
+                                    <i id="@($"{note.Id}code")" class="fa-solid fa-code" title="Codice"></i>
                                     break;
                                 case NoteType.Markdown:
-                                    <i class="fa-brands fa-markdown" title="Markdown"></i>
+                                    <i id="@($"{note.Id}markdown")" class="fa-brands fa-markdown" title="Markdown"></i>
                                     break;
                                 default:
-                                    <i class="fa-solid fa-file-lines" title="Testo"></i>
+                                    <i id="@($"{note.Id}text")" class="fa-solid fa-file-lines" title="Testo"></i>
                                     break;
                             }
-                        </span> *@
-                    </div>
+                        </span>
+                    </div> *@
                 </div>
             }
         }

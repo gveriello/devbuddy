@@ -7,32 +7,105 @@
 					Title="Conferma eliminazione"
 					ModalSize="modal-md"
 					OnConfirmCallback="ConfirmDelete">
-	<p>Sei sicuro di voler eliminare la nota "<strong>@(CurrentNote?.Title)</strong>"?</p>
+	<p>Sei sicuro di voler eliminare la nota "<strong>@(SelectedNode?.Title)</strong>"?</p>
 	<p>Questa azione non può essere annullata.</p>
 </ModalComponentBase>
 
 <div class="Notes-container">
 	<div class="row g-0 h-100">
 		<div class="col-md-3 notes-sidebar-container">
-			<NotesList Notes="@Model.Notes"
-					   SelectedNote="@CurrentNote"
-					   OnNoteSelected="@SelectNote"
-					   OnNoteAdded="@AddNote" />
+
+			<div class="notes-sidebar">
+				<div class="notes-header">
+					<div class="search-box">
+						<input type="text" class="form-control" placeholder="Cerca note..." @bind="SearchQuery" @bind:event="oninput" />
+						<i class="fa-solid fa-search search-icon"></i>
+					</div>
+					<div class="notes-actions">
+						<button class="btn btn-sm btn-primary" @onclick="AddNewNoteAsync" title="Nuova nota">
+							<i class="fa-solid fa-plus"></i>
+						</button>
+					</div>
+				</div>
+
+				<div class="filter-options mb-2">
+					<div class="btn-group btn-group-sm w-100">
+						<button class="btn @(FilterType == NoteFilterType.All ? "btn-primary" : "btn-outline-secondary")"
+								@onclick="() => SetFilter(NoteFilterType.All)">
+							Tutte
+						</button>
+						<button class="btn @(FilterType == NoteFilterType.Favorites ? "btn-primary" : "btn-outline-secondary")"
+								@onclick="() => SetFilter(NoteFilterType.Favorites)">
+							<i class="fa-solid fa-star"></i>
+						</button>
+					</div>
+				</div>
+
+				<div class="notes-tags mb-2">
+					@if (AllTags.Any())
+					{
+						<div class="all-tags">
+							@foreach (var tag in AllTags)
+							{
+								<span class="tag-badge @(SelectedTags.Contains(tag) ? "selected" : "")"
+									  @onclick="() => ToggleTagFilter(tag)">
+									#@tag
+								</span>
+							}
+						</div>
+					}
+				</div>
+
+				<div class="notes-list">
+					@if (!FilteredNotes.Any())
+					{
+						<div class="no-notes">
+							<p>Nessuna nota trovata</p>
+						</div>
+					}
+					else
+					{
+						@foreach (var note in FilteredNotes)
+						{
+							<div class="row">
+								<div @key="@($"{note.Id}parent")" id="@(note.Id)parent" class="note-item @(Model.LastOpenedNoteId == note.Id ? "selected" : "")" @onclick="() => OnNoteSelectionChanged(note)">
+									<div class="note-title">
+										<span>@note.Title</span> &nbsp;
+										<div hidden="@(!note.IsFavorite)"><i class="fa-solid fa-star favorite-icon"></i></div>
+										
+									</div>
+									<div id="note-preview" class="note-preview">
+										@note.GetPreview()
+									</div>
+									@* <div class="note-meta">
+						<div class="note-date">@note.ModifiedAt.ToString("dd/MM/yyyy HH:mm")</div>
+						<div class="note-type">
+							<i @key="@($"{note.Id}_type_icon")"
+							   class="@GetNoteTypeIconClass(note.Type)"
+							   title="@GetNoteTypeTitle(note.Type)"></i>
+						</div>
+					</div> *@
+								</div>
+							</div>
+						}
+					}
+				</div>
+			</div>
 		</div>
 		<div class="col-md-9 editor-container">
-			<div class="note-editor @(CurrentNote == null ? "d-none" : "")">
-				@if (CurrentNote != null)
+			<div class="note-editor @(SelectedNode == null ? "d-none" : "")">
+				@if (SelectedNode != null)
 				{
 					<div class="editor-header">
 						<div class="title-row">
 							<input type="text" class="form-control note-title-input"
 								   placeholder="Titolo della nota"
-								   @bind="CurrentNote.Title"
+								   @bind="SelectedNode.Title"
 								   @bind:event="oninput"
 								   @onblur="OnTitleChanged" />
 
 							<div class="note-actions">
-								<button type="button" class="btn btn-sm @(CurrentNote.IsFavorite ? "btn-warning" : "btn-outline-warning")"
+								<button type="button" class="btn btn-sm @(SelectedNode.IsFavorite ? "btn-warning" : "btn-outline-warning")"
 										@onclick="ToggleFavorite"
 										@attributes="@Tooltip("Aggiungi ai preferiti")">
 									<i class="fa-solid fa-star"></i>
@@ -48,17 +121,17 @@
 
 						<div class="type-and-tags-row">
 							<div class="note-type-selector">
-								<select class="form-select" @bind="CurrentNote.Type">
+								<select class="form-select" @bind="SelectedNode.Type">
 									<option value="@NoteType.Text">Testo semplice</option>
 									<option value="@NoteType.Code">Codice</option>
 									<option value="@NoteType.Markdown">Markdown</option>
 								</select>
 							</div>
 
-							@if (CurrentNote.Type == NoteType.Code)
+							@if (SelectedNode.Type == NoteType.Code)
 							{
 								<div class="language-selector">
-									<select class="form-select" @bind="CurrentNote.Language">
+									<select class="form-select" @bind="SelectedNode.Language" @bind:event="oninput" @onchange="OnLanguageChanged">
 										<option value="plaintext">Testo</option>
 										<option value="csharp">C#</option>
 										<option value="javascript">JavaScript</option>
@@ -86,9 +159,9 @@
 								</div>
 
 								<div class="tags-container">
-									@foreach (var tag in CurrentNote.Tags)
+									@foreach (var tag in SelectedNode.Tags)
 									{
-										<span id="@($"{CurrentNote.Id}{tag}")" class="badge bg-secondary tag-badge">
+										<span id="@($"{SelectedNode.Id}{tag}")" class="badge bg-secondary tag-badge">
 											#@tag
 											<span class="remove-tag" @onclick="() => RemoveTag(tag)">×</span>
 										</span>
@@ -102,7 +175,7 @@
 
 					<div class="editor-footer">
 						<span class="note-stats">
-							@CurrentNote.Content.Length caratteri | Ultima modifica: @CurrentNote.ModifiedAt.ToString("dd/MM/yyyy HH:mm")
+							@SelectedNode.Content.Length caratteri | Ultima modifica: @SelectedNode.ModifiedAt.ToString("dd/MM/yyyy HH:mm")
 						</span>
 					</div>
 				}

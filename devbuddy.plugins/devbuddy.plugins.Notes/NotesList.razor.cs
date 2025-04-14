@@ -42,6 +42,20 @@ namespace devbuddy.plugins.Notes
             .OrderBy(tag => tag)
             .ToList();
 
+        private string GetNoteTypeIconClass(NoteType type) => type switch
+        {
+            NoteType.Code => "fa-solid fa-code",
+            NoteType.Markdown => "fa-brands fa-markdown",
+            _ => "fa-solid fa-file-lines"
+        };
+
+        private string GetNoteTypeTitle(NoteType type) => type switch
+        {
+            NoteType.Code => "Codice",
+            NoteType.Markdown => "Markdown",
+            _ => "Testo"
+        };
+
         private bool FilterBySearch(Note note)
         {
             if (string.IsNullOrWhiteSpace(SearchQuery))

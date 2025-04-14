@@ -41,7 +41,7 @@ namespace devbuddy.common.Enums
         [ModuleKey("9ac57f2b-6d8e-4b1c-9a0f-854c7c3b5e1a")]
         //[Icon("fa-diagram-project")]
         DiagramEditor,
-        
+
         [ModuleKey("38b6793f-3f2a-49ce-9583-ef98c811399c")]
         Notes
     }

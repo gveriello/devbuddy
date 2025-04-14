@@ -1,4 +1,5 @@
-﻿using devbuddy.common.Applications;
+﻿using System.Text.RegularExpressions;
+using devbuddy.common.Applications;
 
 namespace devbuddy.plugins.Notes.Models
 {
@@ -21,13 +22,28 @@ namespace devbuddy.plugins.Notes.Models
 
         NoteType _type = NoteType.Text;
         public NoteType Type
-        { 
+        {
             get => _type;
             set
             {
                 _type = value;
                 //OnTypeChanged();
             }
+        }
+
+        public string GetPreview()
+        {
+            var content = Content;
+
+            // Rimuovi i tag HTML/Markdown 
+            var strippedContent = Regex.Replace(content, "<.*?>", string.Empty);
+            strippedContent = Regex.Replace(strippedContent, "#{1,6}\\s?", string.Empty);
+
+            // Limita la lunghezza
+            if (strippedContent.Length > 100)
+                return string.Concat(strippedContent.AsSpan(0, 97), "...");
+
+            return strippedContent;
         }
     }
 

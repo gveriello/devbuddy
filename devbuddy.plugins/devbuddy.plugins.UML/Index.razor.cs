@@ -32,7 +32,7 @@ namespace devbuddy.plugins.UML
         protected override async Task OnInitializedAsync()
         {
             // Inizializza il modello se necessario
-            Model = DataModelService.ValueByKey<UMLDataModel>(nameof(UML));
+            //Model = DataModelService.ValueByKey<UMLDataModel>(nameof(UML));
 
             await base.OnInitializedAsync();
         }
@@ -151,7 +151,7 @@ namespace devbuddy.plugins.UML
                 }
 
                 // Salva nel data model service
-                await DataModelService.AddOrUpdateAsync(nameof(UML), Model);
+                //await DataModelService.AddOrUpdateAsync(nameof(UML), Model);
 
                 ToastService.Show("Diagramma salvato con successo", ToastLevel.Success);
             }

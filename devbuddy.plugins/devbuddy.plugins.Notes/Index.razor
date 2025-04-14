@@ -105,6 +105,10 @@
 								   @onblur="OnTitleChanged" />
 
 							<div class="note-actions">
+								<button class="btn btn-success btn-sm" @onclick="SaveDataModelAsync" @attributes="@Tooltip("Salva")" title="Salva le modifiche">
+									<i class="fa-solid fa-floppy-disk"></i>
+								</button>
+
 								<button type="button" class="btn btn-sm @(SelectedNode.IsFavorite ? "btn-warning" : "btn-outline-warning")"
 										@onclick="ToggleFavorite"
 										@attributes="@Tooltip("Aggiungi ai preferiti")">

@@ -1,4 +1,5 @@
-﻿using devbuddy.common.Services;
+﻿using System.Reflection;
+using devbuddy.common.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
@@ -9,6 +10,8 @@ namespace devbuddy.common.Applications
         [Inject] protected IJSRuntime JSRuntime { get; set; }
         [Inject] protected ToastService ToastService { get; set; }
         [Inject] protected DataModelService DataModelService { get; set; }
+
+
         protected virtual async Task OnModelChangedAsync() { await InvokeAsync(StateHasChanged); }
 
         protected virtual void OnModelChanged(string propertyName) { OnModelChangedAsync(); }
@@ -31,6 +34,19 @@ namespace devbuddy.common.Applications
     {
 
         protected TModel Model { get; set; } = new();
+        protected string ApiKey { get; set; }
+
+        protected async Task SaveDataModelAsync()
+        {
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(ApiKey);
+            await DataModelService.SaveChangesAsync(ApiKey, Model);
+        }
+
+        protected async Task LoadDataModelAsync()
+        {
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(ApiKey);
+            Model = await DataModelService.GetDataModelByApiKey<TModel>(ApiKey);
+        }
     }
 
     public enum TooltipPosition

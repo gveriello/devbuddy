@@ -13,7 +13,6 @@ namespace devbuddy.plugins.CronExpression
     public sealed partial class Index : AppComponentBase<CronExpressionDataModel>
     {
         private string activeTab = "builder";
-        private readonly string _apiKey = ModulesItems.CronExpression.AttributeValueOrDefault<ModuleKeyAttribute, string>(attr => attr.Key);
 
 
         private CronExpressionType _expressionType = CronExpressionType.Simple;
@@ -63,7 +62,9 @@ namespace devbuddy.plugins.CronExpression
 
         protected override async Task OnInitializedAsync()
         {
-            Model = await DataModelService.GetDataModelByApiKey<CronExpressionDataModel>(_apiKey);
+            this.ApiKey = ModulesItems.CronExpression.AttributeValueOrDefault<ModuleKeyAttribute, string>(attr => attr.Key);
+            await LoadDataModelAsync();
+
             presets = CronService.GetCommonPresets();
 
             if (!string.IsNullOrEmpty(Model.CurrentExpression))
@@ -244,7 +245,7 @@ namespace devbuddy.plugins.CronExpression
                     });
                 }
 
-                await DataModelService.SaveChangesAsync(_apiKey, Model);
+                await SaveDataModelAsync();
                 ToastService.Show(isEditing ? "Cron expression modificata." : "Cron expression salvata.", ToastLevel.Success);
 
                 // Switch to the Saved Expressions tab
@@ -288,14 +289,14 @@ namespace devbuddy.plugins.CronExpression
             if (expressionToDelete != null)
             {
                 Model.SavedExpressions.Remove(expressionToDelete);
-                await DataModelService.SaveChangesAsync(_apiKey, Model);
+                await SaveDataModelAsync();
                 ToastService.Show("Expression deleted", ToastLevel.Success);
             }
         }
 
         protected override async Task OnModelChangedAsync()
         {
-            await DataModelService.SaveChangesAsync(_apiKey, Model);
+            await SaveDataModelAsync();
             await base.OnModelChangedAsync();
         }
     }

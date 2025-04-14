@@ -16,7 +16,6 @@ namespace devbuddy.plugins.YamlFormatter
     {
         [Inject] private IJSRuntime JSRuntime { get; set; }
         [Inject] private ToastService ToastService { get; set; }
-        private readonly string _apiKey = ModulesItems.YamlFormatter.AttributeValueOrDefault<ModuleKeyAttribute, string>(attr => attr.Key);
 
         private string _inputYaml = string.Empty;
         private string _outputYaml = string.Empty;
@@ -85,7 +84,9 @@ namespace devbuddy.plugins.YamlFormatter
 
         protected override async Task OnInitializedAsync()
         {
-            Model = await DataModelService.GetDataModelByApiKey<YamlFormatterDataModel>(_apiKey);
+            ApiKey = ModulesItems.YamlFormatter.AttributeValueOrDefault<ModuleKeyAttribute, string>(attr => attr.Key);
+            await LoadDataModelAsync();
+
             if (!string.IsNullOrEmpty(Model.CurrentYaml))
             {
                 InputYaml = Model.CurrentYaml;
@@ -94,7 +95,7 @@ namespace devbuddy.plugins.YamlFormatter
 
         protected override async Task OnModelChangedAsync()
         {
-            await DataModelService.SaveChangesAsync(_apiKey, Model);
+            await SaveDataModelAsync();
             await base.OnModelChangedAsync();
         }
 
@@ -251,7 +252,7 @@ namespace devbuddy.plugins.YamlFormatter
                     CreatedDate = DateTime.Now
                 });
 
-                await DataModelService.SaveChangesAsync(_apiKey, Model);
+                await SaveDataModelAsync();
                 ToastService.Show("YAML salvato con successo", ToastLevel.Success);
                 ShowSavedYamls = true;
             }
@@ -278,7 +279,7 @@ namespace devbuddy.plugins.YamlFormatter
             if (yamlToDelete != null)
             {
                 Model.SavedYamls.Remove(yamlToDelete);
-                await DataModelService.SaveChangesAsync(_apiKey, Model);
+                await SaveDataModelAsync();
                 ToastService.Show("YAML eliminato", ToastLevel.Success);
             }
         }

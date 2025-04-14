@@ -41,13 +41,11 @@
 	  <ProjectReference Include="..\devbuddy.business\devbuddy.business.csproj" />
 	  <ProjectReference Include="..\devbuddy.common\devbuddy.common.csproj" />
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.Base64\devbuddy.plugins.Base64.csproj" />
-	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.CodeMetricsAnalyzer\devbuddy.plugins.CodeMetricsAnalyzer.csproj" />
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.CronExpression\devbuddy.plugins.CronExpression.csproj" />
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.JsonFormatters\devbuddy.plugins.JsonFormatters.csproj" />
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.Notes\devbuddy.plugins.Notes.csproj" />
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.QRCode\devbuddy.plugins.QRCode.csproj" />
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.QueryOptimizer\devbuddy.plugins.QueryOptimizer.csproj" />
-	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.UML\devbuddy.plugins.UML.csproj" />
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.XmlFormatter\devbuddy.plugins.XmlFormatter.csproj" />
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.YamlFormatter\devbuddy.plugins.YamlFormatter.csproj" />
 	</ItemGroup>

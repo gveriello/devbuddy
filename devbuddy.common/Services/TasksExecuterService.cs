@@ -1,15 +1,14 @@
 ﻿using System.Timers;
 using devbuddy.common.Applications;
-using devbuddy.common.Services.Base;
 using Timer = System.Timers.Timer;
 
 namespace devbuddy.common.Services
 {
     public class TasksExecuterService
     {
-        private readonly DataModelServiceBase _dataModelService;
+        private readonly DataModelService _dataModelService;
         private List<TaskExecute> _tasksToExecute;
-        public TasksExecuterService(DataModelServiceBase dataModelService)
+        public TasksExecuterService(DataModelService dataModelService)
         {
             this._dataModelService = dataModelService;
             LoadTasksToExecute();
@@ -43,7 +42,7 @@ namespace devbuddy.common.Services
 
         private void LoadTasksToExecute()
         {
-            _tasksToExecute = _dataModelService.GetTasks().Cast<TaskExecute>().ToList();
+            //_tasksToExecute = _dataModelService.GetTasks().Cast<TaskExecute>().ToList();
             _tasksToExecute.ForEach(task => task.NextExecute = DateTime.Now.AddMinutes(task.Minutes));
         }
     }

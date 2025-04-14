@@ -1,5 +1,4 @@
 ﻿using devbuddy.common.Services;
-using devbuddy.common.Services.Base;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
@@ -9,7 +8,7 @@ namespace devbuddy.common.Applications
     {
         [Inject] protected IJSRuntime JSRuntime { get; set; }
         [Inject] protected ToastService ToastService { get; set; }
-        [Inject] protected DataModelServiceBase DataModelService { get; set; }
+        [Inject] protected DataModelService DataModelService { get; set; }
         protected virtual async Task OnModelChangedAsync() { await InvokeAsync(StateHasChanged); }
 
         protected virtual void OnModelChanged(string propertyName) { OnModelChangedAsync(); }

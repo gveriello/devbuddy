@@ -2,7 +2,7 @@
 using System.Text;
 using System.Text.Json;
 using Blazored.LocalStorage;
-using devbuddy.business.Models;
+using devbuddy.common;
 using devbuddy.common.Attributes;
 using devbuddy.common.Enums;
 using devbuddy.common.ExtensionMethods;

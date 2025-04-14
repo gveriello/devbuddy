@@ -1,6 +1,7 @@
 ﻿using devbuddy.common.Applications;
 using devbuddy.common.Attributes;
 using devbuddy.common.Enums;
+using devbuddy.common.ExtensionMethods;
 using devbuddy.common.Services;
 using devbuddy.plugins.YamlFormatter.Models;
 using Microsoft.AspNetCore.Components;
@@ -15,6 +16,7 @@ namespace devbuddy.plugins.YamlFormatter
     {
         [Inject] private IJSRuntime JSRuntime { get; set; }
         [Inject] private ToastService ToastService { get; set; }
+        private readonly string _apiKey = ModulesItems.YamlFormatter.AttributeValueOrDefault<ModuleKeyAttribute, string>(attr => attr.Key);
 
         private string _inputYaml = string.Empty;
         private string _outputYaml = string.Empty;
@@ -81,19 +83,18 @@ namespace devbuddy.plugins.YamlFormatter
         public int YamlLines => _yamlLines;
         public int YamlNodes => _yamlNodes;
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
-            Model = DataModelService.ValueByKey<YamlFormatterDataModel>(nameof(YamlFormatter));
+            Model = await DataModelService.GetDataModelByApiKey<YamlFormatterDataModel>(_apiKey);
             if (!string.IsNullOrEmpty(Model.CurrentYaml))
             {
                 InputYaml = Model.CurrentYaml;
             }
-            base.OnInitialized();
         }
 
         protected override async Task OnModelChangedAsync()
         {
-            await DataModelService.AddOrUpdateAsync(nameof(YamlFormatter), Model);
+            await DataModelService.SaveChangesAsync(_apiKey, Model);
             await base.OnModelChangedAsync();
         }
 
@@ -250,7 +251,7 @@ namespace devbuddy.plugins.YamlFormatter
                     CreatedDate = DateTime.Now
                 });
 
-                await DataModelService.AddOrUpdateAsync(nameof(YamlFormatter), Model);
+                await DataModelService.SaveChangesAsync(_apiKey, Model);
                 ToastService.Show("YAML salvato con successo", ToastLevel.Success);
                 ShowSavedYamls = true;
             }
@@ -277,7 +278,7 @@ namespace devbuddy.plugins.YamlFormatter
             if (yamlToDelete != null)
             {
                 Model.SavedYamls.Remove(yamlToDelete);
-                await DataModelService.AddOrUpdateAsync(nameof(YamlFormatter), Model);
+                await DataModelService.SaveChangesAsync(_apiKey, Model);
                 ToastService.Show("YAML eliminato", ToastLevel.Success);
             }
         }

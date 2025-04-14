@@ -21,8 +21,8 @@ namespace devbuddy.common
                     .AddScoped<LoggerService>()
                     .AddScoped<ToastService>()
                     .AddScoped<SidebarNavigationService>()
+                    .AddScoped<DataModelService>()
                     .AddBlazoredLocalStorage();
-            ;
 
             if (DeviceServiceBase.IsInstanceInWebApp)
             {
@@ -37,7 +37,6 @@ namespace devbuddy.common
         private static void RegisterBrowserServices(this IServiceCollection services)
         {
             services.AddScoped<DeviceServiceBase, BrowserDeviceService>();
-            services.AddScoped<DataModelServiceBase, BrowserDataModelService>();
             services.AddScoped<EncryptionServiceBase, BrowserEncryptionService>();
             services.AddBlazoredLocalStorage(config =>
             {
@@ -53,7 +52,6 @@ namespace devbuddy.common
         private static void RegisterDesktopServices(this IServiceCollection services)
         {
             services.AddScoped<DeviceServiceBase, DesktopDeviceService>();
-            services.AddScoped<DataModelServiceBase, DesktopDataModelService>();
             services.AddScoped<EncryptionServiceBase, DesktopEncryptionService>();
         }
     }

@@ -6,7 +6,6 @@ using devbuddy.common.Attributes;
 using devbuddy.common.Enums;
 using devbuddy.common.Models;
 using devbuddy.common.Services;
-using devbuddy.common.Services.Base;
 using Microsoft.AspNetCore.Components;
 
 namespace devbuddy.blazor.Pages
@@ -14,7 +13,6 @@ namespace devbuddy.blazor.Pages
     [Route("/")]
     public partial class Index
     {
-        [Inject] private DataModelServiceBase DataModelService { get; set; }
         [Inject] private MemoryCacheService MemoryCacheService { get; set; }
         [Inject] private SidebarNavigationService DashboardState { get; set; }
         [Inject] public ILocalStorageService LocalStorage { get; set; }
@@ -40,8 +38,6 @@ namespace devbuddy.blazor.Pages
 
                 if (IsLogged)
                 {
-                    await DataModelService.InitializeAsync();
-
                     if (!MemoryCacheService.TryGetValueIfIsNotExpired(nameof(Assembly.GetExecutingAssembly), out List<Type> currentAssemblies))
                     {
                         currentAssemblies = Assembly.GetExecutingAssembly().GetTypes()!

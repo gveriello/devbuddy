@@ -1,4 +1,4 @@
-﻿namespace devbuddy.business.Models
+﻿namespace devbuddy.common
 {
     public static class Endpoints
     {
@@ -26,5 +26,13 @@
         private const string CONTROLLER = "modules";
 
         public const string GET_APP_MODULES = $"{Endpoints.URI_HUBCONNECT}{CONTROLLER}/getAppModules";
+    }
+
+    public static class DataModelEndpoints
+    {
+        private const string CONTROLLER = "DataModels";
+
+        public const string UPSERT_DATAMODEL = $"{Endpoints.URI_HUBCONNECT}{CONTROLLER}/upsert";
+        public const string GET_DATAMODEL = $"{Endpoints.URI_HUBCONNECT}{CONTROLLER}/get";
     }
 }

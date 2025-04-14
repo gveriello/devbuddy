@@ -1,6 +1,8 @@
-﻿using System.Text.RegularExpressions;
-using BlazorMonaco.Editor;
+﻿using BlazorMonaco.Editor;
 using devbuddy.common.Applications;
+using devbuddy.common.Attributes;
+using devbuddy.common.Enums;
+using devbuddy.common.ExtensionMethods;
 using devbuddy.common.Services;
 using devbuddy.plugins.Notes.Models;
 using Microsoft.AspNetCore.Components.Web;
@@ -11,6 +13,7 @@ namespace devbuddy.plugins.Notes
     {
         private ModalComponentBase _deleteModal;
         private StandaloneCodeEditor _codeEditor;
+        private readonly string _apiKey = ModulesItems.Notes.AttributeValueOrDefault<ModuleKeyAttribute, string>(attr => attr.Key);
         private string NewTag { get; set; } = string.Empty;
         private bool _contentChanged = false, _titleChanged = false;
 
@@ -19,7 +22,7 @@ namespace devbuddy.plugins.Notes
         protected override async Task OnInitializedAsync()
         {
             // Carica i dati dal servizio
-            Model = DataModelService.ValueByKey<NotesDataModel>(nameof(Notes));
+            Model = await DataModelService.GetDataModelByApiKey<NotesDataModel>(_apiKey);
             await base.OnInitializedAsync();
         }
 
@@ -28,7 +31,7 @@ namespace devbuddy.plugins.Notes
             Model.LastOpenedNoteId = note.Id;
             SelectedNode = Model.Notes.FirstOrDefault(n => n.Id == Model.LastOpenedNoteId);
             _codeEditor?.SetValue(SelectedNode?.Content);
-            await DataModelService.AddOrUpdateAsync(nameof(Notes), Model);
+            await DataModelService.SaveChangesAsync(_apiKey, Model);
             StateHasChanged();
         }
 
@@ -54,7 +57,7 @@ namespace devbuddy.plugins.Notes
             if (index >= 0)
             {
                 Model.Notes[index] = note;
-                await DataModelService.AddOrUpdateAsync(nameof(Notes), Model);
+                await DataModelService.SaveChangesAsync(_apiKey, Model);
             }
         }
 
@@ -154,7 +157,7 @@ namespace devbuddy.plugins.Notes
             };
             Model.Notes.Add(newNote);
             Model.LastOpenedNoteId = newNote.Id;
-            await DataModelService.AddOrUpdateAsync(nameof(Notes), Model);
+            await DataModelService.SaveChangesAsync(_apiKey, Model);
             StateHasChanged();
             ToastService.Show("Nuova nota creata", ToastLevel.Success);
         }
@@ -180,6 +183,7 @@ namespace devbuddy.plugins.Notes
                     "Nota aggiunta ai preferiti" :
                     "Nota rimossa dai preferiti";
 
+                await DataModelService.SaveChangesAsync(_apiKey, Model);
                 ToastService.Show(message, ToastLevel.Success);
                 StateHasChanged();
             }
@@ -206,7 +210,7 @@ namespace devbuddy.plugins.Notes
                 }
                 SelectedNode = null;
 
-                await DataModelService.AddOrUpdateAsync(nameof(Notes), Model);
+                await DataModelService.SaveChangesAsync(_apiKey, Model);
                 ToastService.Show("Nota eliminata.", ToastLevel.Success);
                 StateHasChanged();
             }
@@ -224,6 +228,7 @@ namespace devbuddy.plugins.Notes
                 {
                     SelectedNode.Tags.Add(tag);
                     SelectedNode.ModifiedAt = DateTime.Now;
+                    await DataModelService.SaveChangesAsync(_apiKey, Model);
                 }
 
                 NewTag = string.Empty;
@@ -236,6 +241,7 @@ namespace devbuddy.plugins.Notes
             {
                 SelectedNode.Tags.Remove(tag);
                 SelectedNode.ModifiedAt = DateTime.Now;
+                await DataModelService.SaveChangesAsync(_apiKey, Model);
             }
         }
 

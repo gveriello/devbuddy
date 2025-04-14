@@ -72,7 +72,6 @@ namespace devbuddy.plugins.Notes
                 _codeEditor.ConstructionOptions.Invoke(_codeEditor);
                 SelectedNode.ModifiedAt = DateTime.Now;
                 _contentChanged = true;
-                await SaveDataModelAsync();
             }
         }
 
@@ -82,7 +81,6 @@ namespace devbuddy.plugins.Notes
             {
                 SelectedNode.ModifiedAt = DateTime.Now;
                 _titleChanged = true;
-                await SaveDataModelAsync();
             }
         }
 

@@ -36,9 +36,24 @@ namespace devbuddy.blazor.Components
 
         protected override async Task OnInitializedAsync()
         {
-            Token = await LocalStorage.GetItemAsync<string>(nameof(Token)) ?? null;
-            LoadingInProgress = false;
+            await CheckTokenAsync();
+        }
+
+        private async Task CheckTokenAsync()
+        {
+            LoadingInProgress = true;
+            var tokenFromLocalStorage = await LocalStorage.GetItemAsync<string>(nameof(Token)) ?? null;
+            if (!await AuthenticationService.VerifyTokenAsync(tokenFromLocalStorage))
+            {
+                await LocalStorage.ClearAsync();
+                Token = null;
+            }
+            else
+            {
+                Token = tokenFromLocalStorage;
+            }
             StateHasChanged();
+            LoadingInProgress = false;
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -48,13 +63,10 @@ namespace devbuddy.blazor.Components
                 // Carica lo script di animazione
                 await JSRuntime.InvokeVoidAsync("eval", await GetAuthAnimationScript());
             }
-        }
 
-        private async Task<string> GetAuthAnimationScript()
-        {
-            // Lo script è inserito direttamente qui per semplicità
-            // In un'applicazione reale, questo potrebbe essere caricato da un file
-            return @"
+            async Task<string> GetAuthAnimationScript()
+            {
+                return @"
                 window.authAnimation = {
                     fadeToggle: function (isRegistering) {
                         const card = document.querySelector('.form-signin .card');
@@ -73,7 +85,9 @@ namespace devbuddy.blazor.Components
                     }
                 };
             ";
+            }
         }
+
 
         private async Task SignIn()
         {

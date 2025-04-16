@@ -13,22 +13,18 @@ namespace devbuddy.business
     public class SidebarService
     {
         private readonly ILocalStorageService _localStorageService;
-        private string _token;
 
         public SidebarService(ILocalStorageService localStorageService)
         {
             this._localStorageService = localStorageService;
         }
 
-        private async Task LoadTokenIfExists()
-            => this._token ??= await _localStorageService.GetItemAsync<string>("Token");
-
         public async Task<List<NavItem>> GetAllAsync()
         {
-            await LoadTokenIfExists();
+            string _token = await _localStorageService.GetItemAsync<string>("Token") ?? throw new UnauthorizedAccessException("Utente non loggato");
 
             HttpClient client = new();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this._token);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
 
             var content = new StringContent(
                 JsonSerializer.Serialize(new

@@ -12,6 +12,7 @@
 
         public const string LOGIN = $"{Endpoints.URI_HUBCONNECT}{CONTROLLER}/login";
         public const string REGISTER = $"{Endpoints.URI_HUBCONNECT}{CONTROLLER}/register";
+        public const string VERIFY_TOKEN = $"{Endpoints.URI_HUBCONNECT}{CONTROLLER}/verify";
     }
 
     public static class UserEndpoints

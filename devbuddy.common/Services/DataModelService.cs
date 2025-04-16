@@ -16,7 +16,6 @@ namespace devbuddy.common.Services
         protected EncryptionServiceBase _encryptionService;
 
         private readonly ILocalStorageService _localStorageService;
-        private string _token;
 
         protected readonly JsonSerializerOptions _options = new()
         {
@@ -31,15 +30,12 @@ namespace devbuddy.common.Services
             _localStorageService = localStorage;
         }
 
-        private async Task LoadTokenIfExists()
-            => _token ??= await _localStorageService.GetItemAsync<string>("Token");
-
         public async Task<TCustomDataModel> GetDataModelByApiKey<TCustomDataModel>(string apiKey)
             where TCustomDataModel : CustomDataModelBase, new()
         {
             try
             {
-                await LoadTokenIfExists();
+                string _token = await _localStorageService.GetItemAsync<string>("Token") ?? throw new UnauthorizedAccessException("Utente non loggato");
 
                 HttpClient client = new();
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
@@ -83,7 +79,7 @@ namespace devbuddy.common.Services
         {
             try
             {
-                await LoadTokenIfExists();
+                string _token = await _localStorageService.GetItemAsync<string>("Token") ?? throw new UnauthorizedAccessException("Utente non loggato");
 
                 HttpClient client = new();
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);

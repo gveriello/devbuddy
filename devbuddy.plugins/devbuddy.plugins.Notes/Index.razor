@@ -94,7 +94,16 @@
 			</div>
 		</div>
 		<div class="col-md-9 editor-container">
-			<div class="note-editor @(SelectedNode == null ? "d-none" : "")">
+			<div class="note-editor " disabled="@(SelectedNode is null)">
+
+				<div class="no-note-selected" hidden="@(SelectedNode is not null)">
+					<div class="message">
+						<i class="fa-solid fa-file-lines fa-3x mb-3"></i>
+						<h5>Nessuna nota selezionata</h5>
+						<p>Seleziona una nota esistente o creane una nuova</p>
+					</div>
+				</div>
+
 				@if (SelectedNode != null)
 				{
 					<div class="editor-header">
@@ -175,25 +184,19 @@
 							</div>
 						</div>
 					</div>
+				}
 
-					<StandaloneCodeEditor @ref="_codeEditor" OnDidChangeModelContent="@OnContentChanged" ConstructionOptions="EditorConstructionOptions" CssClass="editor-content" />
+				<StandaloneCodeEditor @ref="_codeEditor" OnDidChangeModelContent="@OnContentChanged" ConstructionOptions="EditorConstructionOptions" CssClass="editor-content" />
 
+				@if (SelectedNode != null)
+				{
 					<div class="editor-footer">
 						<span class="note-stats">
 							@SelectedNode.Content.Length caratteri | Ultima modifica: @SelectedNode.ModifiedAt.ToString("dd/MM/yyyy HH:mm")
 						</span>
 					</div>
 				}
-				else
-				{
-					<div class="no-note-selected">
-						<div class="message">
-							<i class="fa-solid fa-file-lines fa-3x mb-3"></i>
-							<h5>Nessuna nota selezionata</h5>
-							<p>Seleziona una nota esistente o creane una nuova</p>
-						</div>
-					</div>
-				}
+
 			</div>
 
 		</div>

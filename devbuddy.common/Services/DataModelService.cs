@@ -13,9 +13,9 @@ namespace devbuddy.common.Services
     {
         protected bool _isDirty, _isInitialized;
         protected readonly object _lock = new();
-        protected EncryptionServiceBase _encryptionService;
 
         private readonly ILocalStorageService _localStorageService;
+        private readonly MemoryCacheService _memoryCacheService;
 
         protected readonly JsonSerializerOptions _options = new()
         {
@@ -24,11 +24,14 @@ namespace devbuddy.common.Services
             Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
         };
 
-        public DataModelService(EncryptionServiceBase encryptionService, ILocalStorageService localStorage)
+        public DataModelService(MemoryCacheService memoryCacheService, ILocalStorageService localStorage)
         {
-            _encryptionService = encryptionService;
+            _memoryCacheService = memoryCacheService;
             _localStorageService = localStorage;
         }
+
+        private string BuildDataModelKey(string token, string apiKey)
+            => $"{{tok:{token}}}{{api:{apiKey}}}";
 
         public async Task<TCustomDataModel> GetDataModelByApiKey<TCustomDataModel>(string apiKey)
             where TCustomDataModel : CustomDataModelBase, new()
@@ -36,6 +39,11 @@ namespace devbuddy.common.Services
             try
             {
                 string _token = await _localStorageService.GetItemAsync<string>("Token") ?? throw new UnauthorizedAccessException("Utente non loggato");
+
+                if (_memoryCacheService.TryGetValueIfIsNotExpired(BuildDataModelKey(_token, apiKey), out string dataModel))
+                {
+                    return JsonSerializer.Deserialize<TCustomDataModel>(dataModel, _options);
+                }
 
                 HttpClient client = new();
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
@@ -64,7 +72,7 @@ namespace devbuddy.common.Services
                     throw new UnauthorizedAccessException(httpResponse.Message);
 
                 if (!string.IsNullOrEmpty(httpResponse.Data))
-                    return JsonSerializer.Deserialize<TCustomDataModel>(httpResponse.Data);
+                    return JsonSerializer.Deserialize<TCustomDataModel>(httpResponse.Data, _options);
 
                 return new();
             }
@@ -80,6 +88,8 @@ namespace devbuddy.common.Services
             try
             {
                 string _token = await _localStorageService.GetItemAsync<string>("Token") ?? throw new UnauthorizedAccessException("Utente non loggato");
+
+                _memoryCacheService.AddOrUpdate(BuildDataModelKey(_token, apiKey), JsonSerializer.Serialize(dataModel, _options));
 
                 HttpClient client = new();
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);

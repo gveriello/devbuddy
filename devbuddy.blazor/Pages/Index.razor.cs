@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Blazored.LocalStorage;
+using BlazorMonaco;
 using devbuddy.blazor.Components.Pages;
 using devbuddy.business;
 using devbuddy.common.Attributes;
@@ -73,19 +74,25 @@ namespace devbuddy.blazor.Pages
 
         private async Task OnLogout()
         {
-            //Logout
-            ToastService.Show("La tua sessione è terminata; ti preghiamo di rieffettuare l'accesso.");
             await LocalStorage.ClearAsync();
             this.User = null;
             StateHasChanged();
         }
 
-        private void OnPageChanged()
+        private async Task OnPageChangedAsync()
         {
-            Loading = true;
-            ComponentToRender = DashboardState.FunctionalityType;
-            Loading = false;
-            StateHasChanged();
+            try
+            {
+                Loading = true;
+                ComponentToRender = DashboardState.FunctionalityType;
+                Loading = false;
+                StateHasChanged();
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                await OnLogout();
+                return;
+            }
         }
     }
 }

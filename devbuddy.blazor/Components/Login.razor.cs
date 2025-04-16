@@ -34,28 +34,6 @@ namespace devbuddy.blazor.Components
             StateHasChanged();
         }
 
-        protected override async Task OnInitializedAsync()
-        {
-            await CheckTokenAsync();
-        }
-
-        private async Task CheckTokenAsync()
-        {
-            LoadingInProgress = true;
-            var tokenFromLocalStorage = await LocalStorage.GetItemAsync<string>(nameof(Token)) ?? null;
-            if (!await AuthenticationService.VerifyTokenAsync(tokenFromLocalStorage))
-            {
-                await LocalStorage.ClearAsync();
-                Token = null;
-            }
-            else
-            {
-                Token = tokenFromLocalStorage;
-            }
-            StateHasChanged();
-            LoadingInProgress = false;
-        }
-
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
@@ -87,7 +65,6 @@ namespace devbuddy.blazor.Components
             ";
             }
         }
-
 
         private async Task SignIn()
         {

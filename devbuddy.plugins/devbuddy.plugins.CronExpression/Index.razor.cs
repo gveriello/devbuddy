@@ -62,7 +62,6 @@ namespace devbuddy.plugins.CronExpression
 
         protected override async Task OnInitializedAsync()
         {
-            this.ApiKey = ModulesItems.CronExpression.AttributeValueOrDefault<ModuleKeyAttribute, string>(attr => attr.Key);
             await LoadDataModelAsync();
 
             presets = CronService.GetCommonPresets();

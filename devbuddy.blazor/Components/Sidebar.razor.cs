@@ -25,8 +25,15 @@ namespace devbuddy.blazor.Components
 
         private async Task LoadItems()
         {
-            AllModules = await SidebarService.GetAllAsync();
-            StateHasChanged();
+            try
+            {
+                AllModules = await SidebarService.GetAllAsync();
+                StateHasChanged();
+            }
+            catch(UnauthorizedAccessException)
+            {
+                await OnLogout.InvokeAsync();
+            }
         }
 
         private void OnMenuItemClick((ModulesItems navNode, string navDescription) node)

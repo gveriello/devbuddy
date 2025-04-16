@@ -34,17 +34,39 @@ namespace devbuddy.common.Applications
     {
 
         protected TModel Model { get; set; } = new();
-        protected string ApiKey { get; set; }
+        protected bool ModelHasChanged { get; set; } = false;
+        [Parameter, EditorRequired] public string ApiKey { get; set; }
 
-        protected async Task SaveDataModelAsync()
+        protected override void OnModelChanged(string propertyName)
         {
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(ApiKey);
-            await DataModelService.SaveChangesAsync(ApiKey, Model);
+            ModelHasChanged = true;
+            base.OnModelChanged(propertyName);
+        }
+        protected override Task OnModelChangedAsync()
+        {
+            ModelHasChanged = true;
+            return base.OnModelChangedAsync();
+        }
+
+        protected async Task<bool> SaveDataModelAsync()
+        {
+            ArgumentNullException.ThrowIfNullOrWhiteSpace("ApiKey mancante.", ApiKey);
+            try
+            {
+                await DataModelService.SaveChangesAsync(ApiKey, Model);
+                ModelHasChanged = false;
+                return true;
+            }
+            catch
+            {
+                ToastService.Show("Si è verificato un errore durante il salvataggio dei dati.", ToastLevel.Error);
+                return false;
+            }
         }
 
         protected async Task LoadDataModelAsync()
         {
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(ApiKey);
+            ArgumentNullException.ThrowIfNullOrWhiteSpace("ApiKey mancante.", ApiKey);
             Model = await DataModelService.GetDataModelByApiKey<TModel>(ApiKey);
         }
     }

@@ -1,3 +1,3 @@
 ﻿@inherits PageComponentsBase
 
-<devbuddy.plugins.CronExpression.Index />
+<devbuddy.plugins.CronExpression.Index ApiKey="@(ModulesItems.CronExpression.AttributeValueOrDefault<ModuleKeyAttribute, string>(attr => attr.Key))" />

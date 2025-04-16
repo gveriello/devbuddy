@@ -84,7 +84,6 @@ namespace devbuddy.plugins.YamlFormatter
 
         protected override async Task OnInitializedAsync()
         {
-            ApiKey = ModulesItems.YamlFormatter.AttributeValueOrDefault<ModuleKeyAttribute, string>(attr => attr.Key);
             await LoadDataModelAsync();
 
             if (!string.IsNullOrEmpty(Model.CurrentYaml))

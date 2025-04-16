@@ -14,55 +14,42 @@ namespace devbuddy.plugins.Notes
     {
         private ModalComponentBase _deleteModal;
         private StandaloneCodeEditor _codeEditor;
-        
+
         private string NewTag { get; set; } = string.Empty;
-        private bool _contentChanged = false, _titleChanged = false;
 
         private Note? SelectedNode { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
-            // Carica i dati dal servizio
-            ApiKey = ModulesItems.Notes.AttributeValueOrDefault<ModuleKeyAttribute, string>(attr => attr.Key);
             await LoadDataModelAsync();
             await base.OnInitializedAsync();
         }
 
-        private async Task OnNoteSelectionChanged(Note note)
+        private async Task OnNoteSelectionChangedAsync(Note note)
         {
             Model.LastOpenedNoteId = note.Id;
             SelectedNode = Model.Notes.FirstOrDefault(n => n.Id == Model.LastOpenedNoteId);
             _codeEditor?.SetValue(SelectedNode?.Content);
-            await SaveDataModelAsync();
             StateHasChanged();
+         
+            if (ModelHasChanged)
+                await SaveDataModelAsync();
         }
 
         private void OnLanguageChanged()
         {
-
+            ModelHasChanged = true;
+            StateHasChanged();
         }
 
         private StandaloneEditorConstructionOptions EditorConstructionOptions(StandaloneCodeEditor editor)
         {
             return new StandaloneEditorConstructionOptions
             {
-                Language = SelectedNode.Language,
+                AutomaticLayout = true,
+                Language = SelectedNode?.Language,
             };
         }
-
-        private async Task NoteChanged(Note note)
-        {
-            // Trova l'indice della nota esistente
-            var index = Model.Notes.FindIndex(n => n.Id == note.Id);
-
-            // Se la nota esiste, aggiornala
-            if (index >= 0)
-            {
-                Model.Notes[index] = note;
-                await SaveDataModelAsync();
-            }
-        }
-
 
         private async Task OnContentChanged(ModelContentChangedEvent e)
         {
@@ -71,16 +58,16 @@ namespace devbuddy.plugins.Notes
                 SelectedNode.Content = await _codeEditor.GetValue();
                 _codeEditor.ConstructionOptions.Invoke(_codeEditor);
                 SelectedNode.ModifiedAt = DateTime.Now;
-                _contentChanged = true;
+                ModelHasChanged = true;
             }
         }
 
-        private async Task OnTitleChanged()
+        private async Task OnTitleChangedAsync()
         {
             if (SelectedNode != null)
             {
                 SelectedNode.ModifiedAt = DateTime.Now;
-                _titleChanged = true;
+                ModelHasChanged = true;
             }
         }
 
@@ -99,25 +86,6 @@ namespace devbuddy.plugins.Notes
             .Distinct()
             .OrderBy(tag => tag)];
 
-        private static string GetNoteTypeIconClass(NoteType type)
-        {
-            return type switch
-            {
-                NoteType.Code => "fa-solid fa-code",
-                NoteType.Markdown => "fa-brands fa-markdown",
-                _ => "fa-solid fa-file-lines"
-            };
-        }
-
-        private static string GetNoteTypeTitle(NoteType type)
-        {
-            return type switch
-            {
-                NoteType.Code => "Codice",
-                NoteType.Markdown => "Markdown",
-                _ => "Testo"
-            };
-        }
 
         private bool FilterBySearch(Note note)
         {
@@ -125,9 +93,9 @@ namespace devbuddy.plugins.Notes
                 return true;
 
             var normalizedQuery = SearchQuery.ToLowerInvariant();
-            return note.Title.ToLowerInvariant().Contains(normalizedQuery) ||
-                   note.Content.ToLowerInvariant().Contains(normalizedQuery) ||
-                   note.Tags.Any(tag => tag.ToLowerInvariant().Contains(normalizedQuery));
+            return note.Title.Contains(normalizedQuery, StringComparison.InvariantCultureIgnoreCase) ||
+                   note.Content.Contains(normalizedQuery, StringComparison.InvariantCultureIgnoreCase) ||
+                   note.Tags.Any(tag => tag.Contains(normalizedQuery, StringComparison.InvariantCultureIgnoreCase));
         }
 
         private bool FilterByType(Note note)
@@ -142,7 +110,7 @@ namespace devbuddy.plugins.Notes
 
         private bool FilterByTags(Note note)
         {
-            if (!SelectedTags.Any())
+            if (SelectedTags.Count == 0)
                 return true;
 
             return SelectedTags.All(tag => note.Tags.Contains(tag));
@@ -159,9 +127,12 @@ namespace devbuddy.plugins.Notes
             };
             Model.Notes.Add(newNote);
             Model.LastOpenedNoteId = newNote.Id;
-            await SaveDataModelAsync();
-            StateHasChanged();
-            ToastService.Show("Nuova nota creata", ToastLevel.Success);
+            if (await SaveDataModelAsync())
+            {
+                StateHasChanged();
+                ToastService.Show("Nuova nota creata", ToastLevel.Success);
+                await OnNoteSelectionChangedAsync(newNote);
+            }
         }
 
         private void SetFilter(NoteFilterType filterType) => FilterType = filterType;
@@ -172,6 +143,7 @@ namespace devbuddy.plugins.Notes
                 SelectedTags.Remove(tag);
             else
                 SelectedTags.Add(tag);
+            ModelHasChanged = true;
         }
 
         private async Task ToggleFavorite()
@@ -185,9 +157,11 @@ namespace devbuddy.plugins.Notes
                     "Nota aggiunta ai preferiti" :
                     "Nota rimossa dai preferiti";
 
-                await SaveDataModelAsync();
-                ToastService.Show(message, ToastLevel.Success);
-                StateHasChanged();
+                if (await SaveDataModelAsync())
+                {
+                    ToastService.Show(message, ToastLevel.Success);
+                    StateHasChanged();
+                }
             }
         }
 
@@ -212,9 +186,11 @@ namespace devbuddy.plugins.Notes
                 }
                 SelectedNode = null;
 
-                await SaveDataModelAsync();
-                ToastService.Show("Nota eliminata.", ToastLevel.Success);
-                StateHasChanged();
+                if (await SaveDataModelAsync())
+                {
+                    ToastService.Show("Nota eliminata.", ToastLevel.Success);
+                    StateHasChanged();
+                }
             }
         }
 

@@ -69,23 +69,23 @@
 						@foreach (var note in FilteredNotes)
 						{
 							<div class="row">
-								<div @key="@($"{note.Id}parent")" id="@(note.Id)parent" class="note-item @(Model.LastOpenedNoteId == note.Id ? "selected" : "")" @onclick="() => OnNoteSelectionChanged(note)">
+								<div @key="@($"{note.Id}parent")" id="@(note.Id)parent" class="note-item @(Model.LastOpenedNoteId == note.Id ? "selected" : "")" @onclick="() => OnNoteSelectionChangedAsync(note)">
 									<div class="note-title">
 										<span>@note.Title</span> &nbsp;
 										<div hidden="@(!note.IsFavorite)"><i class="fa-solid fa-star favorite-icon"></i></div>
-										
+
 									</div>
 									<div id="note-preview" class="note-preview">
 										@note.GetPreview()
 									</div>
-									@* <div class="note-meta">
-						<div class="note-date">@note.ModifiedAt.ToString("dd/MM/yyyy HH:mm")</div>
-						<div class="note-type">
-							<i @key="@($"{note.Id}_type_icon")"
-							   class="@GetNoteTypeIconClass(note.Type)"
-							   title="@GetNoteTypeTitle(note.Type)"></i>
-						</div>
-					</div> *@
+									<div class="note-meta">
+										<div class="note-date">@note.ModifiedAt.ToString("dd/MM/yyyy HH:mm")</div>
+										<div class="note-type">
+											<i class="fa-solid fa-code" hidden="@(note.Type != NoteType.Code)"></i>
+											<i class="fa-solid fa-markdown" hidden="@(note.Type != NoteType.Markdown)"></i>
+											<i class="fa-solid fa-file-lines" hidden="@(note.Type != NoteType.Text)"></i>
+										</div>
+									</div>
 								</div>
 							</div>
 						}
@@ -103,10 +103,10 @@
 								   placeholder="Titolo della nota"
 								   @bind="SelectedNode.Title"
 								   @bind:event="oninput"
-								   @onblur="OnTitleChanged" />
+								   @onblur="OnTitleChangedAsync" />
 
 							<div class="note-actions">
-								<button class="btn btn-success btn-sm" @onclick="SaveDataModelAsync" @attributes="@Tooltip("Salva")" title="Salva le modifiche">
+								<button class="btn btn-success btn-sm" disabled="@(!ModelHasChanged)" @onclick="SaveDataModelAsync" @attributes="@Tooltip("Salva")" title="Salva le modifiche">
 									<i class="fa-solid fa-floppy-disk"></i>
 								</button>
 

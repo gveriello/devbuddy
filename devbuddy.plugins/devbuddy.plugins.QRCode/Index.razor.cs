@@ -7,7 +7,7 @@ using QRCoder;
 
 namespace devbuddy.plugins.QRCode
 {
-    public partial class Index : PageComponentsBase
+    public partial class Index : AppComponentBase
     {
         [Inject] private IJSRuntime JSRuntime { get; set; }
         [Inject] private ToastService ToastService { get; set; }

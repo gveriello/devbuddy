@@ -122,8 +122,8 @@
 									<label>Espressione Cron Generata</label>
 									<div class="input-group">
 										<input type="text" class="form-control" readonly value="@currentExpression" />
-										<button class="btn btn-outline-primary" @onclick="() => CopyToClipboard(currentExpression)">
-											<i class="fas fa-copy"></i> Copia
+										<button class="btn btn-outline-primary" @onclick="() => CopyToClipboard(currentExpression)" @attributes=@Tooltip("Copia negli appunti")>
+											<i class="fas fa-copy"></i>
 										</button>
 									</div>
 								</div>

@@ -11,10 +11,10 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Input</h5>
                     <div>
-                        <button class="btn btn-primary btn-sm" @onclick="PasteFromClipboard">
+                        <button class="btn btn-primary btn-sm" @onclick="PasteFromClipboard" @attributes=@Tooltip("Incolla dagli appunti")>
                             <i class="fa-solid fa-paste"></i>
                         </button>
-                        <button class="btn btn-danger btn-sm" @onclick="ClearInput">
+                        <button class="btn btn-danger btn-sm" @onclick="ClearInput" @attributes=@Tooltip("Cancella tutto")>
                             <i class="fa-solid fa-eraser"></i>
                         </button>
                     </div>
@@ -31,7 +31,7 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Output</h5>
                     <div>
-                        <button class="btn btn-secondary btn-sm" @onclick="CopyToClipboard">
+                        <button class="btn btn-secondary btn-sm" @onclick="CopyToClipboard" @attributes=@Tooltip("Copia negli appunti")>
                             <i class="fa-solid fa-copy"></i>
                         </button>
                     </div>

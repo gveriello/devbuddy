@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using devbuddy.common.Applications;
 using devbuddy.common.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
@@ -6,7 +7,7 @@ using Microsoft.JSInterop;
 namespace devbuddy.plugins.JsonFormatters
 {
 
-    public sealed partial class Index
+    public sealed partial class Index: AppComponentBase
     {
         [Inject] private IJSRuntime? JSRuntime { get; set; }
         [Inject] private ToastService? ToastService { get; set; }

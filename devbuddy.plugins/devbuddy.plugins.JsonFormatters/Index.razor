@@ -1,4 +1,6 @@
-﻿
+﻿@using devbuddy.common.Applications
+@inherits AppComponentBase
+
 <div class="container mt-4">
     <h2 class="mb-4">JSON Formatter</h2>
 
@@ -8,10 +10,10 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Input</h5>
                     <div>
-                        <button class="btn btn-primary btn-sm" @onclick="PasteFromClipboard">
+                        <button class="btn btn-primary btn-sm" @onclick="PasteFromClipboard" @attributes=@Tooltip("Incolla dagli appunti")>
                             <i class="fa-solid fa-paste"></i>
                         </button>
-                        <button class="btn btn-danger btn-sm" @onclick="ClearInput">
+                        <button class="btn btn-danger btn-sm" @onclick="ClearInput" @attributes=@Tooltip("Cancella tutto")>
                             <i class="fa-solid fa-eraser"></i>
                         </button>
                     </div>
@@ -28,7 +30,7 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Output</h5>
                     <div>
-                        <button class="btn btn-secondary btn-sm" @onclick="CopyToClipboard">
+                        <button class="btn btn-secondary btn-sm" @onclick="CopyToClipboard" @attributes=@Tooltip("Copia negli appunti")>
                             <i class="fa-solid fa-copy"></i>
                         </button>
                     </div>
@@ -36,9 +38,9 @@
                 <div class="card-body">
                     <textarea @bind="OutputJson" class="form-control" rows="15" readonly></textarea>
                     <div class="mt-2 text-muted small">
-                        <span title="Dimensione in caratteri">Dimensione: @JsonSize caratteri</span> |
-                        <span title="Profondità massima dell'oggetto">Profondità: @JsonDepth</span> |
-                        <span title="Numero di proprietà">Proprietà: @JsonProperties</span>
+                        <span @attributes=@Tooltip("Dimensione in caratteri") >Dimensione: @JsonSize caratteri</span> |
+                        <span @attributes=@Tooltip("Profondità massima dell'oggetto")>Profondità: @JsonDepth</span> |
+                        <span @attributes=@Tooltip("Numero di proprietà")>Proprietà: @JsonProperties</span>
                     </div>
                 </div>
             </div>

@@ -23,7 +23,7 @@
 						<i class="fa-solid fa-search search-icon"></i>
 					</div>
 					<div class="notes-actions">
-						<button class="btn btn-sm btn-primary" @onclick="AddNewNoteAsync" title="Nuova nota">
+						<button class="btn btn-sm btn-primary" @onclick="AddNewNoteAsync" @attributes=@Tooltip("Aggiungi una nuova nota")>
 							<i class="fa-solid fa-plus"></i>
 						</button>
 					</div>
@@ -115,7 +115,7 @@
 								   @onblur="OnTitleChangedAsync" />
 
 							<div class="note-actions">
-								<button class="btn btn-success btn-sm" disabled="@(!ModelHasChanged)" @onclick="SaveDataModelAsync" @attributes="@Tooltip("Salva")" title="Salva le modifiche">
+								<button class="btn btn-success btn-sm" disabled="@(!ModelHasChanged)" @onclick="SaveDataModelAsync" @attributes=@Tooltip("Salva")>
 									<i class="fa-solid fa-floppy-disk"></i>
 								</button>
 

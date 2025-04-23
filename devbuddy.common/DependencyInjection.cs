@@ -36,7 +36,6 @@ namespace devbuddy.common
 
         private static void RegisterBrowserServices(this IServiceCollection services)
         {
-            services.AddScoped<DeviceServiceBase, BrowserDeviceService>();
             services.AddScoped<EncryptionServiceBase, BrowserEncryptionService>();
             services.AddBlazoredLocalStorage(config =>
             {

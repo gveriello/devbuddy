@@ -9,6 +9,7 @@ namespace devbuddy.business
             services.AddScoped<SidebarService>();
             services.AddScoped<AuthenticationService>();
             services.AddScoped<UserService>();
+            services.AddScoped<AnalyticsService>();
         }
     }
 }

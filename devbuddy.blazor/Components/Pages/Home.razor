@@ -1,10 +1,139 @@
 ﻿@inherits PageComponentsBase
 
-<div class="row">
-    <div class="col-12 d-flex justify-content-center">
-        <Logo />
-    </div>
-    <div class="col-12 ">
-        
-    </div>
+<div class="row" >
+	<div class="col-12 d-flex justify-content-center">
+		<Logo />
+	</div>
+	<div class="col-12 mt-4">
+		<h3 class="mb-0">Benvenuto in DevBuddy</h3>
+		<h4>La tua cassetta degli attrezzi per lo sviluppo</h4>
+		<p class="lead">
+			DevBuddy è un toolkit tutto-in-uno che semplifica le attività quotidiane degli sviluppatori,
+			offrendo strumenti accessibili in un'unica interfaccia.
+		</p>
+
+		<h5 class="mt-4">Come iniziare</h5>
+		<p>
+			Utilizza la barra laterale a sinistra per navigare tra i vari strumenti disponibili:
+		</p>
+		<ul>
+			<li><strong>Formattatori</strong> - Strumenti per formattare e validare JSON, XML e YAML</li>
+			<li><strong>Convertitori</strong> - Codifica/decodifica Base64, genera QR Code</li>
+			<li><strong>Strumenti SQL</strong> - Ottimizza le tue query per prestazioni migliori</li>
+			<li><strong>Note</strong> - Prendi appunti e salva snippet di codice</li>
+			<li><strong>Cron Expression</strong> - Crea e testa espressioni cron</li>
+		</ul>
+
+		<div class="alert alert-info mt-3">
+			<i class="fa-solid fa-lightbulb me-2"></i>
+			<strong>Suggerimento:</strong> Ogni strumento ha la possibilità di salvare il tuo lavoro
+			per poterlo riprendere successivamente. Le tue preferenze e i tuoi dati sono sincronizzati
+			sul cloud automaticamente.
+		</div>
+
+		<div class="row mt-4">
+			<div class="col-md-6">
+				<div class="card h-100">
+					<div class="card-header">
+						<h5 class="mb-0">Funzionalità principali</h5>
+					</div>
+					<div class="card-body">
+						<div class="d-flex mb-3">
+							<div class="me-3 text-primary">
+								<i class="fa-solid fa-code fa-2x"></i>
+							</div>
+							<div>
+								<h6>Formattatori di codice</h6>
+								<p class="text-muted">Formatta e valida JSON, XML e YAML con un solo clic</p>
+							</div>
+						</div>
+
+						<div class="d-flex mb-3">
+							<div class="me-3 text-primary">
+								<i class="fa-solid fa-qrcode fa-2x"></i>
+							</div>
+							<div>
+								<h6>Generatore QR Code</h6>
+								<p class="text-muted">Crea e personalizza QR Code per qualsiasi tipo di dato</p>
+							</div>
+						</div>
+
+						<div class="d-flex mb-3">
+							<div class="me-3 text-primary">
+								<i class="fa-solid fa-database fa-2x"></i>
+							</div>
+							<div>
+								<h6>Ottimizzatore Query</h6>
+								<p class="text-muted">Analizza e migliora le query per prestazioni ottimali</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-6">
+				<div class="card h-100">
+					<div class="card-header">
+						<h5 class="mb-0">Vantaggi di DevBuddy</h5>
+					</div>
+					<div class="card-body">
+						<ul class="list-group list-group-flush">
+							<li class="list-group-item d-flex">
+								<i class="fa-solid fa-check text-success me-2 mt-1"></i>
+								<div>Accesso rapido a tutti gli strumenti in un'unica interfaccia</div>
+							</li>
+							<li class="list-group-item d-flex">
+								<i class="fa-solid fa-check text-success me-2 mt-1"></i>
+								<div>Sincronizzazione cloud dei tuoi dati e preferenze</div>
+							</li>
+							<li class="list-group-item d-flex">
+								<i class="fa-solid fa-check text-success me-2 mt-1"></i>
+								<div>Interfaccia moderna e reattiva accessibile da qualsiasi dispositivo</div>
+							</li>
+							<li class="list-group-item d-flex">
+								<i class="fa-solid fa-check text-success me-2 mt-1"></i>
+								<div>Funzionalità di salvataggio e ripristino automatico del lavoro</div>
+							</li>
+							<li class="list-group-item d-flex">
+								<i class="fa-solid fa-check text-success me-2 mt-1"></i>
+								<div>Personalizzazione dell'esperienza utente</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="card mt-4">
+			<div class="card-header">
+				<h5 class="mb-0">Guida veloce</h5>
+			</div>
+			<div class="card-body">
+				<div class="row">
+					<div class="col-md-6">
+						<h6><i class="fa-solid fa-1 me-2"></i>Scegli uno strumento</h6>
+						<p>Seleziona uno strumento dal menu laterale per iniziare a utilizzarlo</p>
+
+						<h6 class="mt-3"><i class="fa-solid fa-2 me-2"></i>Utilizza lo strumento</h6>
+						<p>Ogni strumento ha funzionalità specifiche. Segui le istruzioni nella pagina dello strumento</p>
+					</div>
+					<div class="col-md-6">
+						<h6><i class="fa-solid fa-3 me-2"></i>Salva il tuo lavoro</h6>
+						<p>Usa il pulsante "Salva" quando disponibile per conservare il tuo lavoro</p>
+
+						@* <h6 class="mt-3"><i class="fa-solid fa-4 me-2"></i>Personalizza le impostazioni</h6>
+                        <p>Visita la pagina "Impostazioni" per configurare l'applicazione secondo le tue preferenze</p> *@
+					</div>
+				</div>
+			</div>
+		</div>
+
+		@* <div class="card mt-4">
+            <div class="card-footer text-center">
+                <p class="text-muted mb-0">
+                     DevBuddy v@(devbuddy.web.BuildInfo.BuildNumber) - @(devbuddy.web.BuildInfo.BuildDate)
+                </p>
+            </div>
+        </div> *@
+	</div>
 </div>

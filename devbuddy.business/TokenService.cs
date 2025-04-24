@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using devbuddy.common;
+using devbuddy.common.Models;
 
 namespace devbuddy.business
 {
@@ -31,7 +32,11 @@ namespace devbuddy.business
             var response = await httpClient.PostAsync(TokenEndpoints.VERIFY_TOKEN, content);
 
             if (response.IsSuccessStatusCode)
-                return (true, await response.Content.ReadAsStringAsync());
+            {
+                var jsonResponse = await response.Content.ReadAsStringAsync();
+                var httpResponse = JsonSerializer.Deserialize<HttpResponse<string>>(jsonResponse);
+                return (true, httpResponse!.Data);
+            }
 
             return (false, null);
         }

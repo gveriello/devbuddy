@@ -19,8 +19,7 @@ namespace devbuddy.plugins.Markdown
         private string activeTab = "editor";
 
         // Modal references and properties
-        private ModalComponentBase saveModal;
-        private ModalComponentBase deleteModal;
+        private ModalComponentBase markdownGuideModal;
         private string SaveMarkdownName { get; set; } = string.Empty;
         private string SaveMarkdownDescription { get; set; } = string.Empty;
 
@@ -109,19 +108,6 @@ namespace devbuddy.plugins.Markdown
                 await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", RenderedHtml);
                 ToastService.Show("HTML copiato negli appunti", ToastLevel.Success);
             }
-        }
-
-        public void ShowSaveDialog()
-        {
-            if (string.IsNullOrWhiteSpace(InputMarkdown))
-            {
-                ToastService.Show("Non c'è nulla da salvare. Inserisci prima un Markdown valido.", ToastLevel.Warning);
-                return;
-            }
-
-            SaveMarkdownName = string.Empty;
-            SaveMarkdownDescription = string.Empty;
-            saveModal.Show();
         }
     }
 }

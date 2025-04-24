@@ -74,7 +74,9 @@ namespace devbuddy.blazor.Pages
 
         private async Task OnLogout()
         {
+            var cookieConsent = await LocalStorage.GetItemAsync<string>("CookieConsent");
             await LocalStorage.ClearAsync();
+            await LocalStorage.SetItemAsync("CookieConsent", cookieConsent);
             this.User = null;
             StateHasChanged();
         }

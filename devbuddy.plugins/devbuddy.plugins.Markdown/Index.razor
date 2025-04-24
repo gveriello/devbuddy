@@ -1,6 +1,403 @@
 ﻿@using devbuddy.common.Applications
 @inherits AppComponentBase
 
+
+<!-- Modal per la Guida Markdown -->
+<ModalComponentBase @ref="markdownGuideModal" Title="Guida alla formattazione Markdown" ModalSize="modal-xl" 
+                    ShowCancelButton="false" ConfirmButtonText="Chiudi">
+    <div class="markdown-guide-container">
+        <h3>Formattazione Base</h3>
+        
+        <div class="row mt-4 mb-4">
+            <div class="col-md-12">
+                <h4>Titoli</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="example-code">
+                            <pre><code># Titolo H1
+## Titolo H2
+### Titolo H3
+#### Titolo H4
+##### Titolo H5
+###### Titolo H6</code></pre>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h1>Titolo H1</h1>
+                        <h2>Titolo H2</h2>
+                        <h3>Titolo H3</h3>
+                        <h4>Titolo H4</h4>
+                        <h5>Titolo H5</h5>
+                        <h6>Titolo H6</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <hr />
+        
+        <div class="row mt-4 mb-4">
+            <div class="col-md-12">
+                <h4>Formattazione Testo</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="example-code">
+                            <pre><code>**Testo in grassetto**
+*Testo in corsivo*
+***Testo in grassetto e corsivo***
+~~Testo barrato~~</code></pre>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Testo in grassetto</strong></p>
+                        <p><em>Testo in corsivo</em></p>
+                        <p><strong><em>Testo in grassetto e corsivo</em></strong></p>
+                        <p><s>Testo barrato</s></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <hr />
+        
+        <div class="row mt-4 mb-4">
+            <div class="col-md-12">
+                <h4>Collegamenti</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="example-code">
+                            <pre><code>[Link con testo](https://www.example.com)
+[Link con titolo](https://www.example.com "Titolo del link")
+@("<https://www.example.com>")</code></pre>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <p><a href="https://www.example.com">Link con testo</a></p>
+                        <p><a href="https://www.example.com" title="Titolo del link">Link con titolo</a></p>
+                        <p><a href="https://www.example.com">https://www.example.com</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <hr />
+        
+        <div class="row mt-4 mb-4">
+            <div class="col-md-12">
+                <h4>Citazioni</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="example-code">
+                            <pre><code>> Questa è una citazione
+>> Questa è una citazione annidata</code></pre>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <blockquote class="blockquote">
+                            <p>Questa è una citazione</p>
+                            <blockquote class="blockquote">
+                                <p>Questa è una citazione annidata</p>
+                            </blockquote>
+                        </blockquote>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <h3 class="mt-5">Liste</h3>
+        
+        <div class="row mt-4 mb-4">
+            <div class="col-md-12">
+                <h4>Liste non ordinate</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="example-code">
+                            <pre><code>- Elemento 1
+- Elemento 2
+  - Sottoelemento 2.1
+  - Sottoelemento 2.2
+- Elemento 3</code></pre>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <ul>
+                            <li>Elemento 1</li>
+                            <li>Elemento 2
+                                <ul>
+                                    <li>Sottoelemento 2.1</li>
+                                    <li>Sottoelemento 2.2</li>
+                                </ul>
+                            </li>
+                            <li>Elemento 3</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <hr />
+        
+        <div class="row mt-4 mb-4">
+            <div class="col-md-12">
+                <h4>Liste ordinate</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="example-code">
+                            <pre><code>1. Primo elemento
+2. Secondo elemento
+   1. Sottoelemento 2.1
+   2. Sottoelemento 2.2
+3. Terzo elemento</code></pre>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <ol>
+                            <li>Primo elemento</li>
+                            <li>Secondo elemento
+                                <ol>
+                                    <li>Sottoelemento 2.1</li>
+                                    <li>Sottoelemento 2.2</li>
+                                </ol>
+                            </li>
+                            <li>Terzo elemento</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <hr />
+        
+        <div class="row mt-4 mb-4">
+            <div class="col-md-12">
+                <h4>Liste attività</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="example-code">
+                            <pre><code>- [x] Attività completata
+- [ ] Attività da completare
+- [ ] Altra attività da completare</code></pre>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="list-unstyled">
+                            <li><input type="checkbox" checked disabled /> Attività completata</li>
+                            <li><input type="checkbox" disabled /> Attività da completare</li>
+                            <li><input type="checkbox" disabled /> Altra attività da completare</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <h3 class="mt-5">Codice</h3>
+        
+        <div class="row mt-4 mb-4">
+            <div class="col-md-12">
+                <h4>Codice inline</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="example-code">
+                            <pre><code>Ecco del `codice inline` all'interno di un testo.</code></pre>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <p>Ecco del <code>codice inline</code> all'interno di un testo.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <hr />
+        
+        <div class="row mt-4 mb-4">
+            <div class="col-md-12">
+                <h4>Blocchi di codice</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="example-code">
+                            <pre><code>```
+function esempio() {
+  return 'Blocco di codice';
+}
+```</code></pre>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <pre><code>function esempio() {
+  return 'Blocco di codice';
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <hr />
+        
+        <div class="row mt-4 mb-4">
+            <div class="col-md-12">
+                <h4>Codice con evidenziazione sintassi</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="example-code">
+                            <pre><code>```csharp
+public class Esempio {
+    public string Metodo() {
+        return "Ciao, mondo!";
+    }
+}
+```</code></pre>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <pre><code class="language-csharp">public class Esempio {
+    public string Metodo() {
+        return "Ciao, mondo!";
+    }
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <h3 class="mt-5">Tabelle</h3>
+        
+        <div class="row mt-4 mb-4">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="example-code">
+                            <pre><code>| Intestazione 1 | Intestazione 2 |
+| ------------- | ------------- |
+| Cella 1       | Cella 2       |
+| Cella 3       | Cella 4       |</code></pre>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Intestazione 1</th>
+                                    <th>Intestazione 2</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Cella 1</td>
+                                    <td>Cella 2</td>
+                                </tr>
+                                <tr>
+                                    <td>Cella 3</td>
+                                    <td>Cella 4</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <hr />
+        
+        <div class="row mt-4 mb-4">
+            <div class="col-md-12">
+                <h4>Allineamento tabelle</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="example-code">
+                            <pre><code>| Sinistra | Centro | Destra |
+| :------- | :----: | -----: |
+| Testo    | Testo  | Testo  |</code></pre>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th style="text-align: left">Sinistra</th>
+                                    <th style="text-align: center">Centro</th>
+                                    <th style="text-align: right">Destra</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="text-align: left">Testo</td>
+                                    <td style="text-align: center">Testo</td>
+                                    <td style="text-align: right">Testo</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <h3 class="mt-5">Altri elementi</h3>
+        
+        <div class="row mt-4 mb-4">
+            <div class="col-md-12">
+                <h4>Immagini</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="example-code">
+                            <pre><code>![Testo alternativo](URL_immagine)</code></pre>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <p>Un'immagine verrebbe mostrata qui</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <hr />
+        
+        <div class="row mt-4 mb-4">
+            <div class="col-md-12">
+                <h4>Linee orizzontali</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="example-code">
+                            <pre><code>---
+
+***
+
+___</code></pre>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <hr>
+                        <hr>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <hr />
+        
+        <div class="row mt-4 mb-4">
+            <div class="col-md-12">
+                <h4>Escape caratteri</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="example-code">
+                            <pre><code>\*Testo con asterisco\*
+\# Testo con cancelletto
+\> Testo con maggiore</code></pre>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <p>*Testo con asterisco*</p>
+                        <p># Testo con cancelletto</p>
+                        <p>> Testo con maggiore</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ModalComponentBase>
+
 <div class="container mt-4">
 	<h2 class="mb-4">Markdown Editor</h2>
 	<div class="row mb-4">
@@ -16,6 +413,9 @@
 				<div class="card-header d-flex justify-content-between align-items-center">
 					<h5 class="mb-0">Markdown</h5>
 					<div>
+                        <button class="btn btn-warning btn-sm" @onclick=@(() => markdownGuideModal.Show()) @attributes=@Tooltip("Guida")>
+							<i class="fa-solid fa-info"></i>
+						</button>
 						<button class="btn btn-primary btn-sm" @onclick="PasteFromClipboard" @attributes=@Tooltip("Incolla dagli appunti")>
 							<i class="fa-solid fa-paste"></i>
 						</button>
@@ -50,113 +450,182 @@
 </div>
 
 <style>
-	.markdown-preview {
-		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-		line-height: 1.6;
-		padding: 1rem;
-		overflow-y: auto;
-		max-height: 392px; /* Match the height of the textarea (15 rows) */
-		background-color: #fff;
-	}
+    .markdown-preview {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+        line-height: 1.6;
+        padding: 1rem;
+        overflow-y: auto;
+        max-height: 392px; /* Match the height of the textarea (15 rows) */
+        background-color: #fff;
+    }
 
-		.markdown-preview h1,
-		.markdown-preview h2,
-		.markdown-preview h3,
-		.markdown-preview h4,
-		.markdown-preview h5,
-		.markdown-preview h6 {
-			margin-top: 24px;
-			margin-bottom: 16px;
-			font-weight: 600;
-			line-height: 1.25;
-		}
+        .markdown-preview h1,
+        .markdown-preview h2,
+        .markdown-preview h3,
+        .markdown-preview h4,
+        .markdown-preview h5,
+        .markdown-preview h6 {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.25;
+        }
 
-		.markdown-preview h1 {
-			padding-bottom: 0.3em;
-			font-size: 2em;
-			border-bottom: 1px solid #eaecef;
-		}
+        .markdown-preview h1 {
+            padding-bottom: 0.3em;
+            font-size: 2em;
+            border-bottom: 1px solid #eaecef;
+        }
 
-		.markdown-preview h2 {
-			padding-bottom: 0.3em;
-			font-size: 1.5em;
-			border-bottom: 1px solid #eaecef;
-		}
+        .markdown-preview h2 {
+            padding-bottom: 0.3em;
+            font-size: 1.5em;
+            border-bottom: 1px solid #eaecef;
+        }
 
-		.markdown-preview h3 {
-			font-size: 1.25em;
-		}
+        .markdown-preview h3 {
+            font-size: 1.25em;
+        }
 
-		.markdown-preview code {
-			padding: 0.2em 0.4em;
-			margin: 0;
-			font-size: 85%;
-			background-color: rgba(27, 31, 35, 0.05);
-			border-radius: 3px;
-			font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-		}
+        .markdown-preview code {
+            padding: 0.2em 0.4em;
+            margin: 0;
+            font-size: 85%;
+            background-color: rgba(27, 31, 35, 0.05);
+            border-radius: 3px;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        }
 
-		.markdown-preview pre {
-			padding: 16px;
-			overflow: auto;
-			font-size: 85%;
-			line-height: 1.45;
-			background-color: #f6f8fa;
-			border-radius: 3px;
-		}
+        .markdown-preview pre {
+            padding: 16px;
+            overflow: auto;
+            font-size: 85%;
+            line-height: 1.45;
+            background-color: #f6f8fa;
+            border-radius: 3px;
+        }
 
-			.markdown-preview pre code {
-				background-color: transparent;
-				padding: 0;
-			}
+            .markdown-preview pre code {
+                background-color: transparent;
+                padding: 0;
+            }
 
-		.markdown-preview blockquote {
-			padding: 0 1em;
-			color: #6a737d;
-			border-left: 0.25em solid #dfe2e5;
-		}
+        .markdown-preview blockquote {
+            padding: 0 1em;
+            color: #6a737d;
+            border-left: 0.25em solid #dfe2e5;
+        }
 
-		.markdown-preview table {
-			border-spacing: 0;
-			border-collapse: collapse;
-			margin-bottom: 16px;
-			width: 100%;
-		}
+        .markdown-preview table {
+            border-spacing: 0;
+            border-collapse: collapse;
+            margin-bottom: 16px;
+            width: 100%;
+        }
 
-			.markdown-preview table th,
-			.markdown-preview table td {
-				padding: 6px 13px;
-				border: 1px solid #dfe2e5;
-			}
+            .markdown-preview table th,
+            .markdown-preview table td {
+                padding: 6px 13px;
+                border: 1px solid #dfe2e5;
+            }
 
-			.markdown-preview table th {
-				font-weight: 600;
-			}
+            .markdown-preview table th {
+                font-weight: 600;
+            }
 
-			.markdown-preview table tr {
-				background-color: #fff;
-				border-top: 1px solid #c6cbd1;
-			}
+            .markdown-preview table tr {
+                background-color: #fff;
+                border-top: 1px solid #c6cbd1;
+            }
 
-				.markdown-preview table tr:nth-child(2n) {
-					background-color: #f6f8fa;
-				}
+                .markdown-preview table tr:nth-child(2n) {
+                    background-color: #f6f8fa;
+                }
 
-		.markdown-preview img {
-			max-width: 100%;
-			box-sizing: content-box;
-		}
+        .markdown-preview img {
+            max-width: 100%;
+            box-sizing: content-box;
+        }
 
-		.markdown-preview ul,
-		.markdown-preview ol {
-			padding-left: 2em;
-		}
+        .markdown-preview ul,
+        .markdown-preview ol {
+            padding-left: 2em;
+        }
 
-		.markdown-preview hr {
-			height: 0.25em;
-			padding: 0;
-			margin: 24px 0;
-			background-color: #e1e4e8;
-			border: 0;
-		}
+        .markdown-preview hr {
+            height: 0.25em;
+            padding: 0;
+            margin: 24px 0;
+            background-color: #e1e4e8;
+            border: 0;
+        }
+
+    .example-code {
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 4px;
+        padding: 15px;
+        margin-bottom: 10px;
+    }
+
+        .example-code pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+
+        .example-code code {
+            font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            color: #212529;
+        }
+
+    /* Stili per la modale con scrollbar */
+    .modal-dialog {
+        max-width: 80%; /* Aumenta la larghezza della modale */
+    }
+
+    .modal-body {
+        max-height: 70vh; /* Limita l'altezza al 70% dell'altezza della viewport */
+        overflow-y: auto; /* Abilita la scrollbar verticale quando necessario */
+        padding: 20px;
+    }
+
+        /* Stile personalizzato per scrollbar (opzionale) */
+        .modal-body::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-body::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+            .modal-body::-webkit-scrollbar-thumb:hover {
+                background: #555;
+            }
+
+    /* Scrollbar per Firefox */
+    .modal-body {
+        scrollbar-width: thin;
+        scrollbar-color: #888 #f1f1f1;
+    }
+
+    /* Assicura che l'intestazione e il piè di pagina della modale siano fissi */
+    .modal-header, .modal-footer {
+        position: sticky;
+        background: white;
+        z-index: 1;
+    }
+
+    .modal-header {
+        top: 0;
+    }
+
+    .modal-footer {
+        bottom: 0;
+    }
 </style>

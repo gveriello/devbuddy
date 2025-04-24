@@ -36,7 +36,6 @@ namespace devbuddy.blazor.Components
 
             async Task ForceLogoutAsync()
             {
-                await LocalStorage.ClearAsync();
                 await ForceLogout.InvokeAsync();
                 StateHasChanged();
             }

@@ -12,13 +12,6 @@ use Firebase\JWT\Key;
 class TokenController extends BaseApiController
 {
     public $requiresAuth = true;
-    protected $logService = null;
-
-    public function __construct()
-    {
-        $this->logService = new LogService();
-    }
-
     /**
      * Verifica validità token
      * GET /auth/verify
@@ -31,13 +24,19 @@ class TokenController extends BaseApiController
             $this->Unauthorized("Il token fornito non è valido o è scaduto; perfavore rieffettua l'accesso.");
         }
 
-        //Aggiungo tempo per non far scadere il token
-        $this->user->exp = time() + 3600;
+        $payload = [
+            "iss" => $data["AppId"],
+            "aud" => AUDIENCE,
+            "iat" => $this->user->iat,
+            "exp" => time() + 3600,
+            "sub" => $this->user->sub,
+            "name" => $this->user->name,
+            "surname" => $this->user->surname,
+            "email" => $this->user->email
+        ];
 
         // Generazione del JWT
-        $jwt = JWT::encode($this->user, API_SECRET, 'HS256');
+        $jwt = JWT::encode($payload, API_SECRET, 'HS256');
         $this->Ok($jwt);
-
-        $this->Ok();
     }
 }

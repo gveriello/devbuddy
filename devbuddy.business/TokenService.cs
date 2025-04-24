@@ -17,7 +17,10 @@ namespace devbuddy.business
             ArgumentNullException.ThrowIfNull("Token non valido.", token);
 
             var content = new StringContent(
-                JsonSerializer.Serialize(new { }),
+                JsonSerializer.Serialize(new
+                {
+                    AppId = Endpoints.APP_ID
+                }),
                 Encoding.UTF8,
                 "application/json"
             );

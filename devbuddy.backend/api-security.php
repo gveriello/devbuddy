@@ -1,4 +1,5 @@
-<?
+<?php
+
 /**
  * Classe per la sicurezza delle richieste API
  */

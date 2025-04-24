@@ -55,7 +55,7 @@ namespace devbuddy.business
             var httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             // Invia la richiesta POST
-            var response = await httpClient.PostAsync(AuthEndpoints.VERIFY_TOKEN, content);
+            var response = await httpClient.PostAsync(TokenEndpoints.VERIFY_TOKEN, content);
 
             return response.IsSuccessStatusCode;
         }

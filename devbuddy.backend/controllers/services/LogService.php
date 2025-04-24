@@ -1,4 +1,4 @@
-<?
+<?php
 
 require_once 'DatabaseService.php';
 require_once 'ApplicationService.php';

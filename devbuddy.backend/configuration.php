@@ -1,4 +1,4 @@
-<?
+<?php
 
 // Configurazione
 define('BASE_PATH', __DIR__);

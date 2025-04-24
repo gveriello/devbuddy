@@ -60,13 +60,13 @@ class ClubsController extends BaseApiController
                 }
                 catch (Exception $ex)
                 {
-                    $logService->Log($ex->getMessage(), "Exception", $appid);
+                    $this->logService->Log($ex->getMessage(), "Exception", $appid);
                     $this->InternalServerError($ex->getMessage());
                 }
             }
             $this->Unauthorized('La richiesta può essere effettuata solo se sei autenticato.');
         }
-        $logService->Log("Tentativo di autorizzazione applicativa con appId: ".$appid, "Exception", $appid);
+        $this->logService->Log("Tentativo di autorizzazione applicativa con appId: ".$appid, "Exception", $appid);
         $this->Unauthorized("Applicazione non autorizzata.");
     }
 }

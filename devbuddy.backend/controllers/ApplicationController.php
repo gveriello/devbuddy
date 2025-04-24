@@ -1,4 +1,5 @@
-<?
+<?php
+
 // Inject 
 require_once 'base/BaseApiController.php';
 require_once 'services/DatabaseService.php';

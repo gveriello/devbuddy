@@ -1,4 +1,5 @@
-<?
+<?php
+
 // Inject 
 require_once 'base/BaseApiController.php';
 require_once 'services/CryptoService.php';
@@ -82,7 +83,7 @@ class DataModelsController extends BaseApiController
         }
         catch (Exception $ex)
         {
-            $logService->Log($ex->getMessage(), "Exception", $body['AppId']);
+            $this->logService->Log($ex->getMessage(), "Exception", $body['AppId']);
             $this->InternalServerError($ex->getMessage());
         }
     }
@@ -141,7 +142,7 @@ class DataModelsController extends BaseApiController
         }
         catch (Exception $ex)
         {
-            $logService->Log($ex->getMessage(), "Exception", $body['AppId']);
+            $this->logService->Log($ex->getMessage(), "Exception", $body['AppId']);
             $this->InternalServerError($ex->getMessage());
         }
     }

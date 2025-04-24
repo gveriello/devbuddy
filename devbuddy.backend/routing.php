@@ -27,13 +27,6 @@ class Router
         $this->requestMethod = $_SERVER['REQUEST_METHOD'];
         $this->parseUrl();
         $this->parseRequestData();
-        
-        // Rate limiting - più severo per utenti non autenticati
-        if ($this->user) {
-            ApiSecurity::checkRateLimit($this->user->sub, 100, 60);
-        } else {
-            ApiSecurity::checkRateLimit(null, 30, 60);
-        }
     }
 
     /**
@@ -57,10 +50,16 @@ class Router
             if ($token === null) {
                 $this->handleError(401, 'Non autorizzato: bearer mancante.');
             }
-            
+
             // Decodifica e verifica il token
             $payload = JWT::decode($token, new Key(API_SECRET, 'HS256'));
-            
+
+            // Verifica manuale della scadenza
+            $now = time();
+            if (isset($payload->exp) && $payload->exp < $now) {
+                $this->handleError(401, 'Token scaduto.');
+            }
+
             // Verifica che l'issuer sia tra quelli consentiti
             if (isset($payload->iss) && !in_array($payload->iss, Issuers)) {
                 $this->handleError(401, 'Issuer '.$payload->iss.' non autorizzato.');
@@ -69,9 +68,7 @@ class Router
             if (isset($payload->aud) && $payload->aud !== AUDIENCE) {
                 $this->handleError(401, 'Audience '.$payload->aud.' non autorizzato.');
             }
-            
-            // Salva il payload come utente autenticato
-            $this->user = $payload;
+
             
             return $payload;
         } 
@@ -202,20 +199,29 @@ class Router
             if (class_exists($controllerClass)) {
                 $controller = new $controllerClass();
 
+                $user = null;
                 // Verifica se il controller richiede autenticazione
                 if (property_exists($controller, 'requiresAuth') && $controller->requiresAuth === true && $this->action != 'getendpoints') {
+
                     // Verifica il token e imposta l'utente
-                    $this->user = $this->verifyToken();
-                    
+                    $user = $this->verifyToken();
+
                     // Se l'autenticazione è richiesta ma il token non è valido, blocca
-                    if ($this->user === null) {
+                    if ($user === null) {
                         $this->handleError(401, 'Autenticazione richiesta');
+                    }
+
+                    // Rate limiting - più severo per utenti non autenticati
+                    if ($user) {
+                        ApiSecurity::checkRateLimit($user->sub, 100, 60);
+                    } else {
+                        ApiSecurity::checkRateLimit(null, 30, 60);
                     }
                 }
                 
                 // Passa i dati dell'utente al controller se disponibile
-                if (method_exists($controller, 'setUser') && $this->user) {
-                    $controller->setUser($this->user);
+                if (method_exists($controller, 'setUser') && $user) {
+                    $controller->setUser($user);
                 }
                 
                 // Verifica se il metodo (action) esiste
@@ -224,7 +230,7 @@ class Router
                     // Verifica autorizzazione all'action
                     $permissionMethod = $this->action . 'Permission';
                     if (method_exists($controller, $permissionMethod)) {
-                        $controller->$permissionMethod($this->user);
+                        $controller->$permissionMethod($user);
                     }
                     
                     // Passa i parametri URL e i dati della richiesta al controller

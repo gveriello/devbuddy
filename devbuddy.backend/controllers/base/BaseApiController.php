@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * Classe base per i controller API

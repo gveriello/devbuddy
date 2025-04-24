@@ -17,7 +17,7 @@ namespace devbuddy.blazor.Components
         private async Task CheckTokenAsync()
         {
             var tokenFromLocalStorage = await LocalStorage.GetItemAsync<string>("Token") ?? null;
-            if (!await AuthenticationService.VerifyTokenAsync(tokenFromLocalStorage))
+            if (string.IsNullOrEmpty(tokenFromLocalStorage) || !await AuthenticationService.VerifyTokenAsync(tokenFromLocalStorage))
             {
                 await LocalStorage.ClearAsync();
                 await ForceLogout.InvokeAsync();

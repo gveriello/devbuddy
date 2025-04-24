@@ -1,4 +1,5 @@
-<?
+<?php
+
 // Inject 
 require_once 'base/BaseApiController.php';
 require_once 'services/DatabaseService.php';
@@ -51,7 +52,7 @@ class ArticlesController extends BaseApiController
         }
         catch (Exception $ex)
         {
-            $logService->Log($ex->getMessage(), "Exception", "9095976a-3063-4084-a657-951c842ef129");
+            $this->logService->Log($ex->getMessage(), "Exception", "9095976a-3063-4084-a657-951c842ef129");
             $this->InternalServerError($ex->getMessage());
         }
     }
@@ -87,7 +88,7 @@ class ArticlesController extends BaseApiController
         }
         catch (Exception $ex)
         {
-            $logService->Log($ex->getMessage(), "Exception", "9095976a-3063-4084-a657-951c842ef129");
+            $this->logService->Log($ex->getMessage(), "Exception", "9095976a-3063-4084-a657-951c842ef129");
             $this->InternalServerError($ex->getMessage());
         }
     }
@@ -127,7 +128,7 @@ class ArticlesController extends BaseApiController
         }
         catch (Exception $ex)
         {
-            $logService->Log($ex->getMessage(), "Exception", "9095976a-3063-4084-a657-951c842ef129");
+            $this->logService->Log($ex->getMessage(), "Exception", "9095976a-3063-4084-a657-951c842ef129");
             $this->InternalServerError($ex->getMessage());
         }
     }

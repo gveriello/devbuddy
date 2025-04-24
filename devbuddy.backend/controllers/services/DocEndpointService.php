@@ -1,4 +1,4 @@
-<?
+<?php
 
 if (class_exists('DocEndpointService')) {
     return;

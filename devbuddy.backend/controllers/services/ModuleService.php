@@ -1,4 +1,5 @@
-<?
+<?php
+
 require_once 'DatabaseService.php';
 
 if (class_exists('ModuleService')) {

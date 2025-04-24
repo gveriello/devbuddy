@@ -199,21 +199,6 @@ class AuthController extends BaseApiController
     }
     
     /**
-     * Verifica validità token
-     * GET /auth/verify
-     */
-    public function verifyAction($params, $data, $method)
-    {
-        $this->requireMethod('POST');
-        
-        if (!$this->user) {
-            $this->Unauthorized("Token non valido.");
-        }
-        
-        $this->Ok();
-    }
-    
-    /**
      * Aggiorna token
      * POST /auth/refresh
      */

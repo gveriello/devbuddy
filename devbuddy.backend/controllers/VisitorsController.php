@@ -1,4 +1,5 @@
-<?
+<?php
+
 // Inject 
 require_once 'base/BaseApiController.php';
 require_once 'services/DatabaseService.php';
@@ -78,7 +79,7 @@ class VisitorsController extends BaseApiController
         }
         catch (Exception $ex)
         {
-            $logService->Log($ex->getMessage(), "Exception", $body['AppId']);
+            $this->logService->Log($ex->getMessage(), "Exception", $body['AppId']);
             $this->InternalServerError($ex->getMessage());
         }
     }

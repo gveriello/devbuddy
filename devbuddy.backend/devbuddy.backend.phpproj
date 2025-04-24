@@ -6,4 +6,13 @@
     <EnvName>PHPDev</EnvName>
     <RuntimeVersion>8.4</RuntimeVersion>
   </PropertyGroup>
+  <ItemGroup>
+    <Content Remove="rate_limit\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="resources\Bingoo.7z" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="resources\" />
+  </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-<?
+<?php
 
 // Attiva la modalità strict per PHP
 declare(strict_types=1);

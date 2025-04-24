@@ -42,24 +42,6 @@ namespace devbuddy.business
             throw new UnauthorizedAccessException(httpResponse.Message);
         }
 
-        public async Task<bool> VerifyTokenAsync(string token)
-        {
-            ArgumentNullException.ThrowIfNull("Token non valido.", token);
-
-            var content = new StringContent(
-                JsonSerializer.Serialize(new {}),
-                Encoding.UTF8,
-                "application/json"
-            );
-
-            var httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            // Invia la richiesta POST
-            var response = await httpClient.PostAsync(TokenEndpoints.VERIFY_TOKEN, content);
-
-            return response.IsSuccessStatusCode;
-        }
-
         public async Task<string> RegisterAsync(RegisterRequest request)
         {
             ArgumentNullException.ThrowIfNull("Il nome non può essere vuoto.", request.Name);

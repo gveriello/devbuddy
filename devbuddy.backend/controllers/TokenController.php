@@ -4,6 +4,10 @@
 require_once 'base/BaseApiController.php';
 require_once 'services/DatabaseService.php';
 require_once 'services/LogService.php';
+require_once JWT_PATH . '/JWT.php';
+require_once JWT_PATH . '/Key.php';
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 class TokenController extends BaseApiController
 {
@@ -26,6 +30,13 @@ class TokenController extends BaseApiController
         if (!$this->user) {
             $this->Unauthorized("Il token fornito non è valido o è scaduto; perfavore rieffettua l'accesso.");
         }
+
+        //Aggiungo tempo per non far scadere il token
+        $this->user->exp = time() + 3600;
+
+        // Generazione del JWT
+        $jwt = JWT::encode($this->user, API_SECRET, 'HS256');
+        $this->Ok($jwt);
 
         $this->Ok();
     }

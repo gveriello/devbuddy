@@ -57,7 +57,7 @@ class Router
             // Verifica manuale della scadenza
             $now = time();
             if (isset($payload->exp) && $payload->exp < $now) {
-                $this->handleError(401, 'Token scaduto.');
+                $this->handleError(401, 'Ora attuale '.$now.'; token scaduto alle '.$payload->exp.'.');
             }
 
             // Verifica che l'issuer sia tra quelli consentiti

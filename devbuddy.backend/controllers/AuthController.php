@@ -199,38 +199,6 @@ class AuthController extends BaseApiController
     }
     
     /**
-     * Aggiorna token
-     * POST /auth/refresh
-     */
-    public function refreshAction($params, $data, $method)
-    {
-        $this->requireMethod('POST');
-        
-        if (!$this->user) {
-            $this->sendError('Token mancante o non valido', 401);
-        }
-        
-        // Genera un nuovo token con scadenza aggiornata
-        $token = $this->generateToken([
-            'sub' => $this->user->sub,
-            'name' => $this->user->name,
-            'email' => $this->user->email ?? '',
-            'role' => $this->user->role,
-            'iat' => time(),
-            'exp' => time() + 3600 // 1 ora
-        ]);
-        
-        return [
-            'status' => 'success',
-            'message' => 'Token aggiornato con successo',
-            'data' => [
-                'token' => $token,
-                'expires_in' => 3600
-            ]
-        ];
-    }
-    
-    /**
      * Logout
      * POST /auth/logout
      */

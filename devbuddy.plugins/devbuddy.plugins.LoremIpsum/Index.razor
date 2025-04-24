@@ -1,0 +1,61 @@
+﻿@using devbuddy.common.Applications
+@using devbuddy.plugins.LoremIpsum.Services
+@inherits AppComponentBase
+
+<div class="container mt-4">
+	<h2 class="mb-4">Generatore Lorem Ipsum</h2>
+	<div class="row mb-4">
+		<div class="col-md-4">
+			<div class="card">
+				<div class="card-header d-flex justify-content-between align-items-center">
+					<h5 class="mb-0">Parametri</h5>
+					<div>
+						<button class="btn btn-secondary btn-sm" @onclick="ResetToDefaults" @attributes=@Tooltip("Ripristina valori predefiniti")>
+							<i class="fa-solid fa-rotate-left me-2"></i>
+						</button>
+					</div>
+				</div>
+				<div class="card-body">
+					<div class="mb-3">
+						<label for="paragraphs" class="form-label">Paragrafi: @paragraphs</label>
+						<input type="range" class="form-range" min="1" max="10" step="1" id="paragraphs" @bind="paragraphs">
+					</div>
+					<div class="mb-3">
+						<label for="sentences" class="form-label">Frasi per paragrafo: @sentencesPerParagraph</label>
+						<input type="range" class="form-range" min="1" max="10" step="1" id="sentences" @bind="sentencesPerParagraph">
+					</div>
+					<div class="mb-3">
+						<label for="words" class="form-label">Parole per frase: @wordsPerSentence</label>
+						<input type="range" class="form-range" min="3" max="15" step="1" id="words" @bind="wordsPerSentence">
+					</div>
+					<div class="mb-3 form-check">
+						<input type="checkbox" class="form-check-input" id="loremStart" @bind="startWithLoremIpsum">
+						<label class="form-check-label" for="loremStart">Inizia con "Lorem ipsum dolor sit amet"</label>
+					</div>
+					<div class="mb-3 form-check">
+						<input type="checkbox" class="form-check-input" id="latinText" @bind="includeLatinText">
+						<label class="form-check-label" for="latinText">Includi testo latino</label>
+					</div>
+					<button class="btn btn-primary w-100" @onclick="GenerateText">
+						<i class="fa-solid fa-wand-magic-sparkles me-2"></i>Genera
+					</button>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-8">
+			<div class="card">
+				<div class="card-header d-flex justify-content-between align-items-center">
+					<h5 class="mb-0">Testo generato</h5>
+					<div>
+						<button class="btn btn-secondary btn-sm" @onclick="CopyToClipboard" @attributes=@Tooltip("Copia negli appunti")>
+							<i class="fa-solid fa-copy"></i>
+						</button>
+					</div>
+				</div>
+				<div class="card-body">
+					<textarea @bind="generatedText" class="form-control" rows="15" readonly style="font-family: 'Georgia', serif;"></textarea>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

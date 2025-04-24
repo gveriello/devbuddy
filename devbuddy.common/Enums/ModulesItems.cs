@@ -39,13 +39,15 @@ namespace devbuddy.common.Enums
         XmlFormatter,
 
         [ModuleKey("9ac57f2b-6d8e-4b1c-9a0f-854c7c3b5e1a")]
-        //[Icon("fa-diagram-project")]
         DiagramEditor,
 
         [ModuleKey("38b6793f-3f2a-49ce-9583-ef98c811399c")]
         Notes,
 
         [ModuleKey("ef65f3ff-e74f-4e9a-8c54-bd3c19f91a85")]
-        Markdown
+        Markdown,
+
+        [ModuleKey("ca5b8a9e-6e5f-4a3d-8c1e-0f7e97b4ab2d")]
+        LoremIpsum,
     }
 }

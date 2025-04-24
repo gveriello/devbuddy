@@ -43,6 +43,7 @@
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.Base64\devbuddy.plugins.Base64.csproj" />
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.CronExpression\devbuddy.plugins.CronExpression.csproj" />
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.JsonFormatters\devbuddy.plugins.JsonFormatters.csproj" />
+	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.LoremIpsum\devbuddy.plugins.LoremIpsum.csproj" />
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.Markdown\devbuddy.plugins.Markdown.csproj" />
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.Notes\devbuddy.plugins.Notes.csproj" />
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.QRCode\devbuddy.plugins.QRCode.csproj" />

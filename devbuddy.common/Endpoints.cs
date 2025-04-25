@@ -20,6 +20,12 @@
         public const string VERIFY_TOKEN = $"{Endpoints.URI_HUBCONNECT}{CONTROLLER}/verify";
     }
 
+    public static class KeysEndpoints
+    {
+        private const string CONTROLLER = "keys";
+        public const string TEST = $"{Endpoints.URI_HUBCONNECT}{CONTROLLER}/test";
+    }
+
     public static class UserEndpoints
     {
         private const string CONTROLLER = "users";

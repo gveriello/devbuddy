@@ -1,5 +1,6 @@
 using devbuddy.business;
 using devbuddy.common;
+using devbuddy.cronjob;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -16,6 +17,7 @@ namespace devbuddy.web
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.ConfigureComponentsServices();
             builder.Services.ConfigureCommonServices();
+            builder.Services.StartCronJob();
             await builder.Build().RunAsync();
         }
     }

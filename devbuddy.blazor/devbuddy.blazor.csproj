@@ -40,6 +40,7 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\devbuddy.business\devbuddy.business.csproj" />
 	  <ProjectReference Include="..\devbuddy.common\devbuddy.common.csproj" />
+	  <ProjectReference Include="..\devbuddy.cronjob\devbuddy.cronjob.csproj" />
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.Base64\devbuddy.plugins.Base64.csproj" />
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.CronExpression\devbuddy.plugins.CronExpression.csproj" />
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.JsonFormatters\devbuddy.plugins.JsonFormatters.csproj" />

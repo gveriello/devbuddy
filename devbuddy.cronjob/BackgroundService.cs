@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Text;
 using Microsoft.Extensions.Hosting;
 using devbuddy.common;
+using devbuddy.common.Services;
 
 namespace devbuddy.cronjob
 {
@@ -11,22 +12,19 @@ namespace devbuddy.cronjob
     {
         public static async Task StartAsync(CancellationToken cancellationToken)
         {
-            while(true)
+            var featureFlagsService = new FeatureFlagsService();
+            var canStartCronJobFF = await featureFlagsService.GetAsync("CanStartCronJob", "false");
+            _ = bool.TryParse(canStartCronJobFF, out bool canStartCronJob);
+            if (!canStartCronJob)
+                return;
+
+            var tickCronJobSecondsFF = await featureFlagsService.GetAsync("TickCronJobSeconds", "60");
+            _ = int.TryParse(tickCronJobSecondsFF, out int seconds);
+
+            while (true)
             {
 
-                var content = new StringContent(
-                    JsonSerializer.Serialize(new
-                    {
-                        AppId = Endpoints.APP_ID
-                    }),
-                    Encoding.UTF8,
-                    "application/json"
-                );
-
-                var httpClient = new HttpClient();
-                // Invia la richiesta POST
-                var response = await httpClient.PostAsync(KeysEndpoints.TEST, content, cancellationToken);
-                await Task.Delay(20000);
+                await Task.Delay(seconds * 1000);
             }
         }
 

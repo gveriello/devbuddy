@@ -23,7 +23,12 @@
     public static class KeysEndpoints
     {
         private const string CONTROLLER = "keys";
-        public const string TEST = $"{Endpoints.URI_HUBCONNECT}{CONTROLLER}/test";
+    }
+
+    public static class FeatureFlagEndpoints
+    {
+        private const string CONTROLLER = "FeatureFlags";
+        public const string GET = $"{Endpoints.URI_HUBCONNECT}{CONTROLLER}/get";
     }
 
     public static class UserEndpoints

@@ -39,8 +39,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devbuddy.plugins.Markdown",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devbuddy.plugins.LoremIpsum", "devbuddy.plugins\devbuddy.plugins.LoremIpsum\devbuddy.plugins.LoremIpsum.csproj", "{9FDDC6C1-DF24-41D0-8FC5-66D1335E7C20}"
 EndProject
-Project("{13B669BE-BB05-4DDF-9536-439F39A36129}") = "devbuddy.backend", "devbuddy.backend\devbuddy.backend.phpproj", "{435EF4A2-7A25-94F6-81CB-E8CBA5A88E88}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -111,10 +109,6 @@ Global
 		{9FDDC6C1-DF24-41D0-8FC5-66D1335E7C20}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9FDDC6C1-DF24-41D0-8FC5-66D1335E7C20}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9FDDC6C1-DF24-41D0-8FC5-66D1335E7C20}.Release|Any CPU.Build.0 = Release|Any CPU
-		{435EF4A2-7A25-94F6-81CB-E8CBA5A88E88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{435EF4A2-7A25-94F6-81CB-E8CBA5A88E88}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{435EF4A2-7A25-94F6-81CB-E8CBA5A88E88}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{435EF4A2-7A25-94F6-81CB-E8CBA5A88E88}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -136,7 +130,6 @@ Global
 		{B9D149BB-6D22-4FF4-8457-3D305A25661D} = {255A78B8-75D1-4175-B9AA-5E9F2BE5EACC}
 		{127E4C1E-CA88-423E-9CE0-EB2835AB9A82} = {255A78B8-75D1-4175-B9AA-5E9F2BE5EACC}
 		{9FDDC6C1-DF24-41D0-8FC5-66D1335E7C20} = {255A78B8-75D1-4175-B9AA-5E9F2BE5EACC}
-		{435EF4A2-7A25-94F6-81CB-E8CBA5A88E88} = {6C83A596-D32D-B35F-00DD-F0C99B673980}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {63069232-DFA8-4BF6-A5A0-395A67298A8F}

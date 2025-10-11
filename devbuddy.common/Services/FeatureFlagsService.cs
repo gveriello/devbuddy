@@ -9,7 +9,7 @@ using devbuddy.common.Models;
 
 namespace devbuddy.common.Services
 {
-    public class FeatureFlagsService
+    public class FeatureFlagsService(DevUtilityService devUtilityService)
     {
         public async Task<string?> GetAsync(string key, object? defaultValue = null)
         {
@@ -26,6 +26,7 @@ namespace devbuddy.common.Services
                 );
 
                 var httpClient = new HttpClient();
+                devUtilityService.InjectDevEnvironment(httpClient);
                 var response = await httpClient.PostAsync(FeatureFlagEndpoints.GET, content);
                 // Leggi la risposta
                 var jsonResponse = await response.Content.ReadAsStringAsync();

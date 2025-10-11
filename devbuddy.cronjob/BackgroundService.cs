@@ -12,20 +12,20 @@ namespace devbuddy.cronjob
     {
         public static async Task StartAsync(CancellationToken cancellationToken)
         {
-            var featureFlagsService = new FeatureFlagsService();
-            var canStartCronJobFF = await featureFlagsService.GetAsync("CanStartCronJob", "false");
-            _ = bool.TryParse(canStartCronJobFF, out bool canStartCronJob);
-            if (!canStartCronJob)
-                return;
+            //var featureFlagsService = new FeatureFlagsService();
+            //var canStartCronJobFF = await featureFlagsService.GetAsync("CanStartCronJob", "false");
+            //_ = bool.TryParse(canStartCronJobFF, out bool canStartCronJob);
+            //if (!canStartCronJob)
+            //    return;
 
-            var tickCronJobSecondsFF = await featureFlagsService.GetAsync("TickCronJobSeconds", "60");
-            _ = int.TryParse(tickCronJobSecondsFF, out int seconds);
+            //var tickCronJobSecondsFF = await featureFlagsService.GetAsync("TickCronJobSeconds", "60");
+            //_ = int.TryParse(tickCronJobSecondsFF, out int seconds);
 
-            while (true)
-            {
+            //while (true)
+            //{
 
-                await Task.Delay(seconds * 1000);
-            }
+            //    await Task.Delay(seconds * 1000);
+            //}
         }
 
         public static Task StopAsync(CancellationToken cancellationToken)

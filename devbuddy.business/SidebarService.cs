@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Headers;
+﻿using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using Blazored.LocalStorage;
@@ -7,24 +8,20 @@ using devbuddy.common.Attributes;
 using devbuddy.common.Enums;
 using devbuddy.common.ExtensionMethods;
 using devbuddy.common.Models;
+using devbuddy.common.Services;
 
 namespace devbuddy.business
 {
-    public class SidebarService
+    public class SidebarService(DevUtilityService devUtilityService, ILocalStorageService _localStorageService)
     {
-        private readonly ILocalStorageService _localStorageService;
-
-        public SidebarService(ILocalStorageService localStorageService)
-        {
-            this._localStorageService = localStorageService;
-        }
-
         public async Task<List<NavItem>> GetAllAsync()
         {
             string _token = await _localStorageService.GetItemAsync<string>("Token") ?? throw new UnauthorizedAccessException("Utente non loggato");
 
-            HttpClient client = new();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
+            HttpClient httpClient = new();
+            devUtilityService.InjectDevEnvironment(httpClient);
+
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
 
             var content = new StringContent(
                 JsonSerializer.Serialize(new
@@ -35,7 +32,7 @@ namespace devbuddy.business
                 "application/json"
             );
 
-            var response = await client.PostAsync(ModulesEndpoints.GET_APP_MODULES, content);
+            var response = await httpClient.PostAsync(ModulesEndpoints.GET_APP_MODULES, content);
 
             // Leggi la risposta
             var jsonResponse = await response.Content.ReadAsStringAsync();

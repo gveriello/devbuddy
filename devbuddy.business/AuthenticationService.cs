@@ -4,10 +4,11 @@ using System.Text.Json;
 using devbuddy.business.Models;
 using devbuddy.common;
 using devbuddy.common.Models;
+using devbuddy.common.Services;
 
 namespace devbuddy.business
 {
-    public class AuthenticationService
+    public class AuthenticationService(DevUtilityService devUtilityService)
     {
         public async Task<string> LoginAsync(string email, string password)
         {
@@ -28,9 +29,10 @@ namespace devbuddy.business
             );
 
             var httpClient = new HttpClient();
+            devUtilityService.InjectDevEnvironment(httpClient);
+
             // Invia la richiesta POST
             var response = await httpClient.PostAsync(AuthEndpoints.LOGIN, content);
-
             // Leggi la risposta
             var jsonResponse = await response.Content.ReadAsStringAsync();
             var httpResponse = JsonSerializer.Deserialize<HttpResponse<string>>(jsonResponse);
@@ -68,6 +70,7 @@ namespace devbuddy.business
             );
 
             var httpClient = new HttpClient();
+            devUtilityService.InjectDevEnvironment(httpClient);
             // Invia la richiesta POST
             var response = await httpClient.PostAsync(AuthEndpoints.REGISTER, content);
 

@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Headers;
+﻿using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using Blazored.LocalStorage;
@@ -9,26 +10,16 @@ using devbuddy.common.Services.Base;
 
 namespace devbuddy.common.Services
 {
-    public class DataModelService
+    public class DataModelService(MemoryCacheService memoryCacheService, ILocalStorageService localStorage, DevUtilityService devUtilityService)
     {
         protected bool _isDirty, _isInitialized;
         protected readonly object _lock = new();
-
-        private readonly ILocalStorageService _localStorageService;
-        private readonly MemoryCacheService _memoryCacheService;
-
         protected readonly JsonSerializerOptions _options = new()
         {
             WriteIndented = true,
             PropertyNameCaseInsensitive = true,
             Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
         };
-
-        public DataModelService(MemoryCacheService memoryCacheService, ILocalStorageService localStorage)
-        {
-            _memoryCacheService = memoryCacheService;
-            _localStorageService = localStorage;
-        }
 
         private string BuildDataModelKey(string token, string apiKey)
             => $"{{tok:{token}}}{{api:{apiKey}}}";
@@ -38,14 +29,15 @@ namespace devbuddy.common.Services
         {
             try
             {
-                string _token = await _localStorageService.GetItemAsync<string>("Token") ?? throw new UnauthorizedAccessException("Utente non loggato");
+                string _token = await localStorage.GetItemAsync<string>("Token") ?? throw new UnauthorizedAccessException("Utente non loggato");
 
-                if (_memoryCacheService.TryGetValueIfIsNotExpired(BuildDataModelKey(_token, apiKey), out string dataModel))
+                if (memoryCacheService.TryGetValueIfIsNotExpired(BuildDataModelKey(_token, apiKey), out string dataModel))
                 {
                     return JsonSerializer.Deserialize<TCustomDataModel>(dataModel, _options);
                 }
 
                 HttpClient client = new();
+                devUtilityService.InjectDevEnvironment(client);
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
 
                 var content = new StringContent(
@@ -87,12 +79,13 @@ namespace devbuddy.common.Services
         {
             try
             {
-                string _token = await _localStorageService.GetItemAsync<string>("Token") ?? throw new UnauthorizedAccessException("Utente non loggato");
+                string _token = await localStorage.GetItemAsync<string>("Token") ?? throw new UnauthorizedAccessException("Utente non loggato");
 
-                _memoryCacheService.AddOrUpdate(BuildDataModelKey(_token, apiKey), JsonSerializer.Serialize(dataModel, _options));
+                memoryCacheService.AddOrUpdate(BuildDataModelKey(_token, apiKey), JsonSerializer.Serialize(dataModel, _options));
 
-                HttpClient client = new();
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
+                HttpClient httpClient = new();
+                devUtilityService.InjectDevEnvironment(httpClient);
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
 
                 var toSave = JsonSerializer.Serialize(dataModel, _options);
 
@@ -109,7 +102,7 @@ namespace devbuddy.common.Services
                     "application/json"
                 );
 
-                var response = await client.PostAsync(DataModelEndpoints.UPSERT_DATAMODEL, content);
+                var response = await httpClient.PostAsync(DataModelEndpoints.UPSERT_DATAMODEL, content);
 
                 // Leggi la risposta
                 var jsonResponse = await response.Content.ReadAsStringAsync();

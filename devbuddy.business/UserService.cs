@@ -1,28 +1,25 @@
-﻿using System.Net.Http.Headers;
+﻿using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using Blazored.LocalStorage;
 using devbuddy.common;
 using devbuddy.common.Models;
+using devbuddy.common.Services;
 
 namespace devbuddy.business
 {
-    public class UserService
+    public class UserService(DevUtilityService devUtilityService, ILocalStorageService _localStorageService)
     {
-        private readonly ILocalStorageService _localStorageService;
-
-        public UserService(ILocalStorageService localStorageService)
-        {
-            this._localStorageService = localStorageService;
-        }
 
         public async Task<AuthenticatedUser> GetUserDataAsync()
         {
             AuthenticatedUser toReturn = null;
             string _token = await _localStorageService.GetItemAsync<string>("Token") ?? throw new UnauthorizedAccessException("Utente non loggato");
 
-            HttpClient client = new();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
+            HttpClient httpClient = new();
+            devUtilityService.InjectDevEnvironment(httpClient);
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
 
             var content = new StringContent(
                 JsonSerializer.Serialize(new
@@ -33,7 +30,7 @@ namespace devbuddy.business
                 "application/json"
             );
 
-            HttpResponseMessage response = await client.PostAsync(UserEndpoints.GET_USER_DATA, content);
+            HttpResponseMessage response = await httpClient.PostAsync(UserEndpoints.GET_USER_DATA, content);
             HttpResponse<AuthenticatedUser> user = null;
 
             try

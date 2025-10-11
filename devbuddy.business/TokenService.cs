@@ -7,10 +7,11 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using devbuddy.common;
 using devbuddy.common.Models;
+using devbuddy.common.Services;
 
 namespace devbuddy.business
 {
-    public class TokenService
+    public class TokenService(DevUtilityService devUtilityService)
     {
 
         public async Task<(bool isValid, string? newToken)> VerifyTokenAsync(string token)
@@ -27,6 +28,7 @@ namespace devbuddy.business
             );
 
             var httpClient = new HttpClient();
+            devUtilityService.InjectDevEnvironment(httpClient);
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             // Invia la richiesta POST
             var response = await httpClient.PostAsync(TokenEndpoints.VERIFY_TOKEN, content);

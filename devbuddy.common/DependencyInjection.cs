@@ -22,6 +22,7 @@ namespace devbuddy.common
                     .AddScoped<ToastService>()
                     .AddScoped<SidebarNavigationService>()
                     .AddScoped<DataModelService>()
+                    .AddScoped<DevUtilityService> ()
                     .AddBlazoredLocalStorage();
 
             if (DeviceServiceBase.IsInstanceInWebApp)

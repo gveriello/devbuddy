@@ -16,6 +16,26 @@ namespace devbuddy.blazor.Components
         [Parameter] public EventCallback OnPageChanged { get; set; }
 
         private List<NavItem> AllModules = [];
+        private List<NavItem> AllModulesFiltered = [];
+        string _searchTool;
+        private string SearchTool {
+            get => _searchTool;
+            set => OnSearchToolValueChanged(value);
+        }
+
+        private void OnSearchToolValueChanged(string newValue)
+        {
+            if (string.IsNullOrEmpty(newValue))
+            {
+                AllModulesFiltered = AllModules.ToList();
+            }
+            else
+            {
+                AllModulesFiltered = AllModules.Where(module => module.Description.ToUpper().Contains(newValue.ToUpper()))?.ToList();
+            }
+
+            StateHasChanged();
+        }
 
         protected override async Task OnInitializedAsync()
         {
@@ -27,7 +47,7 @@ namespace devbuddy.blazor.Components
         {
             try
             {
-                AllModules = await SidebarService.GetAllAsync();
+                AllModules = AllModulesFiltered = await SidebarService.GetAllAsync();
                 StateHasChanged();
             }
             catch(UnauthorizedAccessException)

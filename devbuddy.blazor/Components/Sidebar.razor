@@ -16,25 +16,30 @@
 		</div>
 	}
 	<ul class="nav flex-column align-items-center align-items-sm-start" id="menu">
-		@if (AllModules?.Count > 0)
+		@if (AllModulesFiltered?.Count > 0)
 		{
+			<div class="form-floating mb-3">
+				<input type="text" class="form-control" id="floatingSearchModule" placeholder="Digita per cercare gli strumenti" @bind="@SearchTool" />
+			</div>
+			<br />
+
 			//nodo home
-			var homeNavItem = AllModules.FirstOrDefault(nav => nav.Node == ModulesItems.Home);
+			var homeNavItem = AllModulesFiltered.FirstOrDefault(nav => nav.Node == ModulesItems.Home);
 			<MenuNavItem NavNode="@homeNavItem.Node" Description="@homeNavItem.Description" Icon="@homeNavItem.Icon" OnNavItemClick="OnMenuItemClick" />
 			<br />
 			//nodo unparented
-			var unparentedItems = AllModules.Where(nav => string.IsNullOrEmpty(nav.Category) && nav.Node != ModulesItems.Home)?.ToList();
+			var unparentedItems = AllModulesFiltered.Where(nav => string.IsNullOrEmpty(nav.Category) && nav.Node != ModulesItems.Home)?.ToList();
 			if (unparentedItems?.Count > 0)
 				foreach (var unparentedItem in unparentedItems)
 				{
 					<MenuNavItem NavNode="@unparentedItem.Node" Description="@unparentedItem.Description" Icon="@unparentedItem.Icon" OnNavItemClick="OnMenuItemClick" />
 				}
 			//nodi categorizzati
-			var allCategories = AllModules.Where(nav => !string.IsNullOrEmpty(nav.Category))?.Select(nav => nav.Category.Trim()).Distinct().ToList();
+			var allCategories = AllModulesFiltered.Where(nav => !string.IsNullOrEmpty(nav.Category))?.Select(nav => nav.Category.Trim()).Distinct().ToList();
 			if (allCategories?.Count > 0)
 				foreach (var category in allCategories)
 				{
-					var parentedItems = AllModules.Where(nav => nav.Category == category)?.ToList();
+					var parentedItems = AllModulesFiltered.Where(nav => nav.Category == category)?.ToList();
 					if (parentedItems?.Count > 0)
 					{
 						@* <li class="nav-item" style="color:black; cursor:pointer" href="#@category" data-bs-toggle="collapse">

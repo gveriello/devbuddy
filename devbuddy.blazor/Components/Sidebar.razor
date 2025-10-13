@@ -37,16 +37,16 @@
 					var parentedItems = AllModules.Where(nav => nav.Category == category)?.ToList();
 					if (parentedItems?.Count > 0)
 					{
-						<li class="nav-item" style="color:black; cursor:pointer" href="#@category" data-bs-toggle="collapse">
+						@* <li class="nav-item" style="color:black; cursor:pointer" href="#@category" data-bs-toggle="collapse">
 
 							<h5><i class="fa-solid fa-caret-right"></i> &nbsp;<i>@category</i></h5>
 						</li>
-						<div id="@category" class="collapse mb-3">
+						<div id="@category" class="collapse mb-3"> *@
 							@foreach (var parentedItem in parentedItems)
 							{
 								<MenuNavItem NavNode="@parentedItem.Node" Description="@parentedItem.Description" Icon="@parentedItem.Icon" OnNavItemClick="OnMenuItemClick" />
 							}
-						</div>
+						@* </div> *@
 					}
 				}
 		}

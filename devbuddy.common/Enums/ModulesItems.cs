@@ -49,5 +49,8 @@ namespace devbuddy.common.Enums
 
         [ModuleKey("ca5b8a9e-6e5f-4a3d-8c1e-0f7e97b4ab2d")]
         LoremIpsum,
+
+        [ModuleKey("5502bed8-22f5-412a-8a3b-ad5009ff1117")]
+        SqlFormatter,
     }
 }

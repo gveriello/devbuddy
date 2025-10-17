@@ -45,6 +45,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src.desktop", "src.desktop"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devbuddy.cronjob", "devbuddy.cronjob\devbuddy.cronjob.csproj", "{7CB4C573-0290-4BFA-8697-A39C5A50B30E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "devbuddy.plugins.SqlFormatter", "devbuddy.plugins\devbuddy.plugins.SqlFormatter\devbuddy.plugins.SqlFormatter.csproj", "{6ABD9538-7633-4B78-8AB2-5E42FCC00B24}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -119,6 +121,10 @@ Global
 		{7CB4C573-0290-4BFA-8697-A39C5A50B30E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7CB4C573-0290-4BFA-8697-A39C5A50B30E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7CB4C573-0290-4BFA-8697-A39C5A50B30E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6ABD9538-7633-4B78-8AB2-5E42FCC00B24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6ABD9538-7633-4B78-8AB2-5E42FCC00B24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6ABD9538-7633-4B78-8AB2-5E42FCC00B24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6ABD9538-7633-4B78-8AB2-5E42FCC00B24}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -143,6 +149,7 @@ Global
 		{1C1C194C-7FC6-4A46-8421-F09511F0FE0B} = {6C83A596-D32D-B35F-00DD-F0C99B673980}
 		{58F229B7-3723-4C05-AF6E-EFE81DF4440C} = {6C83A596-D32D-B35F-00DD-F0C99B673980}
 		{7CB4C573-0290-4BFA-8697-A39C5A50B30E} = {6C83A596-D32D-B35F-00DD-F0C99B673980}
+		{6ABD9538-7633-4B78-8AB2-5E42FCC00B24} = {255A78B8-75D1-4175-B9AA-5E9F2BE5EACC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {63069232-DFA8-4BF6-A5A0-395A67298A8F}

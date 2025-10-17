@@ -49,6 +49,7 @@
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.Notes\devbuddy.plugins.Notes.csproj" />
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.QRCode\devbuddy.plugins.QRCode.csproj" />
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.QueryOptimizer\devbuddy.plugins.QueryOptimizer.csproj" />
+	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.SqlFormatter\devbuddy.plugins.SqlFormatter.csproj" />
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.XmlFormatter\devbuddy.plugins.XmlFormatter.csproj" />
 	  <ProjectReference Include="..\devbuddy.plugins\devbuddy.plugins.YamlFormatter\devbuddy.plugins.YamlFormatter.csproj" />
 	</ItemGroup>

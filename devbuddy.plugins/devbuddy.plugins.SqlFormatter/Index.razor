@@ -1,0 +1,99 @@
+﻿@using devbuddy.common.Applications
+@inherits AppComponentBase
+
+<div class="container mt-4">
+    <h2 class="mb-4">Sql Formatter</h2>
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Query di partenza</h5>
+                    <div>
+                        <button class="btn btn-primary btn-sm" @onclick="PasteFromClipboard" @attributes=@Tooltip("Incolla dagli appunti")>
+                            <i class="fa-solid fa-paste"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm" @onclick="ClearInput" @attributes=@Tooltip("Cancella tutto")>
+                            <i class="fa-solid fa-eraser"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <textarea @bind="currentSql"
+                              @bind:event="oninput"
+                              @bind:after="OnSqlChanged"
+                              @onkeydown="HandleKeyDown"
+                              @ref="textAreaRef"
+                              spellcheck="false"
+                              class="form-control" rows="15" placeholder="Inserisci qui il la query da formattare" style="font-family: monospace;"></textarea>
+                    @if (showAutocomplete && suggestions.Any())
+                    {
+                        <div class="autocomplete-popup" style="top: @(autocompleteTop)px; left: @(autocompleteLeft)px;">
+                            @foreach (var (suggestion, index) in suggestions.Select((s, i) => (s, i)))
+                            {
+                                <div class="autocomplete-item @(index == selectedSuggestionIndex ? "selected" : "")"
+                                     @onclick="() => InsertSuggestion(suggestion)">
+                                    <span class="suggestion-type">@suggestion.Type</span>
+                                    <span class="suggestion-text">@suggestion.Text</span>
+                                    @if (!string.IsNullOrEmpty(suggestion.Description))
+                                    {
+                                        <span class="suggestion-desc">@suggestion.Description</span>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+                    <div class="row">
+                        <div class="col">
+                            <label>
+                                Dialetto:
+                                <select class="form-control" @bind="selectedDialect" @bind:after="OnDialectChanged">
+                                    <option value="Standard">SQL Standard</option>
+                                    <option value="TSql">T-SQL (SQL Server)</option>
+                                    <option value="PostgreSQL">PostgreSQL</option>
+                                    <option value="MySQL">MySQL</option>
+                                    <option value="Oracle">Oracle</option>
+                                    <option value="SQLite">SQLite</option>
+                                </select>
+                            </label>
+                        </div>
+                        <div class="col-6">
+                            @if (validationErrors.Any())
+                            {
+                                <span class="error-badge">⚠️ Sono presenti @validationErrors.Count errori.</span>
+                                <div class="validation-errors">
+                                    @foreach (var error in validationErrors)
+                                    {
+                                        <div class="error-message">
+                                            <span>@error</span>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <span class="success-badge">✓ Sintassi valida</span>
+                            }
+
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Preview</h5>
+                    <div>
+                        <button class="btn btn-secondary btn-sm" @onclick="CopyToClipboard" @attributes=@Tooltip("Copia HTML negli appunti")>
+                            <i class="fa-solid fa-code"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body markdown-preview">
+                    @((MarkupString)formattedSql)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

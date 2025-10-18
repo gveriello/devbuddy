@@ -18,32 +18,17 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <textarea @bind="currentSql"
-                              @bind:event="oninput"
-                              @bind:after="OnSqlChanged"
-                              @onkeydown="HandleKeyDown"
-                              @ref="textAreaRef"
-                              spellcheck="false"
-                              class="form-control" rows="15" placeholder="Inserisci qui il la query da formattare" style="font-family: monospace;"></textarea>
-                    @if (showAutocomplete && suggestions.Any())
-                    {
-                        <div class="autocomplete-popup" style="top: @(autocompleteTop)px; left: @(autocompleteLeft)px;">
-                            @foreach (var (suggestion, index) in suggestions.Select((s, i) => (s, i)))
-                            {
-                                <div class="autocomplete-item @(index == selectedSuggestionIndex ? "selected" : "")"
-                                     @onclick="() => InsertSuggestion(suggestion)">
-                                    <span class="suggestion-type">@suggestion.Type</span>
-                                    <span class="suggestion-text">@suggestion.Text</span>
-                                    @if (!string.IsNullOrEmpty(suggestion.Description))
-                                    {
-                                        <span class="suggestion-desc">@suggestion.Description</span>
-                                    }
-                                </div>
-                            }
-                        </div>
-                    }
                     <div class="row">
-                        <div class="col">
+                        <div class="col-9 mb-2">
+                            <textarea @bind="currentSql"
+                                      @bind:event="oninput"
+                                      @bind:after="OnSqlChanged"
+                                      @onkeydown="HandleKeyDown"
+                                      @ref="textAreaRef"
+                                      spellcheck="false"
+                                      class="form-control w-100" rows="15" placeholder="Digita la query da formattare" style="font-family: monospace;"></textarea>
+                        </div>
+                        <div class="col-3">
                             <label>
                                 Dialetto:
                                 <select class="form-control" @bind="selectedDialect" @bind:after="OnDialectChanged">
@@ -54,13 +39,30 @@
                                     <option value="Oracle">Oracle</option>
                                     <option value="SQLite">SQLite</option>
                                 </select>
-                            </label>
+                            </label><br />
+                            @if (showAutocomplete && suggestions.Any())
+                            {
+                                @foreach (var (suggestion, index) in suggestions.Select((s, i) => (s, i)))
+                                {
+                                    <button class="btn btn-primary @(index == selectedSuggestionIndex ? "selected" : "")"
+                                            @onclick="() => InsertSuggestion(suggestion)">
+                                        @* <span class="suggestion-type">@suggestion.Type</span>
+                                            <span class="suggestion-text">@suggestion.Text</span> *@
+                                        @if (!string.IsNullOrEmpty(suggestion.Description))
+                                        {
+                                            <span class="badge bg-primary">@suggestion.Text</span>
+                                        }
+                                    </button>
+                                }
+                            }
                         </div>
-                        <div class="col-6">
+
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
                             @if (validationErrors.Any())
                             {
-                                <span class="error-badge">⚠️ Sono presenti @validationErrors.Count errori.</span>
-                                <div class="validation-errors">
+                                <div class="alert alert-danger">
                                     @foreach (var error in validationErrors)
                                     {
                                         <div class="error-message">
@@ -77,7 +79,7 @@
                         </div>
                     </div>
                 </div>
-                
+
             </div>
         </div>
         <div class="col-md-6">

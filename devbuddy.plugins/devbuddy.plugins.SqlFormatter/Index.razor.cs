@@ -450,7 +450,6 @@ namespace devbuddy.plugins.SqlFormatter
                     selectedSuggestionIndex = Math.Max(selectedSuggestionIndex - 1, 0);
                     break;
                 case "Enter":
-                case "Tab":
                     if (suggestions.Any())
                     {
                         InsertSuggestion(suggestions[selectedSuggestionIndex]);

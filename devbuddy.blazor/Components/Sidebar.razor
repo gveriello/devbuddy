@@ -24,8 +24,11 @@
             <MenuNavItem NavNode="@homeNavItem.Node" Description="@homeNavItem.Description" Icon="@homeNavItem.Icon" OnNavItemClick="OnMenuItemClick" />
 
             <li class="nav-item">
-                <div class="col-md-12 w-100">
-                    <input type="text" class="form-control" id="floatingSearchModule" placeholder="Digita per cercare" @bind="@SearchTool" />
+                <div class="col-12 w-100">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Digita per cercare" @bind="@SearchTool">
+                        <button class="btn btn-danger" type="button" @onclick="@(() => SearchTool = string.Empty)"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
                 </div>
             </li>
 

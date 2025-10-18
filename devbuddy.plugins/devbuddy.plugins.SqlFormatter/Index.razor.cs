@@ -17,16 +17,16 @@ namespace devbuddy.plugins.SqlFormatter
         [Parameter]
         public EventCallback<string> SqlQueryChanged { get; set; }
 
-        private string currentSql = string.Empty;
+        private string SqlToFormat = string.Empty;
         private string formattedSql = string.Empty;
         private bool copied = false;
         private string selectedDialect = "Standard";
-        private List<string> validationErrors = new();
+        private List<string> validationErrors = [];
         private ElementReference textAreaRef;
 
         // Autocomplete
-        private bool showAutocomplete = false;
-        private List<Suggestion> suggestions = new();
+        private bool AnySuggestions => Suggestions.Count != 0;
+        private List<Suggestion> Suggestions = [];
         private int selectedSuggestionIndex = 0;
         private int autocompleteTop = 0;
         private int autocompleteLeft = 0;
@@ -34,15 +34,15 @@ namespace devbuddy.plugins.SqlFormatter
 
         protected override void OnInitialized()
         {
-            currentSql = SqlQuery;
+            SqlToFormat = SqlQuery;
             UpdateFormattedSql();
         }
 
         protected override void OnParametersSet()
         {
-            if (currentSql != SqlQuery)
+            if (SqlToFormat != SqlQuery)
             {
-                currentSql = SqlQuery;
+                SqlToFormat = SqlQuery;
                 UpdateFormattedSql();
             }
         }
@@ -53,7 +53,7 @@ namespace devbuddy.plugins.SqlFormatter
         }
         public void ClearInput()
         {
-            currentSql = string.Empty;
+            SqlToFormat = string.Empty;
             SqlQuery = string.Empty;
             formattedSql = string.Empty;
         }
@@ -61,29 +61,29 @@ namespace devbuddy.plugins.SqlFormatter
         private async Task OnSqlChanged()
         {
             UpdateFormattedSql();
-            await SqlQueryChanged.InvokeAsync(currentSql);
-            UpdateAutocomplete();
+            await SqlQueryChanged.InvokeAsync(SqlToFormat);
+            UpdateSuggestions();
         }
 
         private void UpdateFormattedSql()
         {
             ValidateSql();
-            formattedSql = FormatSql(currentSql);
+            formattedSql = FormatSql(SqlToFormat);
         }
 
         private void ValidateSql()
         {
             validationErrors.Clear();
 
-            if (string.IsNullOrWhiteSpace(currentSql))
+            if (string.IsNullOrWhiteSpace(SqlToFormat))
                 return;
 
-            var sql = currentSql.ToUpper();
+            var sql = SqlToFormat.ToUpper();
             var dialect = GetDialect();
 
             // Controllo parentesi bilanciate
-            var openParen = currentSql.Count(c => c == '(');
-            var closeParen = currentSql.Count(c => c == ')');
+            var openParen = SqlToFormat.Count(c => c == '(');
+            var closeParen = SqlToFormat.Count(c => c == ')');
             if (openParen != closeParen)
                 validationErrors.Add($"Parentesi non bilanciate: {openParen} aperte, {closeParen} chiuse");
 
@@ -95,7 +95,7 @@ namespace devbuddy.plugins.SqlFormatter
             }
 
             // Controllo virgole doppie
-            if (currentSql.Contains(",,"))
+            if (SqlToFormat.Contains(",,"))
                 validationErrors.Add("Virgole doppie trovate");
 
             // Controllo JOIN senza ON (eccetto CROSS JOIN)
@@ -284,7 +284,7 @@ namespace devbuddy.plugins.SqlFormatter
             try
             {
                 var clipboardText = await JSRuntime.InvokeAsync<string>("navigator.clipboard.readText");
-                currentSql = clipboardText;
+                SqlToFormat = clipboardText;
             }
             catch (Exception ex)
             {
@@ -311,67 +311,66 @@ namespace devbuddy.plugins.SqlFormatter
             // Evidenzia keywords del dialetto
             foreach (var keyword in dialect.Keywords)
             {
-                var pattern = $@"\b{Regex.Escape(keyword)}\b";
-                result = Regex.Replace(result, pattern,
-                    $"<span class=\"sql-keyword\">{keyword}</span>",
-                    RegexOptions.IgnoreCase);
+                var tempLine = line.ToUpper();
+                if (tempLine.Contains(keyword))
+                {
+                    var pattern = $@"\b{Regex.Escape(keyword)}\b";
+                    result = Regex.Replace(result, pattern,
+                        $"<b>{keyword}</b>",
+                        RegexOptions.IgnoreCase);
+                }
             }
 
             // Evidenzia funzioni del dialetto
             foreach (var function in dialect.Functions)
             {
+                var tempLine = line.ToUpper();
+                if (tempLine.Contains(function)) continue;
+
                 var pattern = $@"\b{Regex.Escape(function)}\b\s*\(";
                 result = Regex.Replace(result, pattern,
-                    $"<span class=\"sql-function\">{function}</span>(",
+                    $"<b>{function}</b>(",
                     RegexOptions.IgnoreCase);
             }
 
             // Evidenzia stringhe
-            result = Regex.Replace(result, @"'([^']*)'",
-                "<span class=\"sql-string\">'$1'</span>");
-            result = Regex.Replace(result, @"""([^""]*)""",
-                "<span class=\"sql-string\">\"$1\"</span>");
+            //result = Regex.Replace(result, @"'([^']*)'",
+            //    "<span class=\"sql-string\">\"$1\"</span>");
+            //result = Regex.Replace(result, @"""([^""]*)""",
+            //    "<span class=\"sql-string\">\"$1\"</span>");
 
             // Evidenzia numeri
             result = Regex.Replace(result, @"\b(\d+\.?\d*)\b",
-                "<span class=\"sql-number\">$1</span>");
+                "<i>$1</i>");
 
             // Evidenzia commenti
             result = Regex.Replace(result, @"--(.*)$",
-                "<span class=\"sql-comment\">--$1</span>");
+                "<i>--$1</i>");
 
             return result;
         }
 
-        private void UpdateAutocomplete()
+        private void UpdateSuggestions()
         {
-            var cursorPos = currentSql.Length; // Semplificato - in produzione useresti JSInterop per posizione cursore
-            var textBeforeCursor = currentSql.Substring(0, Math.Min(cursorPos, currentSql.Length));
+            var cursorPos = SqlToFormat.Length; 
+            var textBeforeCursor = SqlToFormat.Substring(0, Math.Min(cursorPos, SqlToFormat.Length));
 
             // Trova l'ultima parola parziale
-            var match = Regex.Match(textBeforeCursor, @"(\w+)$");
+            var match = FindLastPartialWord().Match(textBeforeCursor);
             if (match.Success)
             {
                 currentWord = match.Groups[1].Value;
                 if (currentWord.Length >= 2) // Mostra suggerimenti dopo 2 caratteri
                 {
-                    suggestions = GetSuggestions(currentWord);
-                    showAutocomplete = suggestions.Any();
+                    Suggestions = GetSuggestions(currentWord);
                     selectedSuggestionIndex = 0;
 
-                    // In produzione, calcola la posizione esatta del cursore con JSInterop
                     autocompleteTop = 100;
                     autocompleteLeft = 20;
-                }
-                else
-                {
-                    showAutocomplete = false;
+                    return;
                 }
             }
-            else
-            {
-                showAutocomplete = false;
-            }
+            Suggestions.Clear();
         }
 
         private List<Suggestion> GetSuggestions(string partial)
@@ -438,35 +437,33 @@ namespace devbuddy.plugins.SqlFormatter
 
         private async Task HandleKeyDown(KeyboardEventArgs e)
         {
-            if (!showAutocomplete)
+            if (!AnySuggestions)
                 return;
 
             switch (e.Key)
             {
                 case "ArrowDown":
-                    selectedSuggestionIndex = Math.Min(selectedSuggestionIndex + 1, suggestions.Count - 1);
+                    selectedSuggestionIndex = Math.Min(selectedSuggestionIndex + 1, Suggestions.Count - 1);
                     break;
                 case "ArrowUp":
                     selectedSuggestionIndex = Math.Max(selectedSuggestionIndex - 1, 0);
                     break;
                 case "Enter":
-                    if (suggestions.Any())
+                    if (Suggestions.Count != 0)
                     {
-                        InsertSuggestion(suggestions[selectedSuggestionIndex]);
+                        InsertSuggestion(Suggestions[selectedSuggestionIndex]);
                     }
                     break;
-                case "Escape":
-                    showAutocomplete = false;
-                    break;
             }
+            StateHasChanged();
         }
 
         private void InsertSuggestion(Suggestion suggestion)
         {
-            var textBeforeCursor = currentSql;
+            var textBeforeCursor = SqlToFormat;
             var newText = Regex.Replace(textBeforeCursor, @"(\w+)$", suggestion.Text);
-            currentSql = newText;
-            showAutocomplete = false;
+            SqlToFormat = newText;
+            Suggestions.Clear();
             UpdateFormattedSql();
         }
 
@@ -493,23 +490,23 @@ namespace devbuddy.plugins.SqlFormatter
         public class SqlDialect
         {
             public string Name { get; set; } = string.Empty;
-            public List<string> Keywords { get; set; } = new();
-            public List<string> Functions { get; set; } = new();
-            public List<string> DataTypes { get; set; } = new();
+            public List<string> Keywords { get; set; } = [];
+            public List<string> Functions { get; set; } = [];
+            public List<string> DataTypes { get; set; } = [];
 
             public static SqlDialect Standard => new()
             {
                 Name = "Standard",
-                Keywords = new() { "SELECT", "FROM", "WHERE", "JOIN", "INNER", "LEFT", "RIGHT", "OUTER",
+                Keywords = [ "SELECT", "FROM", "WHERE", "JOIN", "INNER", "LEFT", "RIGHT", "OUTER",
                 "ON", "AND", "OR", "NOT", "IN", "EXISTS", "BETWEEN", "LIKE", "IS", "NULL",
                 "ORDER", "BY", "GROUP", "HAVING", "DISTINCT", "AS", "ASC", "DESC",
                 "INSERT", "INTO", "VALUES", "UPDATE", "SET", "DELETE", "CREATE", "ALTER", "DROP",
                 "TABLE", "INDEX", "VIEW", "DATABASE", "UNION", "INTERSECT", "EXCEPT",
-                "CASE", "WHEN", "THEN", "ELSE", "END" },
-                Functions = new() { "COUNT", "SUM", "AVG", "MAX", "MIN", "UPPER", "LOWER", "LENGTH",
-                "CONCAT", "SUBSTRING", "TRIM", "COALESCE", "CAST" },
-                DataTypes = new() { "INT", "VARCHAR", "CHAR", "TEXT", "DATE", "DATETIME", "DECIMAL",
-                "FLOAT", "BOOLEAN", "BLOB" }
+                "CASE", "WHEN", "THEN", "ELSE", "END" ],
+                Functions = [ "COUNT", "SUM", "AVG", "MAX", "MIN", "UPPER", "LOWER", "LENGTH",
+                "CONCAT", "SUBSTRING", "TRIM", "COALESCE", "CAST" ],
+                DataTypes = [ "INT", "VARCHAR", "CHAR", "TEXT", "DATE", "DATETIME", "DECIMAL",
+                "FLOAT", "BOOLEAN", "BLOB" ]
             };
 
             public static SqlDialect TSql => new()
@@ -566,5 +563,8 @@ namespace devbuddy.plugins.SqlFormatter
                 DataTypes = new(Standard.DataTypes) { "INTEGER", "REAL", "TEXT", "BLOB", "NUMERIC" }
             };
         }
+
+        [GeneratedRegex(@"(\w+)$")]
+        private static partial Regex FindLastPartialWord();
     }
 }

@@ -18,9 +18,9 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="row">
+                    <div class="row mb-3">
                         <div class="col-9 mb-2">
-                            <textarea @bind="currentSql"
+                            <textarea @bind="SqlToFormat"
                                       @bind:event="oninput"
                                       @bind:after="OnSqlChanged"
                                       @onkeydown="HandleKeyDown"
@@ -29,8 +29,8 @@
                                       class="form-control w-100" rows="15" placeholder="Digita la query da formattare" style="font-family: monospace;"></textarea>
                         </div>
                         <div class="col-3">
-                            <label>
-                                Dialetto:
+                            <label class="mb-3">
+                                Sintassi:
                                 <select class="form-control" @bind="selectedDialect" @bind:after="OnDialectChanged">
                                     <option value="Standard">SQL Standard</option>
                                     <option value="TSql">T-SQL (SQL Server)</option>
@@ -40,20 +40,19 @@
                                     <option value="SQLite">SQLite</option>
                                 </select>
                             </label><br />
-                            @if (showAutocomplete && suggestions.Any())
+                            @if (AnySuggestions)
                             {
-                                @foreach (var (suggestion, index) in suggestions.Select((s, i) => (s, i)))
-                                {
-                                    <button class="btn btn-primary @(index == selectedSuggestionIndex ? "selected" : "")"
-                                            @onclick="() => InsertSuggestion(suggestion)">
-                                        @* <span class="suggestion-type">@suggestion.Type</span>
-                                            <span class="suggestion-text">@suggestion.Text</span> *@
-                                        @if (!string.IsNullOrEmpty(suggestion.Description))
-                                        {
-                                            <span class="badge bg-primary">@suggestion.Text</span>
-                                        }
-                                    </button>
-                                }
+                                <ul class="list-group">
+                                    @foreach (var (suggestion, index) in Suggestions.Select((s, i) => (s, i)))
+                                    {
+                                        <li class="list-group-item  @(index == selectedSuggestionIndex ? "active" : "")" @onclick="() => InsertSuggestion(suggestion)">
+                                            @if (!string.IsNullOrEmpty(suggestion.Text))
+                                            {
+                                                <span class="badge bg-primary">@suggestion.Text</span>
+                                            }
+                                        </li>
+                                    }
+                                </ul>
                             }
                         </div>
 
@@ -65,15 +64,16 @@
                                 <div class="alert alert-danger">
                                     @foreach (var error in validationErrors)
                                     {
-                                        <div class="error-message">
-                                            <span>@error</span>
-                                        </div>
+                                        <span>@error</span>
+                                        <br />
                                     }
                                 </div>
                             }
-                            else
+                            else if (!validationErrors.Any() && !string.IsNullOrWhiteSpace(SqlToFormat))
                             {
-                                <span class="success-badge">✓ Sintassi valida</span>
+                                <div class="alert alert-success">
+                                    <span>✓ Sintassi valida</span>
+                                </div>
                             }
 
                         </div>

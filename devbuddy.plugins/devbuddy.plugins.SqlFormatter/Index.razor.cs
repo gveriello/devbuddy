@@ -3,6 +3,7 @@ using devbuddy.common.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
+using Microsoft.SqlServer.TransactSql.ScriptDom;
 using System.Text.RegularExpressions;
 
 namespace devbuddy.plugins.SqlFormatter
@@ -71,57 +72,27 @@ namespace devbuddy.plugins.SqlFormatter
             formattedSql = FormatSql(SqlToFormat);
         }
 
-        private void ValidateSql()
+        public void ValidateSql()
         {
+            TSql150Parser parser = new(initialQuotedIdentifiers: false);
+
+            IList<ParseError> errors;
+            using (TextReader reader = new StringReader(SqlToFormat))
+            {
+                parser.Parse(reader, out errors);
+            }
+
+            List<string> errorMessages = [];
+            if (errors != null && errors.Count > 0)
+            {
+                foreach (var err in errors)
+                {
+                    errorMessages.Add($"Linea {err.Line}, Colonna {err.Column}: {err.Message}");
+                }
+            }
+
             validationErrors.Clear();
-
-            if (string.IsNullOrWhiteSpace(SqlToFormat))
-                return;
-
-            var sql = SqlToFormat.ToUpper();
-            var dialect = GetDialect();
-
-            // Controllo parentesi bilanciate
-            var openParen = SqlToFormat.Count(c => c == '(');
-            var closeParen = SqlToFormat.Count(c => c == ')');
-            if (openParen != closeParen)
-                validationErrors.Add($"Parentesi non bilanciate: {openParen} aperte, {closeParen} chiuse");
-
-            // Controllo SELECT senza FROM (eccetto per alcuni dialetti)
-            if (sql.Contains("SELECT") && !sql.Contains("FROM") && selectedDialect != "MySQL")
-            {
-                if (!sql.Contains("DUAL")) // Oracle permette SELECT senza FROM con DUAL
-                    validationErrors.Add("SELECT senza FROM (potrebbe essere un errore)");
-            }
-
-            // Controllo virgole doppie
-            if (SqlToFormat.Contains(",,"))
-                validationErrors.Add("Virgole doppie trovate");
-
-            // Controllo JOIN senza ON (eccetto CROSS JOIN)
-            if (Regex.IsMatch(sql, @"\bJOIN\b(?!\s+ON)") && !sql.Contains("CROSS"))
-            {
-                if (!Regex.IsMatch(sql, @"\bJOIN\b\s+\w+\s+ON\b"))
-                    validationErrors.Add("JOIN senza clausola ON");
-            }
-
-            // Controllo parole chiave mal scritte comuni
-            var commonMisspellings = new Dictionary<string, string>
-        {
-            { @"\bSELCT\b", "SELECT" },
-            { @"\bFROM\b.*\bWHERE\b.*\bFROM\b", "FROM duplicato" },
-            { @"\bORDER\s+BT\b", "ORDER BY" },
-            { @"\bGROUP\s+BT\b", "GROUP BY" }
-        };
-
-            foreach (var (pattern, correction) in commonMisspellings)
-            {
-                if (Regex.IsMatch(sql, pattern))
-                    validationErrors.Add($"Possibile errore di battitura: {correction}");
-            }
-
-            // Validazioni specifiche per dialetto
-            ValidateDialectSpecific(sql, dialect);
+            validationErrors.AddRange(errorMessages);
         }
 
         private void ValidateDialectSpecific(string sql, SqlDialect dialect)

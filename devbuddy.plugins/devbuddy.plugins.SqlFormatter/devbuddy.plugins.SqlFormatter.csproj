@@ -13,6 +13,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.13" />
+		<PackageReference Include="Microsoft.SqlServer.DacFx.x64" Version="150.5282.3" />
 	</ItemGroup>
 
 	<ItemGroup>

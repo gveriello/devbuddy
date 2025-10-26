@@ -27,11 +27,11 @@ namespace devbuddy.blazor.Components
         {
             if (string.IsNullOrEmpty(newValue))
             {
-                AllModulesFiltered = AllModules.ToList();
+                AllModulesFiltered = AllModules?.ToList();
             }
             else
             {
-                AllModulesFiltered = AllModules.Where(module => module.Description.ToUpper().Contains(newValue.ToUpper()))?.ToList();
+                AllModulesFiltered = AllModules?.Where(module => module.Description.ToUpper().Contains(newValue.ToUpper()))?.ToList();
             }
 
             StateHasChanged();

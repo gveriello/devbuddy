@@ -2,59 +2,57 @@
 @inherits PageComponentsBase
 
 <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100 ">
-	@if (User is not null)
-	{
-		<div class="dropdown">
-			<a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-				<i class="fa-solid fa-user rounded-circle" style="width:20px; height:20px;"></i>
-				<span class="ms-1 d-none d-sm-inline sidebar-item">@User.Name @User.Surname</span>
-				@* <span class="d-none d-sm-inline mx-1">@User.Name @User.Surname</span> *@
-			</a>
-			<ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-				<li><a class="dropdown-item" @onclick="@(() => OnLogout.InvokeAsync())" style="cursor:pointer">Disconnetti</a></li>
-			</ul>
-		</div>
-	}
-	<ul class="nav flex-column align-items-center align-items-sm-start" id="menu">
-		@if (AllModulesFiltered?.Count > 0)
-		{
-			<div class="form-floating mb-3">
-				<input type="text" class="form-control" id="floatingSearchModule" placeholder="Digita per cercare gli strumenti" @bind="@SearchTool" />
-			</div>
-			<br />
+    @if (User is not null)
+    {
+        <div class="dropdown">
+            <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fa-solid fa-user rounded-circle" style="width:20px; height:20px;"></i>
+                <span class="ms-1 d-none d-sm-inline sidebar-item">@User.Name @User.Surname</span>
+                @* <span class="d-none d-sm-inline mx-1">@User.Name @User.Surname</span> *@
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+                <li><a class="dropdown-item" @onclick="@(() => OnLogout.InvokeAsync())" style="cursor:pointer">Disconnetti</a></li>
+            </ul>
+        </div>
+    }
+    <ul class="nav flex-column align-items-center align-items-sm-start" id="menu">
+        @if (AllModulesFiltered?.Count > 0)
+        {
+            <input type="text" class="form-control" id="floatingSearchModule" placeholder="Digita per cercare gli strumenti" @bind="@SearchTool" />
+            <br />
 
-			//nodo home
-			var homeNavItem = AllModulesFiltered.FirstOrDefault(nav => nav.Node == ModulesItems.Home);
-			<MenuNavItem NavNode="@homeNavItem.Node" Description="@homeNavItem.Description" Icon="@homeNavItem.Icon" OnNavItemClick="OnMenuItemClick" />
-			<br />
-			//nodo unparented
-			var unparentedItems = AllModulesFiltered.Where(nav => string.IsNullOrEmpty(nav.Category) && nav.Node != ModulesItems.Home)?.ToList();
-			if (unparentedItems?.Count > 0)
-				foreach (var unparentedItem in unparentedItems)
-				{
-					<MenuNavItem NavNode="@unparentedItem.Node" Description="@unparentedItem.Description" Icon="@unparentedItem.Icon" OnNavItemClick="OnMenuItemClick" />
-				}
-			//nodi categorizzati
-			var allCategories = AllModulesFiltered.Where(nav => !string.IsNullOrEmpty(nav.Category))?.Select(nav => nav.Category.Trim()).Distinct().ToList();
-			if (allCategories?.Count > 0)
-				foreach (var category in allCategories)
-				{
-					var parentedItems = AllModulesFiltered.Where(nav => nav.Category == category)?.ToList();
-					if (parentedItems?.Count > 0)
-					{
-						@* <li class="nav-item" style="color:black; cursor:pointer" href="#@category" data-bs-toggle="collapse">
+            //nodo home
+            var homeNavItem = AllModulesFiltered.FirstOrDefault(nav => nav.Node == ModulesItems.Home);
+            <MenuNavItem NavNode="@homeNavItem.Node" Description="@homeNavItem.Description" Icon="@homeNavItem.Icon" OnNavItemClick="OnMenuItemClick" />
+            <br />
+            //nodo unparented
+            var unparentedItems = AllModulesFiltered.Where(nav => string.IsNullOrEmpty(nav.Category) && nav.Node != ModulesItems.Home)?.ToList();
+            if (unparentedItems?.Count > 0)
+                foreach (var unparentedItem in unparentedItems)
+                {
+                    <MenuNavItem NavNode="@unparentedItem.Node" Description="@unparentedItem.Description" Icon="@unparentedItem.Icon" OnNavItemClick="OnMenuItemClick" />
+                }
+            //nodi categorizzati
+            var allCategories = AllModulesFiltered.Where(nav => !string.IsNullOrEmpty(nav.Category))?.Select(nav => nav.Category.Trim()).Distinct().ToList();
+            if (allCategories?.Count > 0)
+                foreach (var category in allCategories)
+                {
+                    var parentedItems = AllModulesFiltered.Where(nav => nav.Category == category)?.ToList();
+                    if (parentedItems?.Count > 0)
+                    {
+                        @* <li class="nav-item" style="color:black; cursor:pointer" href="#@category" data-bs-toggle="collapse">
 
 							<h5><i class="fa-solid fa-caret-right"></i> &nbsp;<i>@category</i></h5>
 						</li>
 						<div id="@category" class="collapse mb-3"> *@
-							@foreach (var parentedItem in parentedItems)
-							{
-								<MenuNavItem NavNode="@parentedItem.Node" Description="@parentedItem.Description" Icon="@parentedItem.Icon" OnNavItemClick="OnMenuItemClick" />
-							}
-						@* </div> *@
-					}
-				}
-		}
-	</ul>
+                        @foreach (var parentedItem in parentedItems)
+                        {
+                            <MenuNavItem NavNode="@parentedItem.Node" Description="@parentedItem.Description" Icon="@parentedItem.Icon" OnNavItemClick="OnMenuItemClick" />
+                        }
+                        @* </div> *@
+                    }
+                }
+        }
+    </ul>
 
 </div>

@@ -49,5 +49,8 @@ namespace devbuddy.common.Enums
 
         [ModuleKey("ca5b8a9e-6e5f-4a3d-8c1e-0f7e97b4ab2d")]
         LoremIpsum,
+
+        [ModuleKey("ca5b8a9e-6e5f-4a3d-8c1e-0f7e97b4ab2d")]
+        Regex,
     }
 }

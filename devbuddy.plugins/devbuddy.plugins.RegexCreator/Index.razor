@@ -1,0 +1,41 @@
+﻿@page "/plugins/regexcreator"
+@inherits RegexCreatorBase
+
+<h3>Regex Creator</h3>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <label>Regex Pattern:</label>
+        <input @bind="Pattern" class="form-control" />
+
+        <div class="form-check mt-2">
+            <input type="checkbox" @bind="IgnoreCase" class="form-check-input" id="ignoreCase" />
+            <label class="form-check-label" for="ignoreCase">Ignore Case</label>
+        </div>
+        <div class="form-check">
+            <input type="checkbox" @bind="Multiline" class="form-check-input" id="multiline" />
+            <label class="form-check-label" for="multiline">Multiline</label>
+        </div>
+
+        <label class="mt-3">Test Input:</label>
+        <textarea @bind="TestInput" class="form-control"></textarea>
+        <button type="button" class="btn btn-primary mt-2" @onclick="TestRegex">Test</button>
+    </div>
+</div>
+
+@if (ErrorMessage != null)
+{
+    <div class="alert alert-danger">@ErrorMessage</div>
+}
+else if (Matches?.Count > 0)
+{
+    <div class="alert alert-success">
+        <b>Match trovati: @Matches.Count</b>
+        <ul>
+            @foreach (var match in Matches)
+            {
+                <li>@match.Value (Index: @match.Index)</li>
+            }
+        </ul>
+    </div>
+}

@@ -53,7 +53,7 @@ namespace devbuddy.common.Enums
         [ModuleKey("5502bed8-22f5-412a-8a3b-ad5009ff1117")]
         SqlFormatter,
 
-        [ModuleKey("ca5b8a9e-6e5f-4a3d-8c1e-0f7e97b4ab2d")]
+        [ModuleKey("659cba2c-3307-4f34-82c6-ce8048fb236c")]
         Regex,
     }
 }

@@ -31,9 +31,11 @@ namespace devbuddy.blazor.Components
             }
             else
             {
-                AllModulesFiltered = AllModules?.Where(module => module.Description.ToUpper().Contains(newValue.ToUpper()))?.ToList();
+                AllModulesFiltered = [.. AllModules.Where(module => module.Description.ToUpper().Contains(newValue.ToUpper()) || 
+                                                                module.Node is ModulesItems.Home)];
             }
 
+            this._searchTool = newValue;
             StateHasChanged();
         }
 
